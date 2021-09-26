@@ -1,0 +1,10 @@
+{
+  "Database": {
+    "dbConfig": {
+      "uri": "mongodb://job:8uwLdKTPWtbZDbu3@34.87.103.141:27017/jobsearch"
+    }
+  },
+  "Application": {
+    "port": 3000
+  }
+}
