@@ -1,21 +1,19 @@
-import Ajv from 'ajv'
+import Ajv from "ajv";
 
-import logger from '../lib/utils/logger';
+import logger from "../lib/utils/logger";
 
 const ajv = new Ajv({
-    allErrors: true
+  allErrors: true,
 });
 
-
 export const Validate = (schema) => {
-    return (req, res, next) => {
-      
-        const validate = ajv.compile(schema);
-        const valid = validate(req.body);
-        if (!valid) {
-            logger.info(validate.errors);
-            return res.status(400).json(validate.errors);
-        }
-        next();
+  return (req, res, next) => {
+    const validate = ajv.compile(schema);
+    const valid = validate(req.body);
+    if (!valid) {
+      logger.info("validate: ", validate.errors);
+      return res.status(400).json(validate.errors);
     }
-}
+    next();
+  };
+};

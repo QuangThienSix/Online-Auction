@@ -68,6 +68,7 @@ app.use(function (req, res, next) {
             'message': 'Endpoint not found!',
         }
     });
+    
 });
 app.use(function (err, req, res, next) {
     logger.info(err.stack);

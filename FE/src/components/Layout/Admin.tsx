@@ -1,9 +1,12 @@
+import { Switch, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
 import { Header } from 'components/common';
 import Sidebar from 'components/common/Sidebar';
 import React from 'react';
+import Dashboard from 'features/dashboard/index';
+import Users from 'features/users';
 
 const usetheme = createTheme();
 
@@ -45,7 +48,17 @@ export function AdminLayout() {
         <Sidebar />
       </Box>
 
-      <Box className={classes.main}>MAIN</Box>
+      <Box className={classes.main}>
+        <Switch>
+          <Route path="/admin/dashboard">
+            <Dashboard />
+          </Route>
+
+          <Route path="/admin/users">
+            <Users />
+          </Route>
+        </Switch>
+      </Box>
     </Box>
   );
 }

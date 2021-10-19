@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import { CssBaseline } from '@mui/material';
 import { ConnectedRouter } from 'connected-react-router';
-import history from 'utils/history';
+import { history } from 'utils';
 
 ReactDOM.render(
   <React.StrictMode>

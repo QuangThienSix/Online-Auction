@@ -10,11 +10,11 @@ const axiosClient = axios.create({
   paramsSerializer: (parems) => queryString.stringify(parems),
 });
 
-axiosClient.interceptors.request.use(async (config) => {
-  // set token in headers
-  const token = 'abc';
-  config.headers.Authorization = `Bearer ${token}`;
-});
+// axiosClient.interceptors.request.use(async (config) => {
+//   // set token in headers
+//   const token = 'abc';
+//   config.headers.Authorization = `Bearer ${token}`;
+// });
 
 axiosClient.interceptors.response.use(
   (response) => {

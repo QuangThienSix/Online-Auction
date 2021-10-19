@@ -5,9 +5,9 @@ export interface PrivateRouteProps {}
 
 export function PrivateRoute(props: RouteProps) {
   // Check user i logged
-  const isLoggedIn = Boolean(localStorage.getItem('access_token'));
+  const isLoggedIn = Boolean(localStorage.getItem('x-access-token'));
   if (!isLoggedIn) return <Redirect to="login" />;
-  console.log('isLoggedIn: ', isLoggedIn);
+  // console.log('isLoggedIn: ', isLoggedIn);
 
   return <Route {...props} />;
 }
