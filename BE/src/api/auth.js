@@ -12,7 +12,7 @@ import schema_verify from "../schemas/verify.json";
 
 const auth = () => {
   let api = Router();
-  // api.get("/signup", authMdw, authController.signUp);
+  api.post("/parsetoken", authController.parseToken);
   api.post("/signup", Validate(schema_signup), authController.signUp);
   api.post(
     "/refresh",

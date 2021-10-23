@@ -26,7 +26,26 @@ class AuthController extends BaseController {
     this.signUp = this.signUp.bind(this);
     this.signIn = this.signIn.bind(this);
     this.verify = this.verify.bind(this);
+    this.parseToken = this.parseToken.bind(this);
     this.refreshAccessToken = this.refreshAccessToken.bind(this);
+  }
+  async parseToken(req, res) {
+    logger.info("parseToken");
+    const { accessToken } = req.body;
+
+    const parseToken = deCodeTokenForUser(accessToken);
+    if (parseToken) {
+      this.responseSuccess(res, parseToken);
+    } else {
+      return this.responseError(
+        res,
+        {
+          authenticated: false,
+          message: "token incorrect",
+        },
+        400
+      );
+    }
   }
 
   async signUp(req, res) {
@@ -43,6 +62,24 @@ class AuthController extends BaseController {
 
     var tokenMail = parseInt(rn(options));
 
+    if (
+      username == "" ||
+      password == "" ||
+      email == "" ||
+      address == "" ||
+      fullname == ""
+    ) {
+      logger.info("Data null");
+      return this.responseError(
+        res,
+        {
+          message:
+            "username || password || email ||fullname || address no data",
+        },
+        400
+      );
+    }
+
     const entity = {
       username: username,
       password: password_hash,
@@ -53,40 +90,73 @@ class AuthController extends BaseController {
       roles_id: roles_id,
       tokenMail: tokenMail,
     };
+
     // check user
     const user = await singleByUserName(username, password_hash);
     if (user) {
-      logger.info("Username trùng");
-      return this.responseError(res, "Username trùng");
+      logger.info("same username");
+      return this.responseError(
+        res,
+        {
+          message: "same username ",
+        },
+        400
+      );
     }
     // check mail
     const mail = await singleByMail(email);
     if (mail) {
-      logger.info("Email trùng");
-      return this.responseError(res, "Email trùng");
+      logger.info("same Email");
+      return this.responseError(
+        res,
+        {
+          message: "same Email ",
+        },
+        400
+      );
     }
     // add user
+    let resUser = null;
     try {
-      const resUser = await addUser(entity);
-
-      // send Email
-      const html = `Hi ${fullname},
+      resUser = await addUser(entity);
+    } catch (error) {
+      logger.info("Failed add user", error);
+      return this.responseError(
+        res,
+        {
+          message: "Failed add user",
+        },
+        400
+      );
+    }
+    if (resUser) {
+      try {
+        {
+          // send Email
+          logger.info("Send Email");
+          const html = `Hi ${fullname},
         <br/>
         Cảm ơn bạn đã đăng ký!
         <br/> <br/>
         Mã Xác Nhận: <b>${tokenMail}</b>
         Link Xác nhận : <a href="http://localhost:${apiConfig.port}/login/verify">http://localhost:${apiConfig.port}/login/verify</a>
         `;
-      await sendMail("phamquangthien.it@gmail.com", email, "[OTP]", html);
-    } catch (error) {
-      logger.info("Failed add user", error);
-      return this.responseError(res, "Failed add user");
-    } finally {
-      return this.responseSuccess(res, {
-        success: true,
-        email: email,
-        message: "Register successfully",
-      });
+          await sendMail("phamquangthien.it@gmail.com", email, "[OTP]", html);
+        }
+        return this.responseSuccess(res, {
+          success: true,
+          email: email,
+          message: "Register successfully",
+        });
+      } catch (error) {
+        return this.responseError(
+          res,
+          {
+            message: "Failed send Email",
+          },
+          400
+        );
+      }
     }
   }
 
@@ -97,15 +167,31 @@ class AuthController extends BaseController {
 
     const user = await singleByUserName(username);
     if (user === null) {
-      return res.json({
-        authenticated: false,
-      });
+      return this.responseError(
+        res,
+        {
+          authenticated: false,
+          message: "username || password is incorrect",
+        },
+        400
+      );
     }
 
     if (!bcrypt.compareSync(password, user.password)) {
+      return this.responseError(
+        res,
+        {
+          authenticated: false,
+          message: "username || password is incorrect",
+        },
+        400
+      );
+    }
+
+    if (user.islock) {
       return this.responseError(res, {
         authenticated: false,
-        message: "username || password is incorrect",
+        message: `${user.username} is lock`,
       });
     }
 
@@ -159,12 +245,18 @@ class AuthController extends BaseController {
         await updateIslock(user.user_id);
         return this.responseSuccess(res);
       } else {
-        logger.info("Token không đúng");
-        return this.responseError(res, "Token không đúng");
+        logger.info("Invalid token");
+        return this.responseError(res, {
+          authenticated: false,
+          message: `${user.email}: Invalid token`,
+        });
       }
     } else {
-      logger.info("Email không tồn tại");
-      return this.responseError(res, "Email không tồn tại");
+      logger.info("Invalid Email");
+      return this.responseError(res, {
+        authenticated: false,
+        message: `${user.email}: Invalid Email`,
+      });
     }
   }
 }

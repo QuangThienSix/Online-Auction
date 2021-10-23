@@ -15,6 +15,7 @@ export const getTokenForUser = (user) => {
   return jwt.sign(
     {
       user_id: user.user_id,
+      roles_id: user.roles_id,
       iat: timestamp,
       exp: Math.floor(Date.now() / 1000) + 15 * 60, // 15 minutes
     },

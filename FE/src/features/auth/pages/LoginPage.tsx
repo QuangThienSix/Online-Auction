@@ -1,7 +1,7 @@
 import { ChevronLeft } from '@mui/icons-material';
-import { createTheme, Paper, Typography } from '@mui/material';
+import { Alert, createTheme, Paper, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { useAppDispatch } from 'app/hooks';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { Users } from 'models';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -35,6 +35,8 @@ export default function LoginPage() {
 
   const dispatch = useAppDispatch();
 
+  const message = useAppSelector((state) => state.auth.errormessage);
+
   const handleLoginClick = async (formValue: Users) => {
     dispatch(authActions.login(formValue));
   };
@@ -48,6 +50,11 @@ export default function LoginPage() {
     <div className={classes.root}>
       <Paper elevation={1} className={classes.box}>
         <Typography variant="h4">Login</Typography>
+        {message && (
+          <Alert style={{marginTop: '10px'}} severity="error">
+            {message}
+          </Alert>
+        )}
         <LoginForm initialValue={initialValue} onSubmit={handleLoginClick} />
         <Link to="/regis">
           <Typography variant="caption" style={{ display: 'flex', alignItems: 'center' }}>

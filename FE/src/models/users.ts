@@ -5,8 +5,9 @@ export interface Users {
   fullname?: string;
   address?: string;
   email?: string;
-  rfToken?: string;
   accessToken: string;
+  tokenMail?: string;
+  ratting?: string;
   refreshToken: string;
   islock: boolean;
   roles_id?: number | string;

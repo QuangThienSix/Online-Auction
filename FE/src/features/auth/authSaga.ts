@@ -9,14 +9,13 @@ import { authActions, LoginPayload } from './authSlice';
 function* handleLogin(payload: LoginPayload) {
   try {
     const response: ListResponses<Users> = yield call(userApi.postLogin, payload);
-    console.log(response);
     localStorage.setItem('x-access-token', response.data.accessToken);
     localStorage.setItem('x-refresh-token', response.data.refreshToken);
     yield put(authActions.loginSuccess(response.data));
     //   redirest to admin page
     yield put(push('/admin'));
   } catch (error: any) {
-    yield put(authActions.loginFailed(error.message));
+    yield put(authActions.loginFailed(error.data.error.message));
   }
 }
 
@@ -66,7 +65,8 @@ function* handleRegister(payload: LoginPayload) {
     yield put(authActions.registerSuccess(response.data));
     yield put(push(`/verify/${response.data.email}`));
   } catch (error: any) {
-    yield put(authActions.registerFailed(error));
+    yield put(authActions.registerFailed(error.data.error.message));
+    yield put(push('/regis'));
   }
 }
 function* handleVerify(payload: LoginPayload) {
@@ -75,7 +75,8 @@ function* handleVerify(payload: LoginPayload) {
     yield put(authActions.verifySuccess(response.data));
     yield put(push('/login'));
   } catch (error: any) {
-    yield put(authActions.verifyFailed(error));
+    yield put(authActions.verifyFailed(error.data.error.message));
+    yield put(push('/verify'));
   }
 }
 export default function* authSaga() {
