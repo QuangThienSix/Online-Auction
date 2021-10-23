@@ -14,6 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/swagger-jsdoc": "^6.0.1",
+    "@types/swagger-ui-express": "^4.1.3",
     "ajv": "^8.6.2",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -45,7 +47,8 @@
     "php-unserialize": "0.0.1",
     "random-number": "0.0.9",
     "resource-router-middleware": "^0.6.0",
-    "swagger-ui-express": "^1.0.7",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^1.0.8",
     "winston": "^2.3.1"
   },
   "devDependencies": {
