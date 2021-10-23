@@ -2,11 +2,11 @@ import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
 import logger from "../lib/utils/logger";
 import {
-  addCateroy,
-  updateCateroy,
-  deleteCateroy,
-  getCateroy,
-} from "../models/category";
+  addBrand,
+  updateBrand,
+  deleteBrand,
+  getBrand,
+} from "../models/brand";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
@@ -17,18 +17,18 @@ var options = {
   min: 1000,
   max: 9999,
 };
-class CategoryController extends BaseController {
+class BrandController extends BaseController {
   constructor() {
     super();
     // pinning context, when used in routers
-    this.creatCategory = this.creatCategory.bind(this);
-    this.updateCategory = this.updateCategory.bind(this);
-    this.deleteCategory = this.deleteCategory.bind(this);
-    this.getCateroy = this.getCateroy.bind(this);
+    this.creatBrand = this.creatBrand.bind(this);
+    this.updateBrand = this.updateBrand.bind(this);
+    this.deleteBrand = this.deleteBrand.bind(this);
+    this.getBrand = this.getBrand.bind(this);
   }
 
-  async creatCategory(req, res) {
-    logger.info("creatCategory");
+  async creatBrand(req, res) {
+    logger.info("creatBrand");
     const { accessToken, data } = req.body;
 
     const parseToken = deCodeTokenForUser(accessToken);
@@ -44,7 +44,8 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        let result = await creatCategory(data);
+        console.log(parseToken.payload);
+        let result = await addBrand(data);
         return this.responseSuccess(res, result);
       }
       catch (exception) {
@@ -62,8 +63,8 @@ class CategoryController extends BaseController {
       );
     }
   }
-  async updateCategory(req, res) {
-    logger.info("updateCategory");
+  async updateBrand(req, res) {
+    logger.info("updateBrand");
     const { accessToken, data } = req.body;
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
@@ -78,7 +79,8 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        let result = await updateCategory(data);
+      
+        let result = await updateBrand(data);
         return this.responseSuccess(res, result);
       }
       catch (exception) {
@@ -96,8 +98,8 @@ class CategoryController extends BaseController {
       );
     }
   }
-  async deleteCategory(req, res) {
-    logger.info("deleteCategory");
+  async deleteBrand(req, res) {
+    logger.info("updateBrand");
     const { accessToken, data } = req.body;
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
@@ -112,7 +114,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        let result = await deleteCategory(data);
+        let result = await deleteBrand(data);
         return this.responseSuccess(res, result);
       }
       catch (exception) {
@@ -130,10 +132,11 @@ class CategoryController extends BaseController {
       );
     }
   }
-  async getCateroy(req, res) {
-    logger.info("getCateroy");
+  async getBrand(req, res) {
+    logger.info("getBrand");
+    const {category_id } = req.body;
     try {
-      let result = await getCateroy();
+      let result = await getBrand(category_id);
       console.log(result);
       return this.responseSuccess(res, result);
     }
@@ -147,7 +150,8 @@ class CategoryController extends BaseController {
       );
     }
   }
+ 
 
 }
 
-export default new CategoryController();
+export default new BrandController();

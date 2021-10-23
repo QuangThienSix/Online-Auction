@@ -7,7 +7,7 @@ export const adduser_comment = async (entity) => {
   return await add(TBL_user_comment, entity);
 };
 
-export const getuser_comment = async () => {
+export const getuser_comment = async (product_id) => {
   const rows = await load(
     `select * from ${TBL_user_comment} where product_id = ${product_id}`
   );

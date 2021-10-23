@@ -2,11 +2,17 @@ import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
 import logger from "../lib/utils/logger";
 import {
-  addCateroy,
-  updateCateroy,
-  deleteCateroy,
-  getCateroy,
-} from "../models/category";
+  singleByProductId,
+  addProduct,
+  deleteProduct,
+  updateProduct,
+  top5Ratting,
+  top5Price,
+  top5Active,
+  search,
+  top5Recoment,
+
+} from "../models/products";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
@@ -17,24 +23,24 @@ var options = {
   min: 1000,
   max: 9999,
 };
-class CategoryController extends BaseController {
+class ProductController extends BaseController {
   constructor() {
     super();
     // pinning context, when used in routers
-    this.creatCategory = this.creatCategory.bind(this);
-    this.updateCategory = this.updateCategory.bind(this);
-    this.deleteCategory = this.deleteCategory.bind(this);
-    this.getCateroy = this.getCateroy.bind(this);
+    this.creatProduct = this.creatProduct.bind(this);
+    this.updateProduct = this.updateProduct.bind(this);
+    this.deleteProduct = this.deleteProduct.bind(this);
+    this.getProduct = this.getProduct.bind(this);
   }
 
-  async creatCategory(req, res) {
-    logger.info("creatCategory");
+  async creatProduct(req, res) {
+    logger.info("creatProduct");
     const { accessToken, data } = req.body;
 
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
-      if (parseToken.payload.roles_id != 1)
+      if (parseToken.payload.roles_id != 1 &&parseToken.payload.roles_id != 3 )
         return this.responseError(
           res,
           {
@@ -44,7 +50,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        let result = await creatCategory(data);
+        let result = await addProduct(data);
         return this.responseSuccess(res, result);
       }
       catch (exception) {
@@ -62,13 +68,13 @@ class CategoryController extends BaseController {
       );
     }
   }
-  async updateCategory(req, res) {
-    logger.info("updateCategory");
+  async updateProduct(req, res) {
+    logger.info("updateProduct");
     const { accessToken, data } = req.body;
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
-      if (parseToken.payload.roles_id != 1)
+      if (parseToken.payload.roles_id != 1 &&parseToken.payload.roles_id != 3 )
         return this.responseError(
           res,
           {
@@ -78,7 +84,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        let result = await updateCategory(data);
+        let result = await updateProduct(data);
         return this.responseSuccess(res, result);
       }
       catch (exception) {
@@ -96,8 +102,8 @@ class CategoryController extends BaseController {
       );
     }
   }
-  async deleteCategory(req, res) {
-    logger.info("deleteCategory");
+  async deleteProduct(req, res) {
+    logger.info("deleteProduct");
     const { accessToken, data } = req.body;
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
@@ -112,7 +118,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        let result = await deleteCategory(data);
+        let result = await deleteProduct(data);
         return this.responseSuccess(res, result);
       }
       catch (exception) {
@@ -130,10 +136,11 @@ class CategoryController extends BaseController {
       );
     }
   }
-  async getCateroy(req, res) {
-    logger.info("getCateroy");
+  async getProductById(req, res) {
+    logger.info("getProduct");
     try {
-      let result = await getCateroy();
+      const {product_id } = req.params.id
+      let result = await singleByProductId(product_id);
       console.log(result);
       return this.responseSuccess(res, result);
     }
@@ -147,7 +154,90 @@ class CategoryController extends BaseController {
       );
     }
   }
+  async getTop5ProductRatting(req, res) {
+    logger.info("getProduct");
+    try {
+      let result = await top5Ratting();
+      return this.responseSuccess(res, result);
+    }
+    catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getTop5ProductPrice(req, res) {
+    logger.info("getProduct");
+    try {
+      let result = await top5Price();
+      return this.responseSuccess(res, result);
+    }
+    catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getTop5ProductAcitve(req, res) {
+    logger.info("getProduct");
+    try {
+      let result = await top5Active();
+      return this.responseSuccess(res, result);
+    }
+    catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getTop5ProductRecoment(req, res) {
+    logger.info("getProduct");
+    try {
+      let result = await top5Recoment();
+      return this.responseSuccess(res, result);
+    }
+    catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async Query(req, res) {
+    logger.info("getProduct");
+    try {
+      const {query,page,size } =req.query
+      let result = await search(query,page,size);
+      return this.responseSuccess(res, result);
+    }
+    catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  
 
 }
 
-export default new CategoryController();
+export default new ProductController();

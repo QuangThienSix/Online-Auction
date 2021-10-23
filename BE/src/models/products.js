@@ -22,9 +22,9 @@ export const addProduct = async (entity) => {
 };
 
 
-export const deleteProduct = async (id) => {
+export const deleteProduct = async (data) => {
   const rows = await load(
-    `update ${TBL_PRODUCT} set is_deleted='1' where id='${id}'`
+    `update ${TBL_PRODUCT} set is_deleted='1' where id='${data.id}'`
   );
   if (rows.length === 0) return null;
   return rows[0];
