@@ -11,6 +11,7 @@
     "rfToken": { "type": "string" },
     "islock": { "type": "boolean" },
     "tokenMail": { "type": "string" },
+    "ratting": { "type": "string" },
     "roles_id": { "type": "string" }
   },
   "required": [

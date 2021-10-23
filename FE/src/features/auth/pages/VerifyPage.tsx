@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { createTheme, Paper, Typography, Box } from '@mui/material';
+import { createTheme, Paper, Typography, Box, Alert } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { useAppDispatch } from 'app/hooks';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { authActions, VerifyPayload } from '../authSlice';
@@ -28,6 +28,8 @@ export default function VerifyPage() {
 
   const dispatch = useAppDispatch();
 
+  const message = useAppSelector((state) => state.auth.errormessage);
+
   const { email } = useParams<{ email: string }>();
   console.log(email);
 
@@ -44,6 +46,11 @@ export default function VerifyPage() {
     <div className={classes.root}>
       <Paper elevation={1} className={classes.box}>
         <Typography variant="h4">Verify</Typography>
+        {message && (
+          <Alert style={{ marginTop: '10px' }} severity="error">
+            {message}
+          </Alert>
+        )}
         <VerifyForm initialValue={initialValue} onSubmit={handleVerifyClick} />
         <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/regis" style={{ display: 'flex', alignItems: 'center' }}>

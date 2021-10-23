@@ -36,7 +36,7 @@ export const singleByMail = async (email) => {
 };
 export const updateIslock = async (user_id) => {
   const rows = await load(
-    `update ${TBL_USER} set islock=0 where user_id='${user_id}'`
+    `update ${TBL_USER} set islock=0 , tokenMail='' where user_id='${user_id}'`
   );
   if (rows.length === 0) return null;
   return rows[0];

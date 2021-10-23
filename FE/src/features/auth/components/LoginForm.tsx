@@ -1,41 +1,40 @@
+import { Button, CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
-import { Users } from 'models';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { InputField } from 'components/FormField';
-import { Alert, Button, CircularProgress } from '@mui/material';
+import { Users } from 'models';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { LoginPayload } from '../authSlice';
-
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 export interface LoginFormProps {
   initialValue?: LoginPayload;
   onSubmit?: (formValue: Users) => void;
 }
 
-export default function LoginForm({ initialValue, onSubmit }: LoginFormProps) {
-  const [error, setError] = useState<string>('');
+const schema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required'),
+});
 
+export default function LoginForm({ initialValue, onSubmit }: LoginFormProps) {
   const {
     control,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<Users>({
     defaultValues: initialValue,
+    resolver: yupResolver(schema),
   });
 
   const handleFormSubmit = async (formValue: Users) => {
-    try {
-      setError('');
-      await onSubmit?.(formValue);
-    } catch (error: any) {
-      setError(error?.message);
-    }
+    await onSubmit?.(formValue);
   };
   return (
     <Box maxWidth={400}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <InputField name="username" control={control} label="Username" />
         <InputField name="password" control={control} label="Password" />
-        {error && <Alert severity="error">{error}</Alert>}
         <Box mt={2}>
           <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
             {isSubmitting && <CircularProgress size={16} color="primary" />}&nbsp;Login

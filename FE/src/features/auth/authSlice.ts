@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from 'app/store';
 import { Users } from 'models/users';
 
 export interface AuthState {
   isLoggedIn: boolean;
   logging?: boolean;
+  errormessage: string;
   currentUser?: Users;
 }
 
@@ -23,6 +25,7 @@ export interface RegisterPayload {
 const initialState: AuthState = {
   isLoggedIn: false,
   logging: false,
+  errormessage: '',
   currentUser: undefined,
 };
 
@@ -41,6 +44,8 @@ const authSlice = createSlice({
 
     loginFailed(state, action: PayloadAction<string>) {
       state.logging = false;
+      state.errormessage = '';
+      state.errormessage = action.payload;
     },
 
     register(state, action: PayloadAction<RegisterPayload>) {
@@ -49,10 +54,12 @@ const authSlice = createSlice({
 
     registerSuccess(state, action: PayloadAction<Users>) {
       state.logging = true;
+      state.errormessage = '';
     },
 
     registerFailed(state, action: PayloadAction<string>) {
       state.logging = true;
+      state.errormessage = action.payload;
     },
 
     verify(state, action: PayloadAction<VerifyPayload>) {
@@ -61,10 +68,12 @@ const authSlice = createSlice({
 
     verifySuccess(state, action: PayloadAction<Users>) {
       state.logging = true;
+      state.errormessage = '';
     },
 
     verifyFailed(state, action: PayloadAction<string>) {
       state.logging = true;
+      state.errormessage = action.payload;
     },
 
     logout(state) {
@@ -83,6 +92,8 @@ export const selecttorsIsLoggedIn = (state: { auth: { isLoggedIn: any } }) => st
 export const selecttorsIslogging = (state: { auth: { logging: any } }) => state.auth.logging;
 export const selecttorsCurrentUser = (state: { auth: { currentUser: Users } }) =>
   state.auth.currentUser;
+
+export const selecttorsErrorMessage = (state: RootState) => state.auth.errormessage;
 
 // Reducer
 const authReducer = authSlice.reducer;

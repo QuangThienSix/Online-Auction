@@ -1,24 +1,24 @@
-import passport from 'passport';
-import User from '../models/user';
-import apiConfig from '../config/api';
-import { Strategy, ExtractJwt } from 'passport-jwt';
-import LocalStrategy from 'passport-local';
+import passport from "passport";
+import User from "../models/user";
+import apiConfig from "../config/api";
+import { Strategy, ExtractJwt } from "passport-jwt";
+import LocalStrategy from "passport-local";
 
 /**
  * Local Strategy
  * This strategy allows incoming
- * requests to authenticate using 
+ * requests to authenticate using
  * username and password.
  */
 
 const localOptions = {
-  usernameField: 'email'
-}
+  usernameField: "email",
+};
 
 const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
   // verify this username and password
   User.findOne({ email }, (error, user) => {
-    if (error) return done(error)
+    if (error) return done(error);
 
     if (!user) return done(null, false);
 
@@ -29,7 +29,7 @@ const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
 
       return done(null, user);
     });
-  })
+  });
 });
 
 /**
@@ -39,9 +39,9 @@ const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
  */
 
 const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
-  secretOrKey: apiConfig.secretKey
-}
+  jwtFromRequest: ExtractJwt.fromHeader("authorization"),
+  secretOrKey: apiConfig.secretKey,
+};
 
 const jwtLogin = new Strategy(jwtOptions, (payload, done) => {
   // See if the user ID in the payload (sub) exists in the db
@@ -50,7 +50,7 @@ const jwtLogin = new Strategy(jwtOptions, (payload, done) => {
   User.findById(payload.sub, (error, user) => {
     if (error) done(error, false);
     done(null, user || false);
-  })
+  });
 });
 
 // Use the strategies using passport
