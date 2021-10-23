@@ -3,8 +3,8 @@
     "host": "localhost",
     "port": 3306,
     "user": "root",
-    "password": "root",
-    "database": "online_auction",
+    "password": "Hong0107@",
+    "database": "online-auction",
     "connectionLimit": 50
   },
   "pagination": {

@@ -10,7 +10,7 @@ export const singleByProductName = async (name) => {
   return rows[0];
 };
 
-export const singleByProductName = async (id) => {
+export const singleByProductId = async (id) => {
   const rows = await load(
     `select * from ${TBL_PRODUCT} where id = '${id}' and is_deleted = '0'`
   );
