@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { Users } from 'models';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { getItem } from 'utils';
 import { authActions, LoginPayload } from '../authSlice';
 import LoginForm from '../components/LoginForm';
 
@@ -26,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function LoginPage() {
   const history = useHistory();
-  const token = localStorage.getItem('x-access-token');
-  if (token) {
+  const users = getItem('users');
+  if (users?.accessToken) {
     history.push('/admin/dashboard');
   }
 
@@ -51,7 +52,7 @@ export default function LoginPage() {
       <Paper elevation={1} className={classes.box}>
         <Typography variant="h4">Login</Typography>
         {message && (
-          <Alert style={{marginTop: '10px'}} severity="error">
+          <Alert style={{ marginTop: '10px' }} severity="error">
             {message}
           </Alert>
         )}

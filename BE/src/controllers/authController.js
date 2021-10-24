@@ -50,7 +50,7 @@ class AuthController extends BaseController {
 
   async signUp(req, res) {
     logger.info("singUp");
-    const { username, password, fullname, address, email, islock, roles_id } =
+    const { username, password, fullname, address, email, islock, roles_id,ratting } =
       req.body;
 
     const password_hash = bcrypt.hashSync(
@@ -67,7 +67,7 @@ class AuthController extends BaseController {
       password == "" ||
       email == "" ||
       address == "" ||
-      fullname == ""
+      fullname == ""||ratting ==""
     ) {
       logger.info("Data null");
       return this.responseError(
@@ -89,6 +89,7 @@ class AuthController extends BaseController {
       islock: islock,
       roles_id: roles_id,
       tokenMail: tokenMail,
+      ratting:ratting
     };
 
     // check user

@@ -1,5 +1,11 @@
 import BaseController from "./baseController";
-import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
+import {
+  getTokenForUser,
+  deCodeTokenForUser,
+  sendMail,
+  getPagingData,
+  responsePaginationSuccess,
+} from "../lib/utils";
 import { logger } from "../lib/utils";
 import {
   singleByUserName,
@@ -15,6 +21,7 @@ import {
   updateSellerUser,
   updateBidderUser,
   updatePassUser,
+  listUserId,
 } from "../models/user";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -40,43 +47,82 @@ class UsersController extends BaseController {
   async listUser(req, res) {
     logger.info("Get List Users");
 
-    const { username } = req.query;
-
-    logger.info("username: ", username);
-
     const { roles_id, user_id } = req.accessTokenPayload;
-
+    logger.info("roles_id: ", roles_id);
+    logger.info("user_id: ", user_id);
     let users = null;
+    let { _page, _limit } = req.query;
+    logger.info("_limit:_page ", _limit, ":", _page);
+    if (_limit && _page) {
+      // role Admin
+      if (roles_id === RoleAdmin) {
+        try {
+          users = await listUser();
+          logger.info("Admin User: ", users);
+          _page = Number(_page);
+          _limit = Number(_limit);
+          const pageCount = Math.ceil(users.length / _limit);
 
-    // role Admin
-    if (roles_id === RoleAdmin) {
-      try {
-        users = await listUser();
-        return this.responseSuccess(res, users, "List Users successfully");
-      } catch (error) {
-        return this.responseError(res, error, 401);
+          if (_page > pageCount) {
+            _page = pageCount;
+          }
+
+          responsePaginationSuccess(
+            res,
+            users,
+            _page,
+            _limit,
+            "List Users successfully"
+          );
+        } catch (error) {
+          logger.info("Error : ", error);
+          return this.responseError(res, error, 401);
+        }
+      } else if (user_id) {
+        try {
+          users = await listUserId(user_id);
+          logger.info("User: ", users);
+          _page = Number(_page);
+          _limit = Number(_limit);
+          const pageCount = Math.ceil(users.length / _limit);
+
+          if (_page > pageCount) {
+            _page = pageCount;
+          }
+
+          responsePaginationSuccess(
+            res,
+            users,
+            _page,
+            _limit,
+            "List Users successfully"
+          );
+          return this.responseSuccess(res, users, "User successfully");
+        } catch (error) {
+          logger.info("Error Users : ", error);
+          return this.responseError(res, error, 401);
+        }
       }
-    } else if (user_id) {
-      try {
-        users = await singleById(user_id);
-        return this.responseSuccess(res, users, "User successfully");
-      } catch (error) {
-        return this.responseError(res, error, 401);
+      // No Role Admin && no UserName
+      else {
+        logger.info(
+          "Error Users : ",
+          `${username ? username : "No"} User does not exist`
+        );
+        return this.responseError(
+          res,
+          `${username ? username : "No"} User does not exist`,
+          401
+        );
       }
-    }
-    // No Role Admin && no UserName
-    else {
-      return this.responseError(
-        res,
-        `${username ? username : "No"} User does not exist`,
-        401
-      );
+    } else {
+      return this.responseError(res, "No limit and page", 400);
     }
   }
   async deleteUser(req, res) {
     logger.info("Delete Users");
 
-    const { user_id } = req.query;
+    const { user_id } = req.params;
 
     logger.info("user_id: ", user_id);
 

@@ -1,5 +1,5 @@
 export interface Users {
-  user_id?: number | string;
+  user_id?: string;
   username: string;
   password: string;
   fullname?: string;
@@ -10,5 +10,5 @@ export interface Users {
   ratting?: string;
   refreshToken: string;
   islock: boolean;
-  roles_id?: number | string;
+  roles_id: number | string;
 }

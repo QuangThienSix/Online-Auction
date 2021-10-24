@@ -1,5 +1,6 @@
 import { Router } from "express";
-import UsersController from "../controllers/usersController";
+import WatchListController from "../controllers/watchListController";
+import { authMdw } from "../middleware/auth.mdw";
 import { Validate } from "../middleware/validate.mdw";
 import schema_auth from "../schemas/auth.json";
 import schema_signup from "../schemas/signUp.json";
@@ -9,12 +10,11 @@ import schema_verify from "../schemas/verify.json";
  * Follow this format for normal routing
  */
 
-const users = () => {
+const watch_list = () => {
   let api = Router();
-  api.get("/", UsersController.listUser);
-  api.get("/:_page&_limit", UsersController.listUser);
-  api.delete("/:user_id", UsersController.deleteUser);
+  api.post("/", WatchListController.creatWatchList);
+  api.get("/", WatchListController.getWatchListProduct);
   return api;
 };
 
-export default users();
+export default watch_list();

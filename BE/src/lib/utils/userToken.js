@@ -16,6 +16,8 @@ export const getTokenForUser = (user) => {
     {
       user_id: user.user_id,
       roles_id: user.roles_id,
+      user_name:user.user_name,
+      fullname:user.fullname,
       iat: timestamp,
       exp: Math.floor(Date.now() / 1000) + 15 * 60, // 15 minutes
     },

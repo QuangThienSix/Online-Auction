@@ -3,6 +3,7 @@ import { verifyTokenForUser } from "../lib/utils";
 import { formatResponseSuccess, formatResponseError } from "../lib/utils";
 export const authMdw = function (req, res, next) {
   const accessToken = req.headers["x-access-token"];
+  logger.info("x-access-token: " + accessToken)
   if (accessToken) {
     try {
       const decoded = verifyTokenForUser(accessToken);

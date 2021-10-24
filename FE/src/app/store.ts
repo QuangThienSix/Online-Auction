@@ -6,12 +6,16 @@ import authReducer from 'features/auth/authSlice';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { history } from 'utils';
 import dashboardReducer from 'features/dashboard/dashboardSlice';
+import usersReducer from 'features/users/usersSlice';
+import roleReducer from 'features/roles/roleSlice';
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
   counter: counterReducer,
   auth: authReducer,
   dashboard: dashboardReducer,
+  users: usersReducer,
+  role: roleReducer,
 });
 
 const SagaMiddleware = createSagaMiddleware();

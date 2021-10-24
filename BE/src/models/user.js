@@ -49,7 +49,16 @@ export const updateIslock = async (user_id) => {
   return rows[0];
 };
 export const listUser = async () => {
-  const rows = await load(`select * from ${TBL_USER}`);
+  const rows = await load(
+    `select address,email,fullname,islock,ratting,roles_id,user_id,username from ${TBL_USER}`
+  );
+  if (rows.length === 0) return null;
+  return rows;
+};
+export const listUserId = async (user_id) => {
+  const rows = await load(
+    `select address,email,fullname,islock,ratting,roles_id,user_id,username from ${TBL_USER} where user_id = '${user_id}'`
+  );
   if (rows.length === 0) return null;
   return rows;
 };

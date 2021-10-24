@@ -50,7 +50,7 @@ export function AdminLayout() {
 
       <Box className={classes.main}>
         <Switch>
-          <Route path="/admin/dashboard">
+          <Route path="/admin/dashboard" exact>
             <Dashboard />
           </Route>
 
