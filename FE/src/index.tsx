@@ -8,6 +8,8 @@ import * as serviceWorker from './serviceWorker';
 import { CssBaseline } from '@mui/material';
 import { ConnectedRouter } from 'connected-react-router';
 import { history } from 'utils';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -17,6 +19,17 @@ ReactDOM.render(
         <App />
       </ConnectedRouter>
     </Provider>
+    <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
   </React.StrictMode>,
   document.getElementById('root')
 );

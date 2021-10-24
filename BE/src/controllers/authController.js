@@ -1,6 +1,6 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import logger from "../lib/utils/logger";
+import { logger } from "../lib/utils";
 import {
   singleByUserName,
   updateRefreshToken,
@@ -143,11 +143,14 @@ class AuthController extends BaseController {
         `;
           await sendMail("phamquangthien.it@gmail.com", email, "[OTP]", html);
         }
-        return this.responseSuccess(res, {
-          success: true,
-          email: email,
-          message: "Register successfully",
-        });
+        return this.responseSuccess(
+          res,
+          {
+            success: true,
+            email: email,
+          },
+          "Register successfully"
+        );
       } catch (error) {
         return this.responseError(
           res,
@@ -209,11 +212,15 @@ class AuthController extends BaseController {
     const accessToken = getTokenForUser(user);
 
     if (accessToken) {
-      this.responseSuccess(res, {
-        authenticated: true,
-        accessToken,
-        refreshToken,
-      });
+      this.responseSuccess(
+        res,
+        {
+          authenticated: true,
+          accessToken,
+          refreshToken,
+        },
+        "Login successful"
+      );
     } else {
       logger.info("No accessToken");
       return this.responseError(res, "Failed Login");
@@ -243,7 +250,7 @@ class AuthController extends BaseController {
       if (user.tokenMail === tokenMail) {
         logger.info("token === user.tokenMail");
         await updateIslock(user.user_id);
-        return this.responseSuccess(res);
+        return this.responseSuccess(res, user, "Verify successfully");
       } else {
         logger.info("Invalid token");
         return this.responseError(res, {

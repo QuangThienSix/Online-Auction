@@ -1,6 +1,6 @@
 import Ajv from "ajv";
 
-import logger from "../lib/utils/logger";
+import { logger } from "../lib/utils";
 
 const ajv = new Ajv({
   allErrors: true,

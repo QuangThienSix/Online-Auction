@@ -54,7 +54,7 @@ export function AdminLayout() {
             <Dashboard />
           </Route>
 
-          <Route path="/admin/users">
+          <Route path="/admin/user">
             <Users />
           </Route>
         </Switch>

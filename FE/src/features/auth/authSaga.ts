@@ -5,6 +5,7 @@ import { push } from 'connected-react-router';
 import { ListResponses, Users } from 'models';
 import { put } from 'redux-saga/effects';
 import { authActions, LoginPayload } from './authSlice';
+import { addSingle } from 'utils';
 
 function* handleLogin(payload: LoginPayload) {
   try {
@@ -12,6 +13,7 @@ function* handleLogin(payload: LoginPayload) {
     localStorage.setItem('x-access-token', response.data.accessToken);
     localStorage.setItem('x-refresh-token', response.data.refreshToken);
     yield put(authActions.loginSuccess(response.data));
+    addSingle('success', response.message);
     //   redirest to admin page
     yield put(push('/admin'));
   } catch (error: any) {
@@ -64,6 +66,7 @@ function* handleRegister(payload: LoginPayload) {
     const response: ListResponses<Users> = yield call(userApi.postsignup, payload);
     yield put(authActions.registerSuccess(response.data));
     yield put(push(`/verify/${response.data.email}`));
+    addSingle('success', response.message);
   } catch (error: any) {
     yield put(authActions.registerFailed(error.data.error.message));
     yield put(push('/regis'));
@@ -74,9 +77,11 @@ function* handleVerify(payload: LoginPayload) {
     const response: ListResponses<Users> = yield call(userApi.postverify, payload);
     yield put(authActions.verifySuccess(response.data));
     yield put(push('/login'));
+    addSingle('success', response.message);
   } catch (error: any) {
     yield put(authActions.verifyFailed(error.data.error.message));
     yield put(push('/verify'));
+    
   }
 }
 export default function* authSaga() {

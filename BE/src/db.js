@@ -1,5 +1,5 @@
 import appConfig from "./config/env";
-import logger from "./lib/utils/logger";
+import { logger } from "./lib/utils";
 import mysql from "mysql";
 const pool = mysql.createPool(appConfig.mysql);
 export default (init) => {
