@@ -134,9 +134,11 @@ class BrandController extends BaseController {
   }
   async getBrand(req, res) {
     logger.info("getBrand");
-    const {category_id } = req.body;
+    const brand_id = req.params.id;
+    const {id} = req.params;
+    console.log(id);
     try {
-      let result = await getBrand(category_id);
+      let result = await getBrand(brand_id);
       console.log(result);
       return this.responseSuccess(res, result);
     }

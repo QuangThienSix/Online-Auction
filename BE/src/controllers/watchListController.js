@@ -66,7 +66,7 @@ class WatchListController extends BaseController {
 
   async getWatchListProduct(req, res) {
     logger.info("getWatchListProduct");
-    const {bidder_id } = req.params.bidder_id
+    const {bidder_id } = req.params
     try {
       logger.info("creatWatchList");
       const { accessToken, data } = req.body;

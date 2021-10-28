@@ -14,7 +14,7 @@ const brand = () => {
   let api = Router();
   api.post("/", brandController.creatBrand);
   api.put("/",  brandController.updateBrand);
-  api.get("/", brandController.getBrand);
+  api.get("/:id", brandController.getBrand);
   return api;
 };
 
