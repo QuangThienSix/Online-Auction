@@ -40,7 +40,7 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           </NavLink>
-          <NavLink to="/admin/students" className={classes.link}>
+          <NavLink to="/admin/user" className={classes.link}>
             <ListItem disablePadding>
               <ListItemButton>
                 <ListItemIcon>

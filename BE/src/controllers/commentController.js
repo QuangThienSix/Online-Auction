@@ -1,12 +1,8 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import logger from "../lib/utils/logger";
-import {
-  adduser_comment,
-  getuser_comment
-  
-} from "../models/user_comment";
-import {getNow} from "../db";
+import { logger } from "../lib/utils";
+import { adduser_comment, getuser_comment } from "../models/user_comment";
+import { getNow } from "../db";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
@@ -32,18 +28,16 @@ class CommentController extends BaseController {
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
-     
+
       try {
         data.bidder_name = parseToken.payload.fullname;
         data.bidder_id = parseToken.payload.user_id;
         data.created_at = getNow();
         let result = await adduser_comment(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -63,8 +57,7 @@ class CommentController extends BaseController {
       let result = await this.getuser_comment(product_id);
       console.log(result);
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -74,8 +67,6 @@ class CommentController extends BaseController {
       );
     }
   }
- 
-
 }
 
 export default new CommentController();

@@ -1,9 +1,9 @@
-import { verifyTokenForUser } from "../lib/utils/userToken";
-
 import { logger } from "../lib/utils";
-
+import { verifyTokenForUser } from "../lib/utils";
+import { formatResponseSuccess, formatResponseError } from "../lib/utils";
 export const authMdw = function (req, res, next) {
   const accessToken = req.headers["x-access-token"];
+  logger.info("x-access-token: " + accessToken)
   if (accessToken) {
     try {
       const decoded = verifyTokenForUser(accessToken);
@@ -11,14 +11,10 @@ export const authMdw = function (req, res, next) {
       next();
     } catch (err) {
       logger.info("MDW auth: ", err);
-      return res.status(401).json({
-        message: "Invalid access token.",
-      });
+      return formatResponseError(res, "Invalid access token.", 401);
     }
   } else {
     logger.info("MDW no accessToken: ");
-    return res.status(400).json({
-      message: "Access token not found.",
-    });
+    return formatResponseSuccess(res, {}, "Access token not found.", 400);
   }
 };

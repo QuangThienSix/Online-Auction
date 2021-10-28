@@ -1,12 +1,11 @@
-import { Switch, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
-import { Header } from 'components/common';
 import Sidebar from 'components/common/Sidebar';
-import React from 'react';
 import Dashboard from 'features/dashboard/index';
 import Users from 'features/users';
+import React from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 const usetheme = createTheme();
 
@@ -39,26 +38,22 @@ export function AdminLayout() {
   const classes = useStyles();
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.header}>
-        <Header />
+    <BrowserRouter>
+      <Box className={classes.root}>
+        <Box className={classes.sidebar}>
+          <Sidebar />
+        </Box>
+        <Box className={classes.main}>
+          <Switch>
+            <Route path="/admin/dashboard">
+              <Dashboard />
+            </Route>
+            <Route path="/admin/user">
+              <Users />
+            </Route>
+          </Switch>
+        </Box>
       </Box>
-
-      <Box className={classes.sidebar}>
-        <Sidebar />
-      </Box>
-
-      <Box className={classes.main}>
-        <Switch>
-          <Route path="/admin/dashboard">
-            <Dashboard />
-          </Route>
-
-          <Route path="/admin/users">
-            <Users />
-          </Route>
-        </Switch>
-      </Box>
-    </Box>
+    </BrowserRouter>
   );
 }

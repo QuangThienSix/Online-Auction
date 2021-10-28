@@ -5,31 +5,33 @@ import { push } from 'connected-react-router';
 import { ListResponses, Users } from 'models';
 import { put } from 'redux-saga/effects';
 import { authActions, LoginPayload } from './authSlice';
+import { addSingle, getItem, removeItem, setItem } from 'utils';
 
 function* handleLogin(payload: LoginPayload) {
   try {
     const response: ListResponses<Users> = yield call(userApi.postLogin, payload);
-    localStorage.setItem('x-access-token', response.data.accessToken);
-    localStorage.setItem('x-refresh-token', response.data.refreshToken);
+    setItem('users', response.data);
+
     yield put(authActions.loginSuccess(response.data));
+    addSingle('success', response.message);
     //   redirest to admin page
-    yield put(push('/admin'));
+    yield put(push('/admin/dashboard'));
   } catch (error: any) {
-    yield put(authActions.loginFailed(error.data.error.message));
+    yield put(authActions.loginFailed(error?.data.error.message));
+    yield put(push('/login'));
   }
 }
 
 function* handleLogout() {
-  localStorage.removeItem('x-access-token');
-  localStorage.removeItem('x-refresh-token');
-
-  yield put(push('/login'));
+  removeItem('users');
   //   redirest to login page
+  yield put(push('/'));
 }
 
 function* watchLogimFlow() {
   while (true) {
-    const isLoggedIn = Boolean(localStorage.getItem('access_token'));
+    const { accessToken } = getItem('users');
+    const isLoggedIn = Boolean(accessToken);
 
     if (!isLoggedIn) {
       const action: PayloadAction<LoginPayload> = yield take([
@@ -64,6 +66,7 @@ function* handleRegister(payload: LoginPayload) {
     const response: ListResponses<Users> = yield call(userApi.postsignup, payload);
     yield put(authActions.registerSuccess(response.data));
     yield put(push(`/verify/${response.data.email}`));
+    addSingle('success', response.message);
   } catch (error: any) {
     yield put(authActions.registerFailed(error.data.error.message));
     yield put(push('/regis'));
@@ -74,8 +77,9 @@ function* handleVerify(payload: LoginPayload) {
     const response: ListResponses<Users> = yield call(userApi.postverify, payload);
     yield put(authActions.verifySuccess(response.data));
     yield put(push('/login'));
+    addSingle('success', response.message);
   } catch (error: any) {
-    yield put(authActions.verifyFailed(error.data.error.message));
+    yield put(authActions.verifyFailed(error?.data?.error?.message));
     yield put(push('/verify'));
   }
 }

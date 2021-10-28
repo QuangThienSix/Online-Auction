@@ -1,6 +1,6 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import logger from "../lib/utils/logger";
+import { logger } from "../lib/utils";
 import {
   singleByProductId,
   addProduct,
@@ -11,7 +11,6 @@ import {
   top5Active,
   search,
   top5Recoment,
-
 } from "../models/products";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -45,7 +44,7 @@ class ProductController extends BaseController {
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
-      if (parseToken.payload.roles_id != 1 &&parseToken.payload.roles_id != 3 )
+      if (parseToken.payload.roles_id != 1 && parseToken.payload.roles_id != 3)
         return this.responseError(
           res,
           {
@@ -57,11 +56,9 @@ class ProductController extends BaseController {
       try {
         let result = await addProduct(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -79,7 +76,7 @@ class ProductController extends BaseController {
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
-      if (parseToken.payload.roles_id != 1 &&parseToken.payload.roles_id != 3 )
+      if (parseToken.payload.roles_id != 1 && parseToken.payload.roles_id != 3)
         return this.responseError(
           res,
           {
@@ -91,11 +88,9 @@ class ProductController extends BaseController {
       try {
         let result = await updateProduct(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -125,11 +120,9 @@ class ProductController extends BaseController {
       try {
         let result = await deleteProduct(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -144,12 +137,11 @@ class ProductController extends BaseController {
   async getProductById(req, res) {
     logger.info("getProduct");
     try {
-      const {product_id } = req.params.id
+      const { product_id } = req.params.id;
       let result = await singleByProductId(product_id);
       console.log(result);
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -164,8 +156,7 @@ class ProductController extends BaseController {
     try {
       let result = await top5Ratting();
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -180,8 +171,7 @@ class ProductController extends BaseController {
     try {
       let result = await top5Price();
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -196,8 +186,7 @@ class ProductController extends BaseController {
     try {
       let result = await top5Active();
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -212,8 +201,7 @@ class ProductController extends BaseController {
     try {
       let result = await top5Recoment();
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -226,11 +214,10 @@ class ProductController extends BaseController {
   async Query(req, res) {
     logger.info("getProduct");
     try {
-      const {query,page,size } =req.query
-      let result = await search(query,page,size);
+      const { query, page, size } = req.query;
+      let result = await search(query, page, size);
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -240,9 +227,6 @@ class ProductController extends BaseController {
       );
     }
   }
-
-  
-
 }
 
 export default new ProductController();

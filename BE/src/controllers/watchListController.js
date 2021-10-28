@@ -1,12 +1,8 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import logger from "../lib/utils/logger";
-import {
-  adduser_WatchList,
-  getuser_WatchList
-  
-} from "../models/watch_list";
-import {getNow} from "../db";
+import { logger } from "../lib/utils";
+import { adduser_WatchList, getuser_WatchList } from "../models/watch_list";
+import { getNow } from "../db";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
@@ -32,7 +28,7 @@ class WatchListController extends BaseController {
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
-      if (parseToken.payload.roles_id != 1 &&parseToken.payload.roles_id != 3 )
+      if (parseToken.payload.roles_id != 1 && parseToken.payload.roles_id != 3)
         return this.responseError(
           res,
           {
@@ -47,11 +43,9 @@ class WatchListController extends BaseController {
         data.created_at = getNow();
         let result = await adduser_WatchList(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -70,23 +64,25 @@ class WatchListController extends BaseController {
     try {
       logger.info("creatWatchList");
       const { accessToken, data } = req.body;
-  
+
       const parseToken = deCodeTokenForUser(accessToken);
       if (parseToken) {
         //this.responseSuccess(res, parseToken);
-        if (parseToken.payload.roles_id != 1 &&parseToken.payload.roles_id != 3 )
-        return this.responseError(
-          res,
-          {
-            authenticated: false,
-            message: "Method Not Allowed",
-          },
-          405
-        );
-      let result = await this.getuser_WatchList(bidder_id);
-      return this.responseSuccess(res, result);
-      }
-      else {
+        if (
+          parseToken.payload.roles_id != 1 &&
+          parseToken.payload.roles_id != 3
+        )
+          return this.responseError(
+            res,
+            {
+              authenticated: false,
+              message: "Method Not Allowed",
+            },
+            405
+          );
+        let result = await this.getuser_WatchList(bidder_id);
+        return this.responseSuccess(res, result);
+      } else {
         return this.responseError(
           res,
           {
@@ -95,9 +91,8 @@ class WatchListController extends BaseController {
           },
           400
         );
-    }
-  }
-    catch (error) {
+      }
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -107,8 +102,6 @@ class WatchListController extends BaseController {
       );
     }
   }
- 
-
 }
 
 export default new WatchListController();

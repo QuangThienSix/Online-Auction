@@ -1,12 +1,7 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import logger from "../lib/utils/logger";
-import {
-  addBrand,
-  updateBrand,
-  deleteBrand,
-  getBrand,
-} from "../models/brand";
+import { logger } from "../lib/utils";
+import { addBrand, updateBrand, deleteBrand, getBrand } from "../models/brand";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
@@ -47,11 +42,9 @@ class BrandController extends BaseController {
         console.log(parseToken.payload);
         let result = await addBrand(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -79,14 +72,11 @@ class BrandController extends BaseController {
           405
         );
       try {
-      
         let result = await updateBrand(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -116,11 +106,9 @@ class BrandController extends BaseController {
       try {
         let result = await deleteBrand(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -141,8 +129,7 @@ class BrandController extends BaseController {
       let result = await getBrand(brand_id);
       console.log(result);
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -152,8 +139,6 @@ class BrandController extends BaseController {
       );
     }
   }
- 
-
 }
 
 export default new BrandController();

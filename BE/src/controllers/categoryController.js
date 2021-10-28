@@ -1,6 +1,6 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import logger from "../lib/utils/logger";
+import { logger } from "../lib/utils";
 import {
   addCateroy,
   updateCateroy,
@@ -46,11 +46,9 @@ class CategoryController extends BaseController {
       try {
         let result = await creatCategory(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -80,11 +78,9 @@ class CategoryController extends BaseController {
       try {
         let result = await updateCategory(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -114,11 +110,9 @@ class CategoryController extends BaseController {
       try {
         let result = await deleteCategory(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -136,8 +130,7 @@ class CategoryController extends BaseController {
       let result = await getCateroy();
       console.log(result);
       return this.responseSuccess(res, result);
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -147,7 +140,6 @@ class CategoryController extends BaseController {
       );
     }
   }
-
 }
 
 export default new CategoryController();

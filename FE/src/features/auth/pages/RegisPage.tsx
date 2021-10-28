@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    height: '100vh',
+    height: '100%',
   },
   box: {
     padding: usetheme.spacing(2),
@@ -35,7 +35,7 @@ export default function Regis() {
     fullname: '',
     address: '',
     email: '',
-    ratting: '',
+    ratting: 0,
     accessToken: '',
     refreshToken: '',
     islock: true,

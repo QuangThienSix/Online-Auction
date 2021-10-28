@@ -1,13 +1,22 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import { InputField, RadioGroupField } from 'components/FormField';
 import { Users } from 'models';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
 export interface RegisFormProps {
   initialValue?: Users;
   onSubmit?: (formValue: Users) => void;
 }
+const schema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required'),
+  fullname: yup.string().required('Fullname is required'),
+  address: yup.string().required('Address is required'),
+  email: yup.string().email('Must be a valid email').max(255).required('Email is required'),
+});
 
 export default function RegisForm({ initialValue, onSubmit }: RegisFormProps) {
   const {
@@ -16,6 +25,7 @@ export default function RegisForm({ initialValue, onSubmit }: RegisFormProps) {
     formState: { isSubmitting },
   } = useForm<Users>({
     defaultValues: initialValue,
+    resolver: yupResolver(schema),
   });
 
   const handleFormSubmit = async (formValue: Users) => {

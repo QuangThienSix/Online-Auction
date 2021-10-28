@@ -1,11 +1,10 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import logger from "../lib/utils/logger";
+import { logger } from "../lib/utils";
 import {
   addtransform_seller,
   gettransform_seller,
   activeTransform,
-
 } from "../models/transform_seller";
 import { getNow } from "../db";
 import bcrypt from "bcrypt";
@@ -48,11 +47,9 @@ class TransformController extends BaseController {
         data.created_at = getNow();
         let result = await addtransform_seller(data);
         return this.responseSuccess(res, result);
-      }
-      catch (exception) {
+      } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }
-
     } else {
       return this.responseError(
         res,
@@ -84,8 +81,7 @@ class TransformController extends BaseController {
           );
         let result = await this.gettransform_seller();
         return this.responseSuccess(res, result);
-      }
-      else {
+      } else {
         return this.responseError(
           res,
           {
@@ -95,8 +91,7 @@ class TransformController extends BaseController {
           400
         );
       }
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -124,10 +119,9 @@ class TransformController extends BaseController {
             },
             405
           );
-        let result = await this.activeTransform(data.bidder_id,data.status);
+        let result = await this.activeTransform(data.bidder_id, data.status);
         return this.responseSuccess(res, result);
-      }
-      else {
+      } else {
         return this.responseError(
           res,
           {
@@ -137,8 +131,7 @@ class TransformController extends BaseController {
           400
         );
       }
-    }
-    catch (error) {
+    } catch (error) {
       return this.responseError(
         res,
         {
@@ -148,7 +141,6 @@ class TransformController extends BaseController {
       );
     }
   }
-
 }
 
 export default new TransformController();
