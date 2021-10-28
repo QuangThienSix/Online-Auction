@@ -30,13 +30,11 @@ class ProductController extends BaseController {
     this.updateProduct = this.updateProduct.bind(this);
     this.deleteProduct = this.deleteProduct.bind(this);
     this.getProductById = this.getProductById.bind(this);
-
-    this.getTop5ProductRatting = this.getTop5ProductRatting.bind(this);
     this.getTop5ProductRatting = this.getTop5ProductRatting.bind(this);
     this.getTop5ProductPrice = this.getTop5ProductPrice.bind(this);
-    this.Query = this.Query.bind(this);
     this.getTop5ProductAcitve = this.getTop5ProductAcitve.bind(this);
     this.getTop5ProductRecoment = this.getTop5ProductRecoment.bind(this);
+    this.Query = this.Query.bind(this);
   }
 
   async creatProduct(req, res) {

@@ -52,7 +52,7 @@ class CommentController extends BaseController {
 
   async getCommentProduct(req, res) {
     logger.info("getCommentProduct");
-    const { product_id } = req.params.product_id;
+    const product_id  = req.params.product_id
     try {
       let result = await this.getuser_comment(product_id);
       console.log(result);
