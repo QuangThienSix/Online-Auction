@@ -7,7 +7,7 @@ export interface Users {
   email?: string;
   accessToken: string;
   tokenMail?: string;
-  ratting?: string;
+  ratting?: number;
   refreshToken: string;
   islock: boolean;
   roles_id: number | string;

@@ -17,14 +17,15 @@ function* handleLogin(payload: LoginPayload) {
     //   redirest to admin page
     yield put(push('/admin/dashboard'));
   } catch (error: any) {
-    yield put(authActions.loginFailed(error.data.error.message));
+    yield put(authActions.loginFailed(error?.data.error.message));
+    yield put(push('/login'));
   }
 }
 
 function* handleLogout() {
   removeItem('users');
   //   redirest to login page
-  yield put(push('/login'));
+  yield put(push('/'));
 }
 
 function* watchLogimFlow() {
@@ -78,7 +79,7 @@ function* handleVerify(payload: LoginPayload) {
     yield put(push('/login'));
     addSingle('success', response.message);
   } catch (error: any) {
-    yield put(authActions.verifyFailed(error.data.error.message));
+    yield put(authActions.verifyFailed(error?.data?.error?.message));
     yield put(push('/verify'));
   }
 }

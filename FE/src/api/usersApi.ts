@@ -21,6 +21,19 @@ const usersApi = {
     const url = `/users/${user_id}`;
     return axiosClient.delete(url);
   },
+  getById(user_id: string): Promise<Users> {
+    const url = `/users/${user_id}`;
+    return axiosClient.get(url);
+  },
+  add(data: Users): Promise<Users> {
+    const url = '/users';
+    return axiosClient.post(url, data);
+  },
+
+  update(data: Partial<Users>): Promise<Users> {
+    const url = `/users/${data.user_id}`;
+    return axiosClient.patch(url, data);
+  },
 };
 
 export default usersApi;

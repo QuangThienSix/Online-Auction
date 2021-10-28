@@ -13,6 +13,9 @@ export interface ListResponses<T> {
   data: T;
   message: string;
 }
+export interface ListRespon<T> {
+  data: T;
+}
 
 export interface ListParams {
   _limit?: number;

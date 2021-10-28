@@ -71,6 +71,7 @@ export default function UserTable({ usersList, roleMap, onRemove, onEdit }: IUse
               <TableCell>FullName</TableCell>
               <TableCell>Address</TableCell>
               <TableCell>Email</TableCell>
+              <TableCell>Ratting</TableCell>
               <TableCell>Roles</TableCell>
               <TableCell>Lock</TableCell>
               <TableCell align="right">Actions</TableCell>
@@ -84,8 +85,9 @@ export default function UserTable({ usersList, roleMap, onRemove, onEdit }: IUse
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.fullname}</TableCell>
                 <TableCell>{user.address}</TableCell>
+                <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <Box fontWeight="bold">{user.email}</Box>
+                  <Box fontWeight="bold">{user.ratting}</Box>
                 </TableCell>
                 <TableCell>{roleMap[user.roles_id]?.role_name}</TableCell>
                 <TableCell>{user.islock}</TableCell>

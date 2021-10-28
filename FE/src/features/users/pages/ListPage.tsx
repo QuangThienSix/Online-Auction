@@ -1,19 +1,21 @@
-import { Box, Pagination } from '@mui/material';
+import { Box, Button, Pagination, Typography } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import usersApi from 'api/usersApi';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { RoleAdmin } from 'constants/user_roles';
-import { selectRoleMap } from 'features/roles/roleSlice';
-import { PaginationParams, Users } from 'models';
+import { selectRoleList, selectRoleMap } from 'features/roles/roleSlice';
+import { ListParams, PaginationParams, Users } from 'models';
 import React, { useEffect } from 'react';
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { addSingle } from 'utils';
+import UserFilters from '../components/UserFilters';
 import UserTable from '../components/UsersTable';
 import {
   selectUsersFilter,
   selectUsersList,
   selectUsersPagination,
-  usersAction,
+  usersAction
 } from '../usersSlice';
 
 export interface IListPageProps {
@@ -42,7 +44,9 @@ export default function ListPage({ roles_id }: IListPageProps) {
   const dispatch = useAppDispatch();
   const filter = useAppSelector(selectUsersFilter);
   const roleMap = useAppSelector(selectRoleMap);
-  // const roleList = useAppSelector(selectRoleList);
+  const history = useHistory();
+  const match = useRouteMatch();
+  const roleList = useAppSelector(selectRoleList);
 
   const pagination = useAppSelector<PaginationParams>(selectUsersPagination);
 
@@ -62,7 +66,7 @@ export default function ListPage({ roles_id }: IListPageProps) {
   }, [dispatch, filter]);
 
   const handleEditUsers = async (user: Users) => {
-    // history.push(`${match.url}/${student.id}`);
+    history.push(`${match.url}/${user.user_id}`);
   };
   const handleRemoveUsers = async (user: Users) => {
     try {
@@ -77,10 +81,39 @@ export default function ListPage({ roles_id }: IListPageProps) {
       console.log('Failed to fetch user', error);
     }
   };
+  const handleFilterChange = (newFilter: ListParams) => {
+    dispatch(usersAction.setFilter(newFilter));
+  };
+  const handleSearchChange = (newFilter: ListParams) => {
+    dispatch(usersAction.setFilterWithDebounce(newFilter));
+  };
 
   return (
     <Box className={classes.root}>
-      {/* Student Table */}
+      {/* Add User */}
+      {String(roles_id) === RoleAdmin && (
+        <Box className={classes.titleContainer}>
+          <Typography variant="h4">User</Typography>
+
+          <Link to={`${match.url}/add`} style={{ textDecoration: 'none' }}>
+            <Button variant="contained" color="primary">
+              Add new user
+            </Button>
+          </Link>
+        </Box>
+      )}
+
+      {/* Filters */}
+      <Box mb={3}>
+        <UserFilters
+          filter={filter}
+          roleList={roleList}
+          onChange={handleFilterChange}
+          onSearchChange={handleSearchChange}
+        />
+      </Box>
+
+      {/* User Table */}
       <UserTable
         roleMap={roleMap}
         usersList={usersList}
@@ -90,16 +123,14 @@ export default function ListPage({ roles_id }: IListPageProps) {
 
       {/* Pagination */}
 
-      {String(roles_id) === RoleAdmin && (
-        <Box mt={2} display="flex" justifyContent="center">
-          <Pagination
-            color="primary"
-            count={Math.ceil(pagination?._totalRows / pagination?._limit)}
-            page={pagination?._page}
-            onChange={handlePageChange}
-          />
-        </Box>
-      )}
+      <Box mt={2} display="flex" justifyContent="center">
+        <Pagination
+          color="primary"
+          count={Math.ceil(pagination?._totalRows / pagination?._limit)}
+          page={pagination?._page}
+          onChange={handlePageChange}
+        />
+      </Box>
     </Box>
   );
 }

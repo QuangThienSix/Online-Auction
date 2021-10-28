@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from '@redux-saga/core/effects';
+import { call, put, takeLatest, debounce } from '@redux-saga/core/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import usersApi from 'api/usersApi';
 import { ListParams, ListResponse, Users } from 'models';
@@ -13,9 +13,12 @@ function* fetchStudentList(action: PayloadAction<ListParams>) {
     yield put(usersAction.fetchStudentListFailed());
   }
 }
+function* handleSearchDebounce(action: PayloadAction<ListParams>) {
+  yield put(usersAction.setFilter(action.payload));
+}
 
 export default function* usersSaga() {
   yield takeLatest(usersAction.fetchUsersList, fetchStudentList);
 
-  // yield debounce(500, studentActions.setFilterWithDebounce.type, handleSearchDebounce);
+  yield debounce(500, usersAction.setFilterWithDebounce.type, handleSearchDebounce);
 }

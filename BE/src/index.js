@@ -12,6 +12,8 @@ import babelpolyfill from "babel-polyfill";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "../swagger.json";
 
+
+
 import api from "./api";
 import initializeDb from "./db";
 import apiConfig from "./config/api";
@@ -85,3 +87,4 @@ app.use(function (err, req, res, next) {
   });
 });
 export default app;
+require('./ws');

@@ -48,16 +48,16 @@ export const updateIslock = async (user_id) => {
   if (rows.length === 0) return null;
   return rows[0];
 };
-export const listUser = async () => {
+export const listUser = async (name_like, role, _sort, _order) => {
   const rows = await load(
-    `select address,email,fullname,islock,ratting,roles_id,user_id,username from ${TBL_USER}`
+    `select address,email,fullname,islock,ratting,roles_id,user_id,username from ${TBL_USER} where (username like '%${name_like}%' or '${name_like}' = '' ) and (roles_id like '%${role}%' or '${role}' = '' ) ORDER BY ${_sort} ${_order}`
   );
   if (rows.length === 0) return null;
   return rows;
 };
-export const listUserId = async (user_id) => {
+export const listUserId = async (user_id, name_like, role, _sort, _order) => {
   const rows = await load(
-    `select address,email,fullname,islock,ratting,roles_id,user_id,username from ${TBL_USER} where user_id = '${user_id}'`
+    `select address,email,fullname,islock,ratting,roles_id,user_id,username from ${TBL_USER} where user_id = '${user_id}' and (username like '%${name_like}%' or '${name_like}' = '' ) and (roles_id like '%${role}%' or '${role}' = '' ) ORDER BY ${_sort} ${_order}`
   );
   if (rows.length === 0) return null;
   return rows;
@@ -83,7 +83,8 @@ export const updateUserId = async (entity) => {
     user_id: entity.user_id,
   };
   delete entity.user_id;
-  return db.patch(TBL_USER, entity, condition);
+  delete entity.accessToken;
+  return patch(TBL_USER, entity, condition);
 };
 export const updateSellerUser = async (user_id) => {
   const rows = await load(

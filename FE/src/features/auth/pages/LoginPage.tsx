@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     flexFlow: 'row nowrap',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100vh',
+    minHeight: '100%',
     textAlign: 'center',
   },
   box: {
