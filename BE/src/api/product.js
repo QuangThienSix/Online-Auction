@@ -15,7 +15,7 @@ const product = () => {
   api.post("/", ProductController.creatProduct);
   api.put("/",  ProductController.updateProduct);
   api.delete("/",  ProductController.deleteProduct);
-  api.get("/:id", ProductController.getProductById);
+  api.get("/", ProductController.getProductById);
   api.get("/top5-ratting", ProductController.getTop5ProductRatting);
   api.get("/top5-price", ProductController.getTop5ProductPrice);
   api.get("/top5-active", ProductController.getTop5ProductAcitve);
