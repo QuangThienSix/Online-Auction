@@ -1,5 +1,5 @@
 import { remove } from "winston";
-import { load, add,update,del } from "../db";
+import { load, add, update, del } from "../db";
 
 const TBL_BRAND = "brand";
 
@@ -15,11 +15,10 @@ export const addBrand = async (entity) => {
   return await add(TBL_BRAND, entity);
 };
 export const updateBrand = async (entity) => {
-
   let id = entity.id;
-  delete entity.id
+  delete entity.id;
   console.log(entity);
-  return await update(TBL_BRAND, entity,{"id": id});
+  return await update(TBL_BRAND, entity, { id: id });
 };
 
 export const deleteBrand = async (id) => {
@@ -37,4 +36,3 @@ export const getBrand = async (category_id) => {
   if (rows.length === 0) return null;
   return rows;
 };
-

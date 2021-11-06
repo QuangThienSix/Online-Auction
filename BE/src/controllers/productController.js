@@ -1,6 +1,12 @@
 import BaseController from "./baseController";
-import { getTokenForUser, deCodeTokenForUser, sendMail,  getPagingData, logger,
-  responsePaginationSuccess, } from "../lib/utils";
+import {
+  getTokenForUser,
+  deCodeTokenForUser,
+  sendMail,
+  getPagingData,
+  logger,
+  responsePaginationSuccess,
+} from "../lib/utils";
 import {
   singleByProductId,
   addProduct,
@@ -11,6 +17,9 @@ import {
   top5Active,
   search,
   top5Recoment,
+  ProductDetail,
+  getTop5RelationByCategoryId,
+  getProductByCategoryId,
 } from "../models/products";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -35,6 +44,10 @@ class ProductController extends BaseController {
     this.getTop5ProductAcitve = this.getTop5ProductAcitve.bind(this);
     this.getTop5ProductRecoment = this.getTop5ProductRecoment.bind(this);
     this.Query = this.Query.bind(this);
+    this.ProductDetail = this.ProductDetail.bind(this);
+    this.getTop5RelationByCategoryId =
+      this.getTop5RelationByCategoryId.bind(this);
+    this.getProductByCategoryId = this.getProductByCategoryId.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -215,11 +228,11 @@ class ProductController extends BaseController {
     logger.info("query Product");
     try {
       const { q, page, size } = req.query;
-      let result = await search(q, page||1, size||10);
+      let result = await search(q, page || 1, size || 10);
       console.log(result);
       try {
-       let _page = Number(page||1);
-        let _limit = Number(size||10);
+        let _page = Number(page || 1);
+        let _limit = Number(size || 10);
         const pageCount = Math.ceil(result.length / _limit);
 
         if (_page > pageCount) {
@@ -237,9 +250,58 @@ class ProductController extends BaseController {
         logger.info("Error Product : ", error);
         return this.responseError(res, error, 401);
       }
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
 
+  async ProductDetail(req, res) {
+    logger.info("get product details");
+    try {
+      let result = await ProductDetail(req.params.product_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
 
+  async getTop5RelationByCategoryId(req, res) {
+    logger.info("getTop5RelationByCategoryId");
+    let { category_id, product_id } = req.params;
+    try {
+      let result = await getTop5RelationByCategoryId(category_id, product_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
 
+  async getProductByCategoryId(req, res) {
+    logger.info("getProductByCategoryId");
+
+    let { category_id } = req.params;
+
+    try {
+      let result = await getProductByCategoryId(category_id);
+      return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
         res,
