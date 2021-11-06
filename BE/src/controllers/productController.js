@@ -19,6 +19,7 @@ import {
   top5Recoment,
   ProductDetail,
   getTop5RelationByCategoryId,
+  getProductByCategoryId,
 } from "../models/products";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -46,6 +47,7 @@ class ProductController extends BaseController {
     this.ProductDetail = this.ProductDetail.bind(this);
     this.getTop5RelationByCategoryId =
       this.getTop5RelationByCategoryId.bind(this);
+    this.getProductByCategoryId = this.getProductByCategoryId.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -280,6 +282,25 @@ class ProductController extends BaseController {
     let { category_id, product_id } = req.params;
     try {
       let result = await getTop5RelationByCategoryId(category_id, product_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async getProductByCategoryId(req, res) {
+    logger.info("getProductByCategoryId");
+
+    let { category_id } = req.params;
+
+    try {
+      let result = await getProductByCategoryId(category_id);
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(

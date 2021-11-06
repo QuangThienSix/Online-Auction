@@ -104,3 +104,12 @@ export const getTop5RelationByCategoryId = async (category_id, product_id) => {
   if (rows.length === 0) return null;
   return rows;
 };
+
+export const getProductByCategoryId = async (category_id) => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where category_id = ${category_id} and is_deleted = 0 order by name `
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};

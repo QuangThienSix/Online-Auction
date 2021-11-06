@@ -6,6 +6,7 @@ import {
   updateCateroy,
   deleteCateroy,
   getCateroy,
+  getListCategoryAndBrand,
 } from "../models/category";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -25,6 +26,7 @@ class CategoryController extends BaseController {
     this.updateCategory = this.updateCategory.bind(this);
     this.deleteCategory = this.deleteCategory.bind(this);
     this.getCateroy = this.getCateroy.bind(this);
+    this.getListCategoryAndBrand = this.getListCategoryAndBrand.bind(this);
   }
 
   async creatCategory(req, res) {
@@ -128,9 +130,26 @@ class CategoryController extends BaseController {
     logger.info("getCateroy");
     try {
       let result = await getCateroy();
-      console.log(result);
       return this.responseSuccess(res, result);
     } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async getListCategoryAndBrand(req, res) {
+    logger.info("getListCategoryAndBrand");
+
+    try {
+      let result = await getListCategoryAndBrand();
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      console.log(error);
       return this.responseError(
         res,
         {
