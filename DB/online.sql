@@ -14,7 +14,7 @@
  Date: 31/10/2021 00:51:03
 */
 
-SET NAMES utf8mb4;
+SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
@@ -23,13 +23,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `brand`;
 CREATE TABLE `brand`  (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `is_deleted` int NULL DEFAULT NULL,
   `cateted_at` datetime(0) NULL DEFAULT NULL,
   `updated_at` datetime(0) NULL DEFAULT NULL,
   `category_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of brand
@@ -47,12 +47,12 @@ INSERT INTO `brand` VALUES (6, 'brand2', 0, '2021-10-23 22:36:48', '2021-10-23 2
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category`  (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `is_deleted` int NULL DEFAULT NULL,
   `cateted_at` datetime(0) NULL DEFAULT NULL,
   `updated_at` datetime(0) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of category
@@ -67,7 +67,7 @@ INSERT INTO `category` VALUES (3, 'category3', 0, '2021-10-28 19:50:46', '2021-1
 DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product`  (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `is_deleted` int NULL DEFAULT NULL,
   `created_at` datetime(0) NOT NULL,
   `updated_at` datetime(0) NOT NULL,
@@ -76,21 +76,21 @@ CREATE TABLE `product`  (
   `time_end` datetime(0) NULL DEFAULT NULL,
   `price` decimal(10, 2) NULL DEFAULT NULL,
   `brand_id` int NULL DEFAULT NULL,
-  `brand_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `brand_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `category_id` int NULL DEFAULT NULL,
-  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `category_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `timestamp` datetime(0) NULL DEFAULT NULL,
-  `avatar` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
-  `images` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `avatar` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  `images` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   `current_price` decimal(10, 2) NULL DEFAULT NULL,
   `max_price` decimal(10, 2) NULL DEFAULT NULL,
   `count_quantity_bidder` int NULL DEFAULT NULL,
   `seller_id` int NULL DEFAULT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   `step` int NULL DEFAULT NULL,
   `is_automatic` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of product
@@ -620,7 +620,7 @@ CREATE TABLE `product_bidder`  (
   `status` int NOT NULL,
   `product_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of product_bidder
@@ -635,12 +635,12 @@ DROP TABLE IF EXISTS `transform_seller`;
 CREATE TABLE `transform_seller`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `bidder_id` int NULL DEFAULT NULL,
-  `bidder_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `bidder_name` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   `cateted_at` datetime(0) NOT NULL,
   `updated_at` datetime(0) NOT NULL,
   `status` int NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of transform_seller
@@ -653,13 +653,13 @@ DROP TABLE IF EXISTS `user_comment`;
 CREATE TABLE `user_comment`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `bidder_id` int NULL DEFAULT NULL,
-  `bidder_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `bidder_name` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   `cateted_at` datetime(0) NOT NULL,
   `updated_at` datetime(0) NOT NULL,
   `product_id` int NULL DEFAULT NULL,
   `price` decimal(10, 2) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_comment
@@ -717,13 +717,13 @@ DROP TABLE IF EXISTS `watch_list`;
 CREATE TABLE `watch_list`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `bidder_id` int NULL DEFAULT NULL,
-  `bidder_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `bidder_name` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   `cateted_at` datetime(0) NOT NULL,
   `updated_at` datetime(0) NOT NULL,
   `product_id` int NULL DEFAULT NULL,
   `price` decimal(10, 2) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of watch_list

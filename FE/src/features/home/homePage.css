@@ -10,3 +10,23 @@
     width: 50%;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
+
+.card .product-item {
+    position: relative;
+}
+
+.card .product-item:hover .product-item-content {
+    background-color: #49505726;
+}
+
+.card .product-item:hover .product-item-button {
+    opacity: 1;
+}
+
+.card .product-item .product-item-button {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}

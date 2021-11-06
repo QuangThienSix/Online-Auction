@@ -27,6 +27,11 @@ const product = () => {
     ProductController.getTop5RelationByCategoryId
   );
 
+  api.get(
+    "/getProductByCategoryId/:category_id",
+    ProductController.getProductByCategoryId
+  );
+
   return api;
 };
 
