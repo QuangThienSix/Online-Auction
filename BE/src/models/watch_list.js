@@ -19,7 +19,7 @@ export const getwatch_list = async (bidder_id) => {
 
 export const getBidderHasMaxPrice = async (product_id) => {
   const rows = await load(
-    `select pb.bidder_id, max(price) as max_price, pb.cateted_at, pb.updated_at, u.fullname, u.email, u.address from ${TBL_watch_list} pb left join users u on u.user_id = pb.bidder_id where pb.product_id = '${product_id}'`
+    `select pb.bidder_id, max(price) as max_price, pb.created_at, pb.updated_at, u.fullname, u.email, u.address from ${TBL_watch_list} pb left join users u on u.user_id = pb.bidder_id where pb.product_id = '${product_id}'`
   );
 
   if (rows.length === 0) {

@@ -39,7 +39,7 @@ export const getCateroy = async () => {
 
 export const getListCategoryAndBrand = async () => {
   const rows = await load(
-    `select c.name as category_name, c.id as category_id, c.cateted_at as category_cateted_at, c.updated_at as category_updated_at, b.id as brand_id, b.name as brand_name, b.cateted_at as brand_cateted_at, b.updated_at as brand_updated_at from ${TBL_CATEGORY} c join ${TBL_BRAND} b on b.category_id = c.id where b.is_deleted = 0 and c.is_deleted = 0`
+    `select c.name as category_name, c.id as category_id, c.created_at as category_created_at, c.updated_at as category_updated_at, b.id as brand_id, b.name as brand_name, b.created_at as brand_created_at, b.updated_at as brand_updated_at from ${TBL_CATEGORY} c join ${TBL_BRAND} b on b.category_id = c.id where b.is_deleted = 0 and c.is_deleted = 0`
   );
 
   if (rows.length === 0) return null;
