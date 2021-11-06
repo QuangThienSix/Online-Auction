@@ -23,3 +23,20 @@ export interface Product {
     updated_at: string;
 
 }
+
+export interface ProductDetaill {
+    address?: string;
+    avatar: string;
+    category_id: string;
+    current_price?: string;
+    description?: string;
+    email?: string;
+    fullname?: string;
+    images?: string;
+    max_price?: string;
+    name?: string;
+    ratting_negative?: string;
+    time_end?: string;
+    time_start?: string;
+    ratting?: string;
+}
