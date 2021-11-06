@@ -1,7 +1,11 @@
 import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
 import { logger } from "../lib/utils";
-import { adduser_WatchList, getuser_WatchList } from "../models/watch_list";
+import {
+  adduser_WatchList,
+  getuser_WatchList,
+  getBidderHasMaxPrice,
+} from "../models/watch_list";
 import { getNow } from "../db";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -19,6 +23,7 @@ class WatchListController extends BaseController {
     // pinning context, when used in routers
     this.creatWatchList = this.creatWatchList.bind(this);
     this.getWatchListProduct = this.getWatchListProduct.bind(this);
+    this.getBidderHasMaxPrice = this.getBidderHasMaxPrice.bind(this);
   }
 
   async creatWatchList(req, res) {
@@ -60,7 +65,7 @@ class WatchListController extends BaseController {
 
   async getWatchListProduct(req, res) {
     logger.info("getWatchListProduct");
-    const {bidder_id } = req.params
+    const { bidder_id } = req.params;
     try {
       logger.info("creatWatchList");
       const { accessToken, data } = req.body;
@@ -92,6 +97,22 @@ class WatchListController extends BaseController {
           400
         );
       }
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async getBidderHasMaxPrice(req, res) {
+    logger.info("getBidderHasMaxPrice");
+    try {
+      let result = await getBidderHasMaxPrice(req.params.product_id);
+      return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
         res,
