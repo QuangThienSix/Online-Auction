@@ -8,7 +8,7 @@ export function PrivateRoute(props: RouteProps) {
   // Check user i logged
   const { accessToken } = getItem('users');
   const isLoggedIn = Boolean(accessToken);
-  if (!isLoggedIn) return <Redirect to="login" />;
+  if (!isLoggedIn) return <Redirect to="/login" />;
   // console.log('isLoggedIn: ', isLoggedIn);
 
   return <Route {...props} />;

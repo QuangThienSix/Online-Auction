@@ -3,6 +3,6 @@
 	"prefix": "/api",
 	"specs": "/docs",
 	"bodyLimit": "100kb",
-	"corsHeaders": ["http://vaythechapnganhang24h.vn"],
+	"corsHeaders": ["http://localhost:3000"],
 	"secretKey": "thien0909123144"
 }

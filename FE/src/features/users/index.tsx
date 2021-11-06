@@ -6,6 +6,7 @@ import { Route, Switch, useRouteMatch } from 'react-router';
 import { getItem } from 'utils';
 import ListPage from './pages/ListPage';
 import jwt_decode from 'jwt-decode';
+import AddEditPage from './pages/AddEditUser';
 
 export default function Users() {
   const { accessToken } = getItem('users');
@@ -24,13 +25,13 @@ export default function Users() {
         <ListPage roles_id={decoded?.roles_id} />
       </Route>
 
-      {/* <Route path={`${match.path}/add`}>
+      <Route path={`${match.path}/add`}>
         <AddEditPage />
       </Route>
 
-      <Route path={`${match.path}/:studentId`}>
+      <Route path={`${match.path}/:user_id`}>
         <AddEditPage />
-      </Route> */}
+      </Route>
     </Switch>
   );
 }

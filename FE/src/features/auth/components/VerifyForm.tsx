@@ -4,11 +4,16 @@ import { InputField } from 'components/FormField';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { VerifyPayload } from '../authSlice';
-
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 export interface VerifyFormProps {
   initialValue?: VerifyPayload;
   onSubmit?: (formValue: VerifyPayload) => void;
 }
+const schema = yup.object().shape({
+  tokenMail: yup.string().required('Password is required'),
+  email: yup.string().email('Must be a valid email').max(255).required('Email is required'),
+});
 
 export default function VerifyForm({ initialValue, onSubmit }: VerifyFormProps) {
   const {
@@ -17,12 +22,11 @@ export default function VerifyForm({ initialValue, onSubmit }: VerifyFormProps) 
     formState: { isSubmitting },
   } = useForm<VerifyPayload>({
     defaultValues: initialValue,
+    resolver: yupResolver(schema),
   });
 
   const handleFormSubmit = async (formValue: VerifyPayload) => {
-    try {
-      await onSubmit?.(formValue);
-    } catch (error: any) {}
+    await onSubmit?.(formValue);
   };
   return (
     <Box maxWidth={400}>

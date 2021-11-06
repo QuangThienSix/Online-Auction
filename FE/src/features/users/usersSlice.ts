@@ -41,16 +41,18 @@ const userSlice = createSlice({
     setFilter(state, action: PayloadAction<ListParams>) {
       state.filter = action.payload;
     },
+    setFilterWithDebounce(state, action: PayloadAction<ListParams>) {},
   },
 });
 
 // Action
 
-export const usersAction = userSlice.actions;
+export const  usersAction = userSlice.actions;
 export const selectUsersList = (state: RootState) => state.users.list;
 export const selectUsersLoading = (state: RootState) => state.users.loading;
 export const selectUsersFilter = (state: RootState) => state.users.filter;
 export const selectUsersPagination = (state: RootState) => state.users.pagination;
+
 
 // Selecttors
 

@@ -22,13 +22,19 @@ import {
   updateBidderUser,
   updatePassUser,
   listUserId,
+  updateUserId,
 } from "../models/user";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
 import apiConfig from "../config/api";
 import { RoleAdmin } from "../constants/user_roles";
-
+import { broadcastAll } from "../ws";
+var options = {
+  // example input , yes negative values do work
+  min: 1000,
+  max: 9999,
+};
 class UsersController extends BaseController {
   constructor() {
     super();
@@ -45,20 +51,54 @@ class UsersController extends BaseController {
   }
 
   async listUser(req, res) {
+    broadcastAll("abc");
     logger.info("Get List Users");
 
     const { roles_id, user_id } = req.accessTokenPayload;
     logger.info("roles_id: ", roles_id);
     logger.info("user_id: ", user_id);
     let users = null;
-    let { _page, _limit } = req.query;
-    logger.info("_limit:_page ", _limit, ":", _page);
+    let { _page, _limit, name_like, role, _sort, _order } = req.query;
+    const user_id_query = req.params.user_id;
+    logger.info(
+      "_limit:_page: user_id_query : name_like ",
+      _limit,
+      ":",
+      _page,
+      ":",
+      name_like,
+      ":",
+      name_like,
+      user_id_query
+    );
+    if (name_like === undefined) {
+      name_like = "";
+    }
+    if (role === undefined) {
+      role = "";
+    }
+    if (_sort === undefined) {
+      _sort = "ratting";
+    }
+    if (_order === undefined) {
+      _order = "";
+    }
     if (_limit && _page) {
       // role Admin
       if (roles_id === RoleAdmin) {
         try {
-          users = await listUser();
+          users = await listUser(name_like, role, _sort, _order);
           logger.info("Admin User: ", users);
+
+          if (!users) {
+            return responsePaginationSuccess(
+              res,
+              [],
+              _page,
+              _limit,
+              "List Users successfully"
+            );
+          }
           _page = Number(_page);
           _limit = Number(_limit);
           const pageCount = Math.ceil(users.length / _limit);
@@ -67,7 +107,7 @@ class UsersController extends BaseController {
             _page = pageCount;
           }
 
-          responsePaginationSuccess(
+          return responsePaginationSuccess(
             res,
             users,
             _page,
@@ -80,8 +120,19 @@ class UsersController extends BaseController {
         }
       } else if (user_id) {
         try {
-          users = await listUserId(user_id);
+          users = await listUserId(user_id, name_like, role, _sort, _order);
           logger.info("User: ", users);
+
+          if (!users) {
+            return responsePaginationSuccess(
+              res,
+              [],
+              _page,
+              _limit,
+              "List Users successfully"
+            );
+          }
+
           _page = Number(_page);
           _limit = Number(_limit);
           const pageCount = Math.ceil(users.length / _limit);
@@ -90,14 +141,13 @@ class UsersController extends BaseController {
             _page = pageCount;
           }
 
-          responsePaginationSuccess(
+          return responsePaginationSuccess(
             res,
             users,
             _page,
             _limit,
             "List Users successfully"
           );
-          return this.responseSuccess(res, users, "User successfully");
         } catch (error) {
           logger.info("Error Users : ", error);
           return this.responseError(res, error, 401);
@@ -115,6 +165,10 @@ class UsersController extends BaseController {
           401
         );
       }
+    } else if (user_id_query) {
+      logger.info("user_id_query", user_id_query);
+      const data = await singleById(user_id_query);
+      return res.json(data);
     } else {
       return this.responseError(res, "No limit and page", 400);
     }
@@ -149,6 +203,10 @@ class UsersController extends BaseController {
 
     const entity = req.body;
 
+    const { user_id } = req.params;
+
+    logger.info("user_id", user_id);
+
     const { roles_id } = req.accessTokenPayload;
 
     logger.info("roles_id: ", roles_id);
@@ -158,34 +216,19 @@ class UsersController extends BaseController {
     // role Admin
     if (roles_id === RoleAdmin) {
       try {
-        users = await updateUser(entity);
+        logger.info("Update With Admin");
+        users = await updateUserId(entity);
         return this.responseSuccess(res, users, "Update Users successfully");
       } catch (error) {
         return this.responseError(res, "User does not exist", 400);
       }
     } else {
-      const user = await singleByUserName(username);
-      if (!bcrypt.compareSync(entity.password, user.password)) {
-        return this.responseError(
-          res,
-          {
-            authenticated: false,
-            message: "username || password is incorrect",
-          },
-          400
-        );
-      } else {
-        const entityId = {
-          email: entity.email,
-          fullname: entity.fullname,
-          password: bcrypt.hashSync(
-            entity.password,
-            appConfig.authentication.saltRounds
-          ),
-          ...entity,
-        };
-        users = await updateUser(entityId);
-        return this.responseSuccess(res, users, "Update User successfully");
+      try {
+        logger.info("Update With User");
+        users = await updateUserId(entity);
+        return this.responseSuccess(res, users, "Update Users successfully");
+      } catch (error) {
+        return this.responseError(res, "User does not exist", 400);
       }
     }
   }
@@ -200,8 +243,6 @@ class UsersController extends BaseController {
     );
 
     delete req.body.password;
-
-    var tokenMail = parseInt(rn(options));
 
     if (
       username == "" ||
@@ -227,9 +268,9 @@ class UsersController extends BaseController {
       fullname: fullname,
       address: address,
       email: email,
-      islock: islock,
+      islock: false,
       roles_id: roles_id,
-      tokenMail: tokenMail,
+      tokenMail: "",
     };
 
     // check user

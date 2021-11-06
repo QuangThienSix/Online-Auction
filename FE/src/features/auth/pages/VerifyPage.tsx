@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     flexFlow: 'row nowrap',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100vh',
+    minHeight: '100%',
     textAlign: 'center',
   },
   box: {
@@ -31,14 +31,13 @@ export default function VerifyPage() {
   const message = useAppSelector((state) => state.auth.errormessage);
 
   const { email } = useParams<{ email: string }>();
-  console.log(email);
 
   const handleVerifyClick = async (formValue: VerifyPayload) => {
     dispatch(authActions.verify(formValue));
   };
 
   const initialValue: VerifyPayload = {
-    email: email,
+    email: email ? email : '',
     tokenMail: '',
   };
 

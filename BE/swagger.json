@@ -5,25 +5,17 @@
     "description": "A REST API boilerplate for NodeJS that uses collections of basic practices: Auth, Security, RESTful resources, API docs and Testing.",
     "version": "0.0.0"
   },
-  "produces": [
-    "application/json"
-  ],
+  "produces": ["application/json"],
   "basePath": "/api",
   "paths": {
     "/auth/signup": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Register new account",
         "description": "",
         "operationId": "signUp",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -39,7 +31,7 @@
           "200": {
             "description": "Successful operation",
             "schema": {
-              "$ref": "#/definitions/TokenResponse"
+              "$ref": "#/definitions/SigupRespone"
             }
           }
         }
@@ -47,23 +39,17 @@
     },
     "/auth/signin": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Sign in with email and password",
+        "tags": ["Authentication"],
+        "summary": "Sign in with username and password",
         "description": "",
         "operationId": "signIn",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
             "name": "body",
-            "description": "Email and password",
+            "description": "Username and password",
             "required": true,
             "schema": {
               "$ref": "#/definitions/SigInRequest"
@@ -88,16 +74,12 @@
     },
     "/facets": {
       "get": {
-        "tags": [
-          "Facets"
-        ],
+        "tags": ["Facets"],
         "summary": "Get all facets",
         "description": "",
         "operationId": "getAllFacets",
         "consumes": [],
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "header",
@@ -123,16 +105,12 @@
         }
       },
       "post": {
-        "tags": [
-          "Facets"
-        ],
+        "tags": ["Facets"],
         "summary": "Create a new facet",
         "description": "",
         "operationId": "addFacet",
         "consumes": [],
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "header",
@@ -169,16 +147,12 @@
     },
     "/facets/{facetId}": {
       "get": {
-        "tags": [
-          "Facets"
-        ],
+        "tags": ["Facets"],
         "summary": "Get a facet",
         "description": "",
         "operationId": "getFacet",
         "consumes": [],
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "header",
@@ -212,16 +186,12 @@
         }
       },
       "put": {
-        "tags": [
-          "Facets"
-        ],
+        "tags": ["Facets"],
         "summary": "Update a facet",
         "description": "",
         "operationId": "updateFacet",
         "consumes": [],
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "header",
@@ -255,16 +225,12 @@
         }
       },
       "delete": {
-        "tags": [
-          "Facets"
-        ],
+        "tags": ["Facets"],
         "summary": "Delete a facet",
         "description": "",
         "operationId": "deleteFacet",
         "consumes": [],
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "header",
@@ -300,34 +266,17 @@
     }
   },
   "definitions": {
-    "FacetRequest": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      },
-      "xml": {
-        "name": "SignIn"
-      }
-    },
     "SigInRequest": {
       "type": "object",
-      "required": [
-        "email",
-        "password"
-      ],
+      "required": ["username", "password"],
       "properties": {
-        "email": {
+        "username": {
           "type": "string",
-          "default": "user@mail.com"
+          "default": "123"
         },
         "password": {
           "type": "string",
-          "default": "abc123"
+          "default": "123"
         }
       },
       "xml": {
@@ -337,17 +286,42 @@
     "SignUpRequest": {
       "type": "object",
       "required": [
+        "username",
+        "password",
+        "fullname",
         "email",
-        "password"
+        "address",
+        "islock",
+        "roles_id"
       ],
       "properties": {
-        "email": {
+        "username": {
           "type": "string",
-          "default": "user@mail.com"
+          "default": "123"
         },
         "password": {
           "type": "string",
-          "default": "abc123"
+          "default": "123"
+        },
+        "fullname": {
+          "type": "fullname",
+          "default": "Thiện"
+        },
+        "email": {
+          "type": "email",
+          "default": "123@gamil.com"
+        },
+        "address": {
+          "type": "string",
+          "default": "123 cao thắng"
+        },
+        "islock": {
+          "type": "boolean",
+          "default": true
+        },
+        "roles_id": {
+          "type": "string",
+          "default": "2"
         }
       },
       "xml": {
@@ -357,8 +331,16 @@
     "TokenResponse": {
       "type": "object",
       "properties": {
-        "token": {
+        "authenticated": {
+          "description": "Authenticated",
+          "type": "boolean"
+        },
+        "accessToken": {
           "description": "JWT token",
+          "type": "string"
+        },
+        "refreshToken": {
+          "description": "Refresh Token",
           "type": "string"
         }
       }
@@ -395,6 +377,40 @@
     "401Response": {
       "type": "string",
       "default": "Unauthorized"
+    },
+    "FacetRequest": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "SignIn"
+      }
+    },
+    "SigupRespone": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "Register successfully",
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "success": true,
+              "type": "boolean"
+            },
+            "email": {
+              "success": "123@gamil.com",
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 }

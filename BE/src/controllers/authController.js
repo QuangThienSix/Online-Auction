@@ -29,6 +29,7 @@ class AuthController extends BaseController {
     this.parseToken = this.parseToken.bind(this);
     this.refreshAccessToken = this.refreshAccessToken.bind(this);
   }
+
   async parseToken(req, res) {
     logger.info("parseToken");
     const { accessToken } = req.body;
@@ -50,8 +51,16 @@ class AuthController extends BaseController {
 
   async signUp(req, res) {
     logger.info("singUp");
-    const { username, password, fullname, address, email, islock, roles_id,ratting } =
-      req.body;
+    const {
+      username,
+      password,
+      fullname,
+      address,
+      email,
+      islock,
+      roles_id,
+      ratting,
+    } = req.body;
 
     const password_hash = bcrypt.hashSync(
       password,
@@ -62,23 +71,38 @@ class AuthController extends BaseController {
 
     var tokenMail = parseInt(rn(options));
 
-    if (
-      username == "" ||
-      password == "" ||
-      email == "" ||
-      address == "" ||
-      fullname == ""||ratting ==""
-    ) {
-      logger.info("Data null");
-      return this.responseError(
-        res,
-        {
-          message:
-            "username || password || email ||fullname || address no data",
-        },
-        400
-      );
-    }
+    console.log(
+      username,
+      password,
+      fullname,
+      address,
+      email,
+      islock,
+      roles_id,
+      ratting
+    );
+    // if (username) {
+    //   console.log(username.type);
+    // }
+
+    // if (
+    //   username === "" ||
+    //   password === "" ||
+    //   email === "" ||
+    //   address === "" ||
+    //   fullname === "" ||
+    //   ratting === ""
+    // ) {
+    //   logger.info("Data null");
+    //   return this.responseError(
+    //     res,
+    //     {
+    //       message:
+    //         "username || password || email ||fullname || address no data",
+    //     },
+    //     400
+    //   );
+    // }
 
     const entity = {
       username: username,
@@ -89,7 +113,7 @@ class AuthController extends BaseController {
       islock: islock,
       roles_id: roles_id,
       tokenMail: tokenMail,
-      ratting:ratting
+      ratting: ratting,
     };
 
     // check user
