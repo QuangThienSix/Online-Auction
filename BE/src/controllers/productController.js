@@ -1,6 +1,6 @@
 import BaseController from "./baseController";
-import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import { logger } from "../lib/utils";
+import { getTokenForUser, deCodeTokenForUser, sendMail,  getPagingData, logger,
+  responsePaginationSuccess, } from "../lib/utils";
 import {
   singleByProductId,
   addProduct,
@@ -30,13 +30,11 @@ class ProductController extends BaseController {
     this.updateProduct = this.updateProduct.bind(this);
     this.deleteProduct = this.deleteProduct.bind(this);
     this.getProductById = this.getProductById.bind(this);
-
-    this.getTop5ProductRatting = this.getTop5ProductRatting.bind(this);
     this.getTop5ProductRatting = this.getTop5ProductRatting.bind(this);
     this.getTop5ProductPrice = this.getTop5ProductPrice.bind(this);
-    this.Query = this.Query.bind(this);
     this.getTop5ProductAcitve = this.getTop5ProductAcitve.bind(this);
     this.getTop5ProductRecoment = this.getTop5ProductRecoment.bind(this);
+    this.Query = this.Query.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -137,7 +135,7 @@ class ProductController extends BaseController {
     }
   }
   async getProductById(req, res) {
-    logger.info("getProduct");
+    logger.info("getProduct id");
     try {
       const { product_id } = req.params.id;
       let result = await singleByProductId(product_id);
@@ -154,7 +152,7 @@ class ProductController extends BaseController {
     }
   }
   async getTop5ProductRatting(req, res) {
-    logger.info("getProduct");
+    logger.info("getProduct Rattin");
     try {
       let result = await top5Ratting();
       return this.responseSuccess(res, result);
@@ -169,7 +167,7 @@ class ProductController extends BaseController {
     }
   }
   async getTop5ProductPrice(req, res) {
-    logger.info("getProduct");
+    logger.info("getProduct Price");
     try {
       let result = await top5Price();
       return this.responseSuccess(res, result);
@@ -184,7 +182,7 @@ class ProductController extends BaseController {
     }
   }
   async getTop5ProductAcitve(req, res) {
-    logger.info("getProduct");
+    logger.info("getProduct Acitve");
     try {
       let result = await top5Active();
       return this.responseSuccess(res, result);
@@ -199,7 +197,7 @@ class ProductController extends BaseController {
     }
   }
   async getTop5ProductRecoment(req, res) {
-    logger.info("getProduct");
+    logger.info("getProduct Recoment");
     try {
       let result = await top5Recoment();
       return this.responseSuccess(res, result);
@@ -214,11 +212,34 @@ class ProductController extends BaseController {
     }
   }
   async Query(req, res) {
-    logger.info("getProduct");
+    logger.info("query Product");
     try {
-      const { query, page, size } = req.query;
-      let result = await search(query, page, size);
-      return this.responseSuccess(res, result);
+      const { q, page, size } = req.query;
+      let result = await search(q, page||1, size||10);
+      console.log(result);
+      try {
+       let _page = Number(page||1);
+        let _limit = Number(size||10);
+        const pageCount = Math.ceil(result.length / _limit);
+
+        if (_page > pageCount) {
+          _page = pageCount;
+        }
+
+        return responsePaginationSuccess(
+          res,
+          result,
+          _page,
+          _limit,
+          "List product successfully"
+        );
+      } catch (error) {
+        logger.info("Error Product : ", error);
+        return this.responseError(res, error, 401);
+      }
+
+
+
     } catch (error) {
       return this.responseError(
         res,
