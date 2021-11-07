@@ -1,29 +1,37 @@
-import {
-  load,
-  add
-} from "../db";
+
+import { load, add,getNow } from "../db";
+
 
 const TBL_CATEGORY = "category";
 const TBL_BRAND = "brand";
 
 export const singleByCategoryName = async (id) => {
   const rows = await load(
-    `select * from ${TBL_CATEGORY} where id = '${id}'  and is_deleted =  '0'`
+    `select * from ${TBL_CATEGORY} where id = '${id}'  and is_deleted =  0`
   );
   if (rows.length === 0) return null;
   return rows[0];
 };
 
-export const addCateroy = async (entity) => {
+export const creatCategory = async (entity) => {
   return await add(TBL_CATEGORY, entity);
 };
 export const updateCateroy = async (entity) => {
-  return await update(TBL_CATEGORY, entity);
+  const rows = await load(
+    `UPDATE category 
+    set updated_at = ${entity.updated_at},
+    name = ${entity.name},
+    WHERE id = ${entity.id}`
+  );
+  if (rows.length === 0) return null;
+  return rows[0];
+  
+
 };
 
 export const deleteCateroy = async (id) => {
   const rows = await load(
-    `update ${TBL_CATEGORY} set is_deleted='1' where id='${id}'`
+    `update ${TBL_CATEGORY} set is_deleted=1 , updated_at = ${getNow()} where id=${id}`
   );
   if (rows.length === 0) return null;
   return rows[0];

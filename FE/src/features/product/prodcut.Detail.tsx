@@ -1,16 +1,17 @@
+import { FormControl, InputLabel, OutlinedInput } from '@mui/material';
 import productApi from 'api/productApi';
 import { ListResponse } from 'models';
 import { Product, ProductDetaill } from 'models/product';
 import moment from 'moment';
 import numeral from 'numeral';
 import { Button } from 'primereact/button';
-import { Image } from 'primereact/image';
-import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
 import { Carousel } from 'primereact/carousel';
-import './productDetail.css';
 import { Dialog } from 'primereact/dialog';
-import { AutoComplete } from 'primereact/autocomplete';
+import { Image } from 'primereact/image';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import './productDetail.css';
+import axiosClient from 'api/axiosClient';
 import { getItem } from 'utils';
 
 export interface IProductDetailProps {
@@ -21,23 +22,24 @@ export function ProductDetail(props: IProductDetailProps) {
     const [product, setProduct] = useState<ProductDetaill>();
     const [productList, setProductList] = useState<Product[]>();
     const [displayResponsive, setDisplayResponsive] = useState(false);
+    const searchRef = useRef<HTMLInputElement>();
     // const dispatch = useAppDispatch();
     const [priceAuction, setpriceAuction] = useState<any>(null);
+    const { accessToken } = getItem('users');
+    axiosClient.defaults.headers.common['x-access-token'] = accessToken;
 
     const history = useHistory();
     const handleDetail = (product: Product) => {
         history.push(`${product.id}`);
     };
     const handleOnction = async (product: ProductDetaill) => {
-        const { accessToken } = getItem('users');
         const data = {
             data: {
                 product_id: id,
                 price: priceAuction,
             },
-            accessToken: accessToken
         }
-        await productApi.updatedPrice(data);
+        await productApi.auction(data);
 
     }
 
@@ -145,6 +147,11 @@ export function ProductDetail(props: IProductDetailProps) {
 
     }, [id]);
 
+    const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const data = e.target.value;
+        setpriceAuction(data);
+    };
+
 
     const productTemplate = (product: ProductDetaill) => {
         return (
@@ -168,7 +175,17 @@ export function ProductDetail(props: IProductDetailProps) {
                             <Dialog header="Đấu Giá" visible={displayResponsive} onHide={() => onHide()} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} footer={renderFooter(product)}>
                                 <div className="content">
                                     <label className="lable">Giá Cần Mua: </label>
-                                    <AutoComplete value={priceAuction} field="name" type="number" onChange={(e) => setpriceAuction(e.value)} />
+                                    <FormControl fullWidth variant="outlined" size="small">
+                                        <InputLabel>Gía Cần Mua</InputLabel>
+                                        <OutlinedInput
+                                            id="searchByName"
+                                            label="Search by name"
+                                            defaultValue={priceAuction}
+                                            onChange={handleSearchChange}
+                                            inputRef={searchRef}
+                                            type="number"
+                                        />
+                                    </FormControl>
                                 </div>
                             </Dialog>
                         </div>

@@ -13,6 +13,7 @@ import schema_verify from "../schemas/verify.json";
 const product = () => {
   let api = Router();
   api.post("/", ProductController.creatProduct);
+  api.post("/auction", ProductController.createAuction);
   api.put("/", ProductController.updateProduct);
   api.delete("/", ProductController.deleteProduct);
   api.get("/", ProductController.getProductById);

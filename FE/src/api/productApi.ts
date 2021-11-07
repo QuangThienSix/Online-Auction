@@ -23,8 +23,8 @@ const productApi = {
         const url = `/product/getProductByBrandId/${id}`;
         return axiosClient.get(url);
     },
-    updatedPrice(data: Partial<any>): Promise<any> {
-        const url = `/watch-list`;
+    auction(data: Partial<any>): Promise<any> {
+        const url = `/product/auction`;
         return axiosClient.post(url, data);
     },
 };

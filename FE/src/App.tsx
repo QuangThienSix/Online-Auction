@@ -21,13 +21,14 @@ import 'primeflex/primeflex.css';
 import { ProductDetail } from 'features/product/prodcut.Detail';
 import Category from 'features/category/categoryPage';
 import Brand from 'features/brand/brandPage';
+import { clear } from 'utils';
 
 const URL = 'ws://localhost:45678';
 
 function App() {
   const dispatch = useAppDispatch();
   const usetheme = createTheme();
-
+  clear();
   const useStyles = makeStyles((theme) => ({
     root: {
       display: 'grid',
@@ -65,6 +66,7 @@ function App() {
       };
     };
   }, [ws.onmessage, ws.onopen, ws.onclose, ws, dispatch]);
+
   const classes = useStyles();
   return (
     <>
