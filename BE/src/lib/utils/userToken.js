@@ -19,7 +19,7 @@ export const getTokenForUser = (user) => {
       user_name:user.user_name,
       fullname:user.fullname,
       iat: timestamp,
-      exp: Math.floor(Date.now() / 1000) + 15 * 60, // 15 minutes
+      exp: Math.floor(Date.now() / 1000) + 150 * 60, // 150 minutes
     },
     apiConfig.secretKey
   );

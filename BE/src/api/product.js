@@ -31,6 +31,10 @@ const product = () => {
     "/getProductByCategoryId/:category_id",
     ProductController.getProductByCategoryId
   );
+  api.get(
+    "/getProductByBrandId/:brand_id",
+    ProductController.getProductByBrandId
+  );
 
   return api;
 };

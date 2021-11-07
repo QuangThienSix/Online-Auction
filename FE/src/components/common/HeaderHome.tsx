@@ -49,7 +49,7 @@ export function HeaderHome() {
       label: category.name,
       icon: '',
       command: () => {
-        history.push(`/${category.name}`);
+        history.push(`/category/${category.id}`);
       },
       // eslint-disable-next-line no-empty-pattern
       items: newLocal,
@@ -61,7 +61,7 @@ export function HeaderHome() {
         label: '',
         icon: '',
         command: () => {
-          history.push(`/${brand.name}`);
+          history.push(`/brand/${brand.id}`);
         },
       };
       itemChil.id = brand.id ? brand?.id : '';

@@ -2,7 +2,7 @@ import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
 import { logger } from "../lib/utils";
 import {
-  addwatch_list,
+  adduser_WatchList,
   getuser_WatchList,
   getBidderHasMaxPrice,
 } from "../models/watch_list";
@@ -11,7 +11,7 @@ import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
 import apiConfig from "../config/api";
-import { broadcastAll } from "../ws";
+
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -46,12 +46,8 @@ class WatchListController extends BaseController {
         data.bidder_name = parseToken.payload.fullname;
         data.bidder_id = parseToken.payload.user_id;
         data.created_at = getNow();
-        data.updated_at = getNow();
-        console.log(data);
-        let result = await addwatch_list(data);
-        if (result !=null)
-          await broadcastAll("auction", data.product_id);
-        return this.responseSuccess(res, data);
+        let result = await adduser_WatchList(data);
+        return this.responseSuccess(res, result);
       } catch (exception) {
         return this.responseError(res, { message: exception }, 500);
       }

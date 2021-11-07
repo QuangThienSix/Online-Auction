@@ -11,6 +11,8 @@ import { Carousel } from 'primereact/carousel';
 import './productDetail.css';
 import { Dialog } from 'primereact/dialog';
 import { AutoComplete } from 'primereact/autocomplete';
+import { getItem } from 'utils';
+
 export interface IProductDetailProps {
 }
 
@@ -20,12 +22,22 @@ export function ProductDetail(props: IProductDetailProps) {
     const [productList, setProductList] = useState<Product[]>();
     const [displayResponsive, setDisplayResponsive] = useState(false);
     // const dispatch = useAppDispatch();
+    const [priceAuction, setpriceAuction] = useState<any>(null);
+
     const history = useHistory();
     const handleDetail = (product: Product) => {
         history.push(`${product.id}`);
     };
-    const handleOnction = (product: ProductDetaill) => {
-        console.log(product);
+    const handleOnction = async (product: ProductDetaill) => {
+        const { accessToken } = getItem('users');
+        const data = {
+            data: {
+                product_id: id,
+                price: priceAuction,
+            },
+            accessToken: accessToken
+        }
+        await productApi.updatedPrice(data);
 
     }
 
@@ -115,7 +127,6 @@ export function ProductDetail(props: IProductDetailProps) {
         );
     };
 
-    const [selectedCountry1, setSelectedCountry1] = useState<any>(null);
 
     useEffect(() => {
         if (!id) return
@@ -157,7 +168,7 @@ export function ProductDetail(props: IProductDetailProps) {
                             <Dialog header="Đấu Giá" visible={displayResponsive} onHide={() => onHide()} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} footer={renderFooter(product)}>
                                 <div className="content">
                                     <label className="lable">Giá Cần Mua: </label>
-                                    <AutoComplete value={selectedCountry1} field="name" type="number" onChange={(e) => setSelectedCountry1(e.value)} />
+                                    <AutoComplete value={priceAuction} field="name" type="number" onChange={(e) => setpriceAuction(e.value)} />
                                 </div>
                             </Dialog>
                         </div>

@@ -19,6 +19,8 @@ import 'primeicons/primeicons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'primeflex/primeflex.css';
 import { ProductDetail } from 'features/product/prodcut.Detail';
+import Category from 'features/category/categoryPage';
+import Brand from 'features/brand/brandPage';
 
 const URL = 'ws://localhost:45678';
 
@@ -78,6 +80,8 @@ function App() {
             <Route path="/regis" component={Regis} />
             <Route path="/verify/:email" component={VerifyPage} />
             <Route path="/verify" component={VerifyPage} />
+            <Route path="/category/:id" component={Category} />
+            <Route path="/brand/:id" component={Brand} />
             <PrivateRoute path="/admin">
               <Route component={AdminLayout} />
             </PrivateRoute>

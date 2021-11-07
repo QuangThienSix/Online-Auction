@@ -146,3 +146,11 @@ export const getProductByCategoryId = async (category_id) => {
   if (rows.length === 0) return null;
   return rows;
 };
+export const getProductByBrandId = async (brand_id) => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where brand_id = ${brand_id} and is_deleted = 0 order by name `
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};

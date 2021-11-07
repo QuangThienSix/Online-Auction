@@ -19,6 +19,14 @@ const productApi = {
         const url = `/product/getProductByCategoryId/${id}`;
         return axiosClient.get(url);
     },
+    getBrandID(id: string): Promise<ListResponse<Product>> {
+        const url = `/product/getProductByBrandId/${id}`;
+        return axiosClient.get(url);
+    },
+    updatedPrice(data: Partial<any>): Promise<any> {
+        const url = `/watch-list`;
+        return axiosClient.post(url, data);
+    },
 };
 
 export default productApi;

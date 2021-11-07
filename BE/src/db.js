@@ -19,7 +19,6 @@ export default (init) => {
 };
 
 export const load = (sql) => {
-  console.log(sql);
   return new Promise(function (resolve, reject) {
     pool.query(sql, function (error, results, fields) {
       if (error) {
