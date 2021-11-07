@@ -224,6 +224,8 @@ class ProductController extends BaseController {
       );
     }
   }
+
+
   async Query(req, res) {
     logger.info("query Product");
     try {
