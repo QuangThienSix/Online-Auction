@@ -1,6 +1,9 @@
 import BaseController from "./baseController";
-import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import { logger } from "../lib/utils";
+import {
+  deCodeTokenForUser,
+  logger,
+  convertStringArraytoArray,
+} from "../lib/utils";
 import {
   addCateroy,
   updateCateroy,
@@ -31,15 +34,17 @@ class CategoryController extends BaseController {
 
   async creatCategory(req, res) {
     logger.info("creatCategory");
-    const { accessToken, data } = req.body;
+    const {
+      accessToken,
+      data
+    } = req.body;
 
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
         return this.responseError(
-          res,
-          {
+          res, {
             authenticated: false,
             message: "Method Not Allowed",
           },
@@ -49,12 +54,13 @@ class CategoryController extends BaseController {
         let result = await creatCategory(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(res, {
+          message: exception
+        }, 500);
       }
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -64,14 +70,16 @@ class CategoryController extends BaseController {
   }
   async updateCategory(req, res) {
     logger.info("updateCategory");
-    const { accessToken, data } = req.body;
+    const {
+      accessToken,
+      data
+    } = req.body;
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
         return this.responseError(
-          res,
-          {
+          res, {
             authenticated: false,
             message: "Method Not Allowed",
           },
@@ -81,12 +89,13 @@ class CategoryController extends BaseController {
         let result = await updateCategory(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(res, {
+          message: exception
+        }, 500);
       }
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -96,14 +105,16 @@ class CategoryController extends BaseController {
   }
   async deleteCategory(req, res) {
     logger.info("deleteCategory");
-    const { accessToken, data } = req.body;
+    const {
+      accessToken,
+      data
+    } = req.body;
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
         return this.responseError(
-          res,
-          {
+          res, {
             authenticated: false,
             message: "Method Not Allowed",
           },
@@ -113,12 +124,13 @@ class CategoryController extends BaseController {
         let result = await deleteCategory(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(res, {
+          message: exception
+        }, 500);
       }
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -130,11 +142,14 @@ class CategoryController extends BaseController {
     logger.info("getCateroy");
     try {
       let result = await getCateroy();
+      result.map((item) => {
+        const brands = convertStringArraytoArray(item.brands);
+        item.brands = brands;
+      });
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
@@ -151,8 +166,7 @@ class CategoryController extends BaseController {
     } catch (error) {
       console.log(error);
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500

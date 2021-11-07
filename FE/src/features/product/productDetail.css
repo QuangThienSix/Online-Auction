@@ -1,0 +1,31 @@
+.p-carousel .p-carousel-indicators .p-carousel-indicator button {
+    display: none;
+}
+
+.dialog-demo .p-button {
+    margin: 0 .5rem 0 0;
+    min-width: 10rem;
+}
+
+.dialog-demo p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.dialog-demo .p-dialog .p-button {
+    min-width: 6rem;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+}
+
+.content .p-inputtext,
+.content .p-autocomplete {
+    width: 100%;
+}
+
+.content .lable {
+    width: 150px;
+}

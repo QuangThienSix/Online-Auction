@@ -1,4 +1,7 @@
-import { load, add } from "../db";
+import {
+  load,
+  add
+} from "../db";
 
 const TBL_CATEGORY = "category";
 const TBL_BRAND = "brand";

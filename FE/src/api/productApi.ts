@@ -7,8 +7,16 @@ const productApi = {
         const url = '/product/top5-ratting';
         return axiosClient.get(url);
     },
+    getAllPrice(params: ListParams): Promise<ListResponse<Product>> {
+        const url = '/product/top5-price';
+        return axiosClient.get(url);
+    },
     getDetail(id: string): Promise<any> {
         const url = `/product/productdetail/${id}`;
+        return axiosClient.get(url);
+    },
+    getCategoryID(id: string): Promise<ListResponse<Product>> {
+        const url = `/product/getProductByCategoryId/${id}`;
         return axiosClient.get(url);
     },
 };

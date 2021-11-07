@@ -1,20 +1,121 @@
 import productApi from 'api/productApi';
 import { ListResponse } from 'models';
-import { ProductDetaill } from 'models/product';
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Image } from 'primereact/image'
-import { Button } from 'primereact/button';
-import numeral from 'numeral';
+import { Product, ProductDetaill } from 'models/product';
 import moment from 'moment';
+import numeral from 'numeral';
+import { Button } from 'primereact/button';
+import { Image } from 'primereact/image';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import { Carousel } from 'primereact/carousel';
+import './productDetail.css';
+import { Dialog } from 'primereact/dialog';
+import { AutoComplete } from 'primereact/autocomplete';
 export interface IProductDetailProps {
 }
 
 export function ProductDetail(props: IProductDetailProps) {
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<ProductDetaill>();
+    const [productList, setProductList] = useState<Product[]>();
+    const [displayResponsive, setDisplayResponsive] = useState(false);
     // const dispatch = useAppDispatch();
+    const history = useHistory();
+    const handleDetail = (product: Product) => {
+        history.push(`${product.id}`);
+    };
+    const handleOnction = (product: ProductDetaill) => {
+        console.log(product);
 
+    }
+
+    const onClick = () => {
+        setDisplayResponsive(true);
+    }
+
+    const onHide = () => {
+        setDisplayResponsive(false)
+    }
+
+    const renderFooter = (product: ProductDetaill) => {
+        return (
+            <div>
+                <Button label="No" icon="pi pi-times" onClick={() => onHide()} className="p-button-text" />
+                <Button label="Yes" icon="pi pi-check" onClick={() => handleOnction(product)} autoFocus />
+            </div>
+        );
+    }
+
+    const responsiveOptionsList = [
+        {
+            breakpoint: '1024px',
+            numVisible: 3,
+            numScroll: 3,
+        },
+        {
+            breakpoint: '600px',
+            numVisible: 2,
+            numScroll: 2,
+        },
+        {
+            breakpoint: '480px',
+            numVisible: 1,
+            numScroll: 1,
+        },
+    ];
+    const productTemplateList = (product: Product) => {
+        return (
+            <div className="product-item">
+                <div className="product-item-content text-center">
+                    {/* <a> */}
+                    <div className="p-mb-3">
+                        <img
+                            src={`showcase/demo/images/product/${product.images}`}
+                            onError={(e: any) =>
+                            (e.target.src =
+                                'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')
+                            }
+                            alt={product.name}
+                            className="product-image"
+                        />
+                    </div>
+                    <div>
+                        <h4 className="p-mb-3">{product.name}</h4>
+                        <h6 className="p-mt-0 p-mb-1">Giá Mua: {numeral(product.max_price).format('0,0')} đ</h6>
+                        <h6 className="p-mt-0 p-mb-1" style={{ fontWeight: 700 }}>Giá Hiện Tại: {numeral(product.price).format('0,0')} đ</h6>
+                        <h6 className="p-mt-0 p-mb-1">Ngày Bán: {moment(product.created_at).format('DD/MM/YYYY')}</h6>
+                        {/* <h6 className="p-mt-0 p-mb-1">Người Bán: {product.fullname}</h6> */}
+                        <div className="item-rating">
+                            {Number(product.ratting) > 500 ? (
+                                <>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                </>
+                            ) : (
+                                <>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                    <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                                    <i className="pi pi-star-o p-mr-2"></i>
+                                </>
+                            )}
+
+                            <span className="item-rating-total"> {product.ratting}</span>
+                        </div>
+                        <div className="car-buttons p-mt-3 product-item-button">
+                            <Button onClick={() => handleDetail(product)} icon="pi pi-search" className="p-button p-button-rounded" />
+                        </div>
+                    </div>
+                    {/* </a> */}
+                </div>
+            </div>
+        );
+    };
+
+    const [selectedCountry1, setSelectedCountry1] = useState<any>(null);
 
     useEffect(() => {
         if (!id) return
@@ -23,15 +124,17 @@ export function ProductDetail(props: IProductDetailProps) {
         (async () => {
             try {
                 const data: ListResponse<ProductDetaill> = await productApi.getDetail(id);
+                const ListData: ListResponse<Product> = await productApi.getCategoryID(data.data[0].category_id);
+                setProductList(ListData.data);
                 setProduct(data.data[0]);
             } catch (error) {
                 console.log('Failed to fetch prodcut details', error);
             }
         })();
+
     }, [id]);
 
 
-    console.log(product);
     const productTemplate = (product: ProductDetaill) => {
         return (
             <div className="product-item">
@@ -50,7 +153,13 @@ export function ProductDetail(props: IProductDetailProps) {
                             Không Tôt: <i className="pi pi-star-o p-mr-2"></i> {product.ratting_negative}
                         </div>
                         <div className="car-buttons p-mt-3 product-item-button">
-                            <Button icon="pi pi-search" className="p-button p-button-rounded" />
+                            <Button onClick={() => onClick()} icon="pi pi-money-bill" className="p-button p-button-rounded" />
+                            <Dialog header="Đấu Giá" visible={displayResponsive} onHide={() => onHide()} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} footer={renderFooter(product)}>
+                                <div className="content">
+                                    <label className="lable">Giá Cần Mua: </label>
+                                    <AutoComplete value={selectedCountry1} field="name" type="number" onChange={(e) => setSelectedCountry1(e.value)} />
+                                </div>
+                            </Dialog>
                         </div>
                     </div>
                 </div>
@@ -67,9 +176,9 @@ export function ProductDetail(props: IProductDetailProps) {
                                 <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="250" />
                             </div>
                             <div className="row mb-2">
-                                <div className="col-4"> <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="50" /></div>
-                                <div className="col-4"> <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="50" /></div>
-                                <div className="col-4"> <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="50" /></div>
+                                <div className="col-4"> <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="100" /></div>
+                                <div className="col-4"> <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="100" /></div>
+                                <div className="col-4"> <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="100" /></div>
                             </div>
                         </div>
                         <div className="col-8 col__product-detail">
@@ -79,10 +188,31 @@ export function ProductDetail(props: IProductDetailProps) {
                 </div>
             </section>
             <section>
-                <h3 className="title">Sản phẩm liên quan</h3>
                 <div className="container">
                     <div className="row">
-
+                        <section>
+                            <div className="container">
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="carousel-demo">
+                                            <div className="card" style={{ border: "none" }}>
+                                                <Carousel
+                                                    value={productList}
+                                                    numVisible={4}
+                                                    numScroll={2}
+                                                    responsiveOptions={responsiveOptionsList}
+                                                    className="custom-carousel"
+                                                    circular
+                                                    autoplayInterval={3000}
+                                                    itemTemplate={productTemplateList}
+                                                    header={<h3 className="text-center">Sản Phẩm Liên Quan</h3>}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </section>

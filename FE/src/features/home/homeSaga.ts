@@ -5,19 +5,27 @@ import { all, call, put, takeLatest } from "redux-saga/effects";
 import { homeActions } from "./homeSlice";
 
 
-function* fethproduct() {
+function* fethproductTop5Ratting() {
     const { data }: ListResponse<Product> = yield call(productApi.getAll, {
         _page: 1,
         _limit: 5,
     });
     yield put(homeActions.setProductTopList(data));
 }
+function* fethproductTop5Price() {
+    const { data }: ListResponse<Product> = yield call(productApi.getAllPrice, {
+        _page: 1,
+        _limit: 5,
+    });
+    yield put(homeActions.setProductTop5PriceList(data));
+}
 
 function* fetchProdcutsList() {
     try {
 
         yield all([
-            call(fethproduct),
+            call(fethproductTop5Ratting),
+            call(fethproductTop5Price),
 
         ]);
         yield put(homeActions.productSuccess());
