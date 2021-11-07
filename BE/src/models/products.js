@@ -16,7 +16,7 @@ export const singleByProductId = async (id) => {
     FROM product a
     JOIN product_bidder b on a.id = b.product_id
     JOIN users c on b.bidder_id = c.user_id
-    WHERE a.id = ${product_id}
+    WHERE a.id = ${id}
     ORDER BY b.price DESC
     LIMIT 1 
     ;`
