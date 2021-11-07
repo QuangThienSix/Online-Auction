@@ -11,6 +11,7 @@ import {
   top5Active,
   search,
   top5Recoment,
+  getAuctionLastModifier
 } from "../models/products";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -211,6 +212,8 @@ class ProductController extends BaseController {
       );
     }
   }
+
+
   async Query(req, res) {
     logger.info("query Product");
     try {

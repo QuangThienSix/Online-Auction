@@ -12,7 +12,14 @@ export const singleByProductName = async (name) => {
 
 export const singleByProductId = async (id) => {
   const rows = await load(
-    `select * from ${TBL_PRODUCT} where id = '${id}' and is_deleted = 0`
+    `  SELECT a.*, c.user_id, c.fullname,c.username,b.price as 'price_current',b.updated_at 'last_modifiers'
+    FROM product a
+    JOIN product_bidder b on a.id = b.product_id
+    JOIN users c on b.bidder_id = c.user_id
+    WHERE a.id = ${product_id}
+    ORDER BY b.price DESC
+    LIMIT 1 
+    ;`
   );
   if (rows.length === 0) return null;
   return rows[0];
@@ -87,6 +94,32 @@ ORDER BY a.price DESC LIMIT 5;
   if (rows.length === 0) return null;
   return rows;
 };
+export const auction = async (product_id ,bidder_id,price ) => {
+  const rows = await load(
+    `SELECT a.* FROM product a where  a.is_deleted = 0 and
+    current_timestamp() BETWEEN a.time_start AND a.time_end 
+and brand_id = ${brand_id}
+ORDER BY a.price DESC LIMIT 5;
+    `
+  );
+  if (rows.length === 0) return null;
+  return rows;
+};
 
+export const getAuctionLastModifier = async (product_id) => {
+  const rows = await load(
+    `SELECT a.*, c.user_id, c.fullname,c.username,b.price as 'price_current',b.updated_at 'last_modifiers'
+    FROM product a
+    JOIN product_bidder b on a.id = b.product_id
+    JOIN users c on b.bidder_id = c.user_id
+    WHERE a.id = ${product_id}
+    ORDER BY b.price DESC
+    LIMIT 1 
+    ;
+    `
+  );
+  if (rows.length === 0) return null;
+  return rows;
+};
 
 

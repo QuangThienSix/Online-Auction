@@ -53,7 +53,6 @@ class UsersController extends BaseController {
   async listUser(req, res) {
     broadcastAll("abc");
     logger.info("Get List Users");
-
     const { roles_id, user_id } = req.accessTokenPayload;
     logger.info("roles_id: ", roles_id);
     logger.info("user_id: ", user_id);

@@ -23,6 +23,14 @@ if (!socketServer) {
 
 export const broadcastAll = (msg) => {
   logger.info("Message send: ", msg);
+  switch(msg.toLowerCase())
+  {
+    case "auction":
+      
+      break;
+
+  }
+
   for (var i = 0; i < CLIENTS.length; i++) {
     if (CLIENTS[i].readyState === WebSocket.OPEN) CLIENTS[i].send(msg);
   }
