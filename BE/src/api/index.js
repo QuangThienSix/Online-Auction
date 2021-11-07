@@ -12,6 +12,7 @@ import watchList from "./watch_list";
 import comment from "./comment";
 import transform from "./transform";
 import userRole from "./user_role";
+import upload from "./upload";
 
 /**
  * API Resources
@@ -32,7 +33,7 @@ export default () => {
   api.use("/watch-list", watchList);
   api.use("/comment", comment);
   api.use("/transform", transform);
-
+  api.use("/upload", upload);
   // bul
 
   api.use("/users", authMdw, users);
