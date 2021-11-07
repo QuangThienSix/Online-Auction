@@ -10,6 +10,7 @@ import {
 import {
   singleByProductId,
   addProduct,
+  auction,
   deleteProduct,
   updateProduct,
   top5Ratting,
@@ -25,7 +26,8 @@ import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
 import apiConfig from "../config/api";
-
+import { getNow } from "../db";
+import { broadcastAll } from "../ws";
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -48,6 +50,7 @@ class ProductController extends BaseController {
     this.getTop5RelationByCategoryId =
       this.getTop5RelationByCategoryId.bind(this);
     this.getProductByCategoryId = this.getProductByCategoryId.bind(this);
+    this.createAuction = this.createAuction.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -67,6 +70,8 @@ class ProductController extends BaseController {
           405
         );
       try {
+        data.created_at = getNow();
+        data.updated_at = getNow();
         let result = await addProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
@@ -85,7 +90,8 @@ class ProductController extends BaseController {
   }
   async updateProduct(req, res) {
     logger.info("updateProduct");
-    const { accessToken, data } = req.body;
+    const { data } = req.body;
+    const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
@@ -117,10 +123,10 @@ class ProductController extends BaseController {
   }
   async deleteProduct(req, res) {
     logger.info("deleteProduct");
-    const { accessToken, data } = req.body;
+    const { data } = req.body;
+    const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
-      //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
         return this.responseError(
           res,
@@ -131,6 +137,7 @@ class ProductController extends BaseController {
           405
         );
       try {
+        data.updated_at = getNow();
         let result = await deleteProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
@@ -152,7 +159,6 @@ class ProductController extends BaseController {
     try {
       const { product_id } = req.params.id;
       let result = await singleByProductId(product_id);
-      console.log(result);
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
@@ -179,6 +185,47 @@ class ProductController extends BaseController {
       );
     }
   }
+
+
+  async createAuction(req, res) {
+    logger.info("createAuction");
+    const { data } = req.body;
+    const token =  req.headers["x-access-token"];
+    const parseToken = deCodeTokenForUser(token);
+    if (parseToken) {
+      if (parseToken.payload.roles_id ==1)
+        return this.responseError(
+          res,
+          {
+            authenticated: false,
+            message: "Method Not Allowed",
+          },
+          405
+        );
+      try {
+        data.bidder_id = parseToken.payload.user_id;
+        let result = await auction(data.product_id,data.bidder_id,data.price);
+        if (result !=null)
+        await broadcastAll("auction", data.product_id);
+
+
+        return this.responseSuccess(res, result);
+      } catch (exception) {
+        return this.responseError(res, { message: exception }, 500);
+      }
+    } else {
+      return this.responseError(
+        res,
+        {
+          authenticated: false,
+          message: "token incorrect",
+        },
+        400
+      );
+    }
+  }
+
+
   async getTop5ProductPrice(req, res) {
     logger.info("getProduct Price");
     try {

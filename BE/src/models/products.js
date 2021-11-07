@@ -37,7 +37,33 @@ export const deleteProduct = async (data) => {
 };
 
 export const updateProduct = async (entity) => {
-  return await update(TBL_PRODUCT, entity);
+  const rows = await load(
+    `
+UPDATE product 
+set name = '${entity.name}',
+updated_at = ${entity.update_at},
+ratting = ${entity.ratting},
+time_end = ${entity.time_end},
+time_start = ${entity.time_start},
+price = ${entity.price},
+category_id = ${entity.category_id},
+category_name = '${entity.category_name}',
+timestamp = ${entity.timestamp},
+avatar = '${entity.avatar}',
+images = ${entity.images},
+current_price = ${entity.current_price}
+max_price = ${entity.max_price},
+count_quantity_bidder = ${entity.count_quantity_bidder},
+seller_id = ${entity.seller_id},
+step = ${entity.step},
+is_automatic = ${entity.is_automatic},
+is_done = ${entity.is_done}
+WHERE id = ${entity.id}
+    `
+  );
+  if (rows.length === 0) return null;
+  return rows;
+
 };
 export const top5Ratting = async () => {
   const rows = await load(
@@ -95,10 +121,7 @@ ORDER BY a.price DESC LIMIT 5;
 };
 export const auction = async (product_id ,bidder_id,price ) => {
   const rows = await load(
-    `SELECT a.* FROM product a where  a.is_deleted = 0 and
-    current_timestamp() BETWEEN a.time_start AND a.time_end 
-and brand_id = ${brand_id}
-ORDER BY a.price DESC LIMIT 5;
+    `CALL proc_auction(${product_id},${price},${bidder_id});
     `
   );
   if (rows.length === 0) return null;
