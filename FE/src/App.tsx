@@ -18,6 +18,7 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'primeflex/primeflex.css';
+import { ProductDetail } from 'features/product/prodcut.Detail';
 
 const URL = 'ws://localhost:45678';
 
@@ -72,6 +73,7 @@ function App() {
         <Box className={classes.main}>
           <Switch>
             <Route path="/" component={HomePage} exact />
+            <Route path="/product/:id" component={ProductDetail} exact />
             <Route path="/login" component={LoginPage} />
             <Route path="/regis" component={Regis} />
             <Route path="/verify/:email" component={VerifyPage} />

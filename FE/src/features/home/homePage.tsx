@@ -1,17 +1,36 @@
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { Product } from 'models/product';
+import moment from 'moment';
+import numeral from 'numeral';
 import { Button } from 'primereact/button';
 import { Carousel } from 'primereact/carousel';
-import React, { useEffect, useState } from 'react';
-import { ProductService } from './service/ProductService';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router';
 import './homePage.css';
-export interface IHomePageProps {}
+import { homeActions, selecttorsProductTop } from './homeSlice';
+// import productApi from 'api/productApi';
+
+export interface IHomePageProps { }
 
 export default function HomePage(props: IHomePageProps) {
   // const { category, loading } = useCategory();
-  const [products, setProducts] = useState([]);
-  const productService = new ProductService();
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+  const ProductTopList = useAppSelector(selecttorsProductTop);
+
   useEffect(() => {
-    productService.getProductsSmall().then((data) => setProducts(data.slice(0, 9)));
-  });
+    dispatch(homeActions.product());
+    // const data = productApi.getDetail('1');
+    // console.log(data);
+  }, [dispatch]);
+
+
+  const handleDetail = (product: Product) => {
+    history.push(`product/${product.id}`);
+  };
+
+
+
   // if (loading) {
   //   return (
   //     <Box className={classes.loading}>
@@ -36,33 +55,53 @@ export default function HomePage(props: IHomePageProps) {
       numScroll: 1,
     },
   ];
-  const productTemplate = (product: any) => {
+  const productTemplate = (product: Product) => {
     return (
       <div className="product-item">
         <div className="product-item-content text-center">
+          {/* <a> */}
           <div className="p-mb-3">
             <img
-              src={`showcase/demo/images/product/${product.image}`}
+              src={`showcase/demo/images/product/${product.images}`}
               onError={(e: any) =>
-                (e.target.src =
-                  'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')
+              (e.target.src =
+                'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')
               }
               alt={product.name}
               className="product-image"
             />
           </div>
           <div>
-            <h4 className="p-mb-1">{product.name}</h4>
-            <h6 className="p-mt-0 p-mb-3">$ {product.price}</h6>
-            <span className={`product-badge status-${product.inventoryStatus.toLowerCase()}`}>
-              {product.inventoryStatus}
-            </span>
-            <div className="car-buttons p-mt-5">
-              <Button icon="pi pi-search" className="p-button p-button-rounded p-mr-2" />
-              <Button icon="pi pi-star" className="p-button-success p-button-rounded p-mr-2" />
-              <Button icon="pi pi-cog" className="p-button-help p-button-rounded" />
+            <h4 className="p-mb-3">{product.name}</h4>
+            <h6 className="p-mt-0 p-mb-1">Giá Mua: {numeral(product.max_price).format('0,0')} đ</h6>
+            <h6 className="p-mt-0 p-mb-1" style={{ fontWeight: 700 }}>Giá Hiện Tại: {numeral(product.price).format('0,0')} đ</h6>
+            <h6 className="p-mt-0 p-mb-1">Ngày Bán: {moment(product.created_at).format('DD/MM/YYYY')}</h6>
+            <h6 className="p-mt-0 p-mb-1">Người Bán: {product.seller_id}</h6>
+            <div className="item-rating">
+              {Number(product.ratting) > 500 ? (
+                <>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                </>
+              ) : (
+                <>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star-o p-mr-2"></i>
+                </>
+              )}
+
+              <span className="item-rating-total"> {product.ratting}</span>
+            </div>
+            <div className="car-buttons p-mt-3 product-item-button">
+              <Button onClick={() => handleDetail(product)} icon="pi pi-search" className="p-button p-button-rounded" />
             </div>
           </div>
+          {/* </a> */}
         </div>
       </div>
     );
@@ -77,15 +116,15 @@ export default function HomePage(props: IHomePageProps) {
               <div className="carousel-demo">
                 <div className="card" style={{ border: "none" }}>
                   <Carousel
-                    value={products}
+                    value={ProductTopList}
                     numVisible={4}
                     numScroll={1}
                     responsiveOptions={responsiveOptions}
                     className="custom-carousel"
                     circular
-                    autoplayInterval={3000}
+                    // autoplayInterval={3000}
                     itemTemplate={productTemplate}
-                    header={<h5 >Sản Phẩm</h5>}
+                    header={<h3 className="text-center">Sản Phẩm</h3>}
                   />
                 </div>
               </div>

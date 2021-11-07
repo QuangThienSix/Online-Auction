@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { logger } from "./lib/utils";
-
+import ProductController  from "./controllers/ProductController";
 const WS_PORT = 45678;
 const CLIENTS = [];
 
@@ -21,12 +21,12 @@ if (!socketServer) {
   logger.info(`WebSocket Server is running at ws://localhost:${WS_PORT}`);
 }
 
-export const broadcastAll = (msg) => {
+export const broadcastAll = (msg,param) => {
   logger.info("Message send: ", msg);
   switch(msg.toLowerCase())
   {
     case "auction":
-      
+      ProductController.getProductById(param.id);
       break;
 
   }

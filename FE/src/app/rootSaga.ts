@@ -1,6 +1,7 @@
 import authSaga from 'features/auth/authSaga';
 import counterSaga from 'features/counter/countSaga';
 import dashboardSagardSaga from 'features/dashboard/dashboardSaga';
+import homeSaga from 'features/home/homeSaga';
 import roleSaga from 'features/roles/roleSaga';
 import socketSaga from 'features/socket/socketSaga';
 import usersSaga from 'features/users/usersSaga';
@@ -14,5 +15,6 @@ export default function* rootSaga() {
     usersSaga(),
     roleSaga(),
     socketSaga(),
+    homeSaga(),
   ]);
 }

@@ -13,7 +13,11 @@ import schema_verify from "../schemas/verify.json";
 const watch_list = () => {
   let api = Router();
   api.post("/", WatchListController.creatWatchList);
-  api.get("/", WatchListController.getWatchListProduct);
+  // api.get("/", WatchListController.getWatchListProduct);
+  api.get(
+    "/getBidderHasMaxPrice/:product_id",
+    WatchListController.getBidderHasMaxPrice
+  );
   return api;
 };
 
