@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
 import apiConfig from "../config/api";
-
+import {getNow} from "../db"
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -21,12 +21,13 @@ class BrandController extends BaseController {
     this.deleteBrand = this.deleteBrand.bind(this);
     this.getBrand = this.getBrand.bind(this);
   }
-
   async creatBrand(req, res) {
     logger.info("creatBrand");
-    const { accessToken, data } = req.body;
-
-    const parseToken = deCodeTokenForUser(accessToken);
+    const token =  req.headers["x-access-token"];
+    const { data } = req.body;
+    console.log(token);
+    const parseToken = deCodeTokenForUser(token);
+    console.log(parseToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
@@ -39,6 +40,8 @@ class BrandController extends BaseController {
           405
         );
       try {
+        data.created_at = getNow();
+        data.updated_at = getNow();
         console.log(parseToken.payload);
         let result = await addBrand(data);
         return this.responseSuccess(res, result);
@@ -58,8 +61,9 @@ class BrandController extends BaseController {
   }
   async updateBrand(req, res) {
     logger.info("updateBrand");
-    const { accessToken, data } = req.body;
-    const parseToken = deCodeTokenForUser(accessToken);
+    const token =  req.headers["x-access-token"];
+    const { data } = req.body;
+    const parseToken = deCodeTokenForUser(token);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
@@ -72,6 +76,7 @@ class BrandController extends BaseController {
           405
         );
       try {
+        data.updated_at = getNow();
         let result = await updateBrand(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
@@ -89,11 +94,11 @@ class BrandController extends BaseController {
     }
   }
   async deleteBrand(req, res) {
-    logger.info("updateBrand");
-    const { accessToken, data } = req.body;
-    const parseToken = deCodeTokenForUser(accessToken);
+    logger.info("deleted brand");
+    const token =  req.headers["x-access-token"];
+    const {  data } = req.body;
+    const parseToken = deCodeTokenForUser(token);
     if (parseToken) {
-      //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
         return this.responseError(
           res,
@@ -104,6 +109,7 @@ class BrandController extends BaseController {
           405
         );
       try {
+        data.updated_at = getNow();
         let result = await deleteBrand(data);
         return this.responseSuccess(res, result);
       } catch (exception) {

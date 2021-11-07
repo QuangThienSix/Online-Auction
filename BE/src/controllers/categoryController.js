@@ -2,9 +2,9 @@ import BaseController from "./baseController";
 import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
 import { logger } from "../lib/utils";
 import {
-  addCateroy,
-  updateCateroy,
-  deleteCateroy,
+  creatCategory,
+  updateCategory,
+  deleteCategory,
   getCateroy,
   getListCategoryAndBrand,
 } from "../models/category";
@@ -12,7 +12,7 @@ import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
 import apiConfig from "../config/api";
-
+import {getNow} from "../db"
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -31,11 +31,10 @@ class CategoryController extends BaseController {
 
   async creatCategory(req, res) {
     logger.info("creatCategory");
-    const { accessToken, data } = req.body;
-
-    const parseToken = deCodeTokenForUser(accessToken);
+    const { data } = req.body;
+    const token =  req.headers["x-access-token"];
+    const parseToken = deCodeTokenForUser(token);
     if (parseToken) {
-      //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
         return this.responseError(
           res,
@@ -46,6 +45,8 @@ class CategoryController extends BaseController {
           405
         );
       try {
+        data.created_at = getNow();
+        data.updated_at = getNow();
         let result = await creatCategory(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
@@ -64,7 +65,9 @@ class CategoryController extends BaseController {
   }
   async updateCategory(req, res) {
     logger.info("updateCategory");
-    const { accessToken, data } = req.body;
+    const { data } = req.body;
+
+    const accessToken =  req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
@@ -78,6 +81,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
+        data.updated_at = getNow();
         let result = await updateCategory(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
@@ -96,7 +100,8 @@ class CategoryController extends BaseController {
   }
   async deleteCategory(req, res) {
     logger.info("deleteCategory");
-    const { accessToken, data } = req.body;
+    const token =  req.headers["x-access-token"];
+    const {data } = req.body;
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
@@ -110,6 +115,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
+        data.updated_at = getNow();
         let result = await deleteCategory(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
