@@ -15,7 +15,8 @@ import
 
 const upload = () => {
   let api = Router();
-  api.post("/single", uploadcontroller.single);
+  api.post("/", uploadcontroller.single);
+  api.get("/:name", uploadcontroller.getFile);
   //api.post("/multer", Validate(schema_signup), authController.signUp);
   return api;
 };
