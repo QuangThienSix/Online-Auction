@@ -22,6 +22,7 @@ import { ProductDetail } from 'features/product/prodcut.Detail';
 import Category from 'features/category/categoryPage';
 import Brand from 'features/brand/brandPage';
 import { clear } from 'utils';
+import { authActions } from 'features/auth/authSlice';
 
 const URL = 'ws://localhost:45678';
 
@@ -29,6 +30,7 @@ function App() {
   const dispatch = useAppDispatch();
   const usetheme = createTheme();
   clear();
+  dispatch(authActions.logout());
   const useStyles = makeStyles((theme) => ({
     root: {
       display: 'grid',

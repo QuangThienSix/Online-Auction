@@ -29,3 +29,7 @@
 .content .lable {
     width: 150px;
 }
+
+.p-dialog .p-dialog-content {
+    padding: 1rem;
+}

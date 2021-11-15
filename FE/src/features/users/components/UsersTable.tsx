@@ -26,6 +26,8 @@ export interface IUserTableProps {
   };
   onEdit?: (users: Users) => void;
   onRemove?: (users: Users) => void;
+  onUpseller?: (users: Users) => void;
+  onDownseller?: (users: Users) => void;
 }
 
 const usetheme = createTheme();
@@ -40,23 +42,49 @@ const useStyles = makeStyles(() => ({
   table: {},
 }));
 
-export default function UserTable({ usersList, roleMap, onRemove, onEdit }: IUserTableProps) {
+export default function UserTable({ usersList, roleMap, onRemove, onUpseller,onDownseller, onEdit }: IUserTableProps) {
   const classes = useStyles();
   const [selectedUsers, setSelectedUsers] = useState<Users>();
   const [open, setOpen] = useState(false);
+  const [open1, setOpen1] = useState(false);
+  const [open2, setOpen2] = useState(false);
 
   const handleRemoveClick = (user: Users) => {
     setSelectedUsers(user);
     setOpen(true);
   };
+  const handleRemoveClick1 = (user: Users) => {
+    setSelectedUsers(user);
+    setOpen1(true);
+  };
+  const handleRemoveClick2 = (user: Users) => {
+    setSelectedUsers(user);
+    setOpen2(true);
+  };
   const handleClose = () => {
     setOpen(false);
+  };
+  const handleClose1 = () => {
+    setOpen1(false);
+  };
+  const handleClose2 = () => {
+    setOpen2(false);
   };
 
   const handleRemoveConfirm = (user: Users) => {
     // call onremove
     onRemove?.(user);
 
+    setOpen(false);
+  };
+  const handleRemoveConfirm1 = (user: Users) => {
+    // call onremove
+    onUpseller?.(user);
+    setOpen(false);
+  };
+  const handleRemoveConfirm2 = (user: Users) => {
+    // call onremove
+    onDownseller?.(user);
     setOpen(false);
   };
 
@@ -104,6 +132,12 @@ export default function UserTable({ usersList, roleMap, onRemove, onEdit }: IUse
                   <Button size="small" color="secondary" onClick={() => handleRemoveClick(user)}>
                     Remove
                   </Button>
+                  <Button size="small" color="success" onClick={() => handleRemoveClick1(user)}>
+                    Up Seller
+                  </Button>
+                  <Button size="small" color="warning" onClick={() => handleRemoveClick2(user)}>
+                    Down Seller
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -138,6 +172,68 @@ export default function UserTable({ usersList, roleMap, onRemove, onEdit }: IUse
               autoFocus
             >
               Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+      <div>
+        <Dialog
+          open={open1}
+          onClose={handleClose1}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Up Seller</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to up seller user name "{selectedUsers?.username}".
+              <br /> This action &apos;t be undo.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose1} color="inherit" variant="outlined">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                handleRemoveConfirm1(selectedUsers as Users);
+              }}
+              color="primary"
+              variant="contained"
+              autoFocus
+            >
+              Up
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+      <div>
+        <Dialog
+          open={open2}
+          onClose={handleClose2}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Down Seller</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to Down seller user name "{selectedUsers?.username}".
+              <br /> This action &apos;t be undo.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose2} color="inherit" variant="outlined">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                handleRemoveConfirm2(selectedUsers as Users);
+              }}
+              color="warning"
+              variant="contained"
+              autoFocus
+            >
+              Up
             </Button>
           </DialogActions>
         </Dialog>

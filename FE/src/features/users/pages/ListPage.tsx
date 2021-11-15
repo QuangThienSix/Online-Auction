@@ -9,6 +9,7 @@ import { ListParams, PaginationParams, Users } from 'models';
 import React, { useEffect } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { addSingle } from 'utils';
+import { SellerTable } from '../components/SellerTable';
 import UserFilters from '../components/UserFilters';
 import UserTable from '../components/UsersTable';
 import {
@@ -81,6 +82,33 @@ export default function ListPage({ roles_id }: IListPageProps) {
       console.log('Failed to fetch user', error);
     }
   };
+  const handleUpSellerUsers = async (user: Users) => {
+    console.log('Sellet');
+    try {
+      // upseller user API
+      await usersApi.upseller(user);
+      addSingle('success', 'upseller user successfully!');
+      // Trigger to re-fetch user list with current filter
+      const newFilter = { ...filter };
+      dispatch(usersAction.setFilter(newFilter));
+    } catch (error) {
+      // Toast error
+      console.log('Failed to fetch user', error);
+    }
+  };
+  const handleDownSellerUsers = async (user: Users) => {
+    try {
+      // upseller user API
+      await usersApi.upseller(user?.user_id || '');
+      addSingle('success', 'upseller user successfully!');
+      // Trigger to re-fetch user list with current filter
+      const newFilter = { ...filter };
+      dispatch(usersAction.setFilter(newFilter));
+    } catch (error) {
+      // Toast error
+      console.log('Failed to fetch user', error);
+    }
+  };
   const handleFilterChange = (newFilter: ListParams) => {
     dispatch(usersAction.setFilter(newFilter));
   };
@@ -119,7 +147,11 @@ export default function ListPage({ roles_id }: IListPageProps) {
         usersList={usersList}
         onEdit={handleEditUsers}
         onRemove={handleRemoveUsers}
+        onUpseller={handleUpSellerUsers}
+        onDownseller={handleDownSellerUsers}
       />
+      {/* Seller Table */}
+      <SellerTable />
 
       {/* Pagination */}
 

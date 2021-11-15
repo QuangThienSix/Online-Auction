@@ -1,38 +1,19 @@
-import BaseController from "./baseController";
-import {
-  getTokenForUser,
-  deCodeTokenForUser,
-  sendMail,
-  getPagingData,
-  logger,
-  responsePaginationSuccess,
-} from "../lib/utils";
-import {
-  singleByProductId,
-  addProduct,
-  auction,
-  deleteProduct,
-  updateProduct,
-  top5Ratting,
-  top5Price,
-  top5Active,
-  search,
-  top5Recoment,
-  ProductDetail,
-  getTop5RelationByCategoryId,
-  getProductByCategoryId,
-  getProductByBrandId
-} from "../models/products";
-import bcrypt from "bcrypt";
-import appConfig from "../config/env/app.dev.json";
-import rn from "random-number";
-import apiConfig from "../config/api";
 import {
   getNow
 } from "../db";
 import {
+  deCodeTokenForUser, logger,
+  responsePaginationSuccess
+} from "../lib/utils";
+import {
+  addProduct,
+  auction,
+  deleteProduct, getProductByBrandId, getProductByCategoryId, getProductBySeller, getTop5RelationByCategoryId, ProductDetail, search, singleByProductId, top5Active, top5Price, top5Ratting, top5Recoment, updateProduct
+} from "../models/products";
+import {
   broadcastAll
 } from "../ws";
+import BaseController from "./baseController";
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -57,6 +38,7 @@ class ProductController extends BaseController {
     this.getProductByCategoryId = this.getProductByCategoryId.bind(this);
     this.getProductByBrandId = this.getProductByBrandId.bind(this);
     this.createAuction = this.createAuction.bind(this);
+    this.getProductBySeller = this.getProductBySeller.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -185,6 +167,21 @@ class ProductController extends BaseController {
       );
     }
   }
+  async getProductBySeller(req, res) {
+    logger.info("getProductBySeller id");
+    const { roles_id, user_id } = req.accessTokenPayload;
+    try {
+      let result = await getProductBySeller(user_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res, {
+          message: error,
+        },
+        500
+      );
+    }
+  }
   async getTop5ProductRatting(req, res) {
     logger.info("getProduct Rattin");
     try {
@@ -219,16 +216,19 @@ class ProductController extends BaseController {
         );
       try {
         data.bidder_id = parseToken.payload.user_id;
-        let result = await auction(data.product_id, data.bidder_id, data.price);
+        await auction(data.product_id, data.bidder_id, data.price);
+        const result = await singleByProductId(data.product_id);
 
+        await broadcastAll(result);
+        return this.responseSuccess(res, result);
 
       } catch (exception) {
         return this.responseError(res, {
-          message: exception
+          message: exception.message
         }, 500);
       }
-      await broadcastAll("auction", data.product_id);
-      return this.responseSuccess(res, {});
+
+
     } else {
       return this.responseError(
         res, {

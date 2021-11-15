@@ -7,6 +7,10 @@ const productApi = {
         const url = '/product/top5-ratting';
         return axiosClient.get(url);
     },
+    getAllBySeller(params: ListParams): Promise<ListResponse<Product>> {
+        const url = '/product/seller';
+        return axiosClient.get(url);
+    },
     getAllPrice(params: ListParams): Promise<ListResponse<Product>> {
         const url = '/product/top5-price';
         return axiosClient.get(url);
