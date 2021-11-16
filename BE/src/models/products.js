@@ -1,4 +1,7 @@
-import { load, add } from "../db";
+import {
+  load,
+  add
+} from "../db";
 
 const TBL_PRODUCT = "product";
 
@@ -12,7 +15,14 @@ export const singleByProductName = async (name) => {
 
 export const singleByProductId = async (id) => {
   const rows = await load(
-    `select * from ${TBL_PRODUCT} where id = '${id}' and is_deleted = 0`
+    `  SELECT a.*, c.user_id, c.fullname,c.username,b.price as 'price_current',b.updated_at 'last_modifiers'
+    FROM product a
+    JOIN product_bidder b on a.id = b.product_id
+    JOIN users c on b.bidder_id = c.user_id
+    WHERE a.id = ${id}
+    ORDER BY b.price DESC
+    LIMIT 1 
+    ;`
   );
   if (rows.length === 0) return null;
   return rows[0];
@@ -30,7 +40,33 @@ export const deleteProduct = async (data) => {
 };
 
 export const updateProduct = async (entity) => {
-  return await update(TBL_PRODUCT, entity);
+  const rows = await load(
+    `
+UPDATE product 
+set name = '${entity.name}',
+updated_at = ${entity.update_at},
+ratting = ${entity.ratting},
+time_end = ${entity.time_end},
+time_start = ${entity.time_start},
+price = ${entity.price},
+category_id = ${entity.category_id},
+category_name = '${entity.category_name}',
+timestamp = ${entity.timestamp},
+avatar = '${entity.avatar}',
+images = ${entity.images},
+current_price = ${entity.current_price}
+max_price = ${entity.max_price},
+count_quantity_bidder = ${entity.count_quantity_bidder},
+seller_id = ${entity.seller_id},
+step = ${entity.step},
+is_automatic = ${entity.is_automatic},
+is_done = ${entity.is_done}
+WHERE id = ${entity.id}
+    `
+  );
+  if (rows.length === 0) return null;
+  return rows;
+
 };
 export const top5Ratting = async () => {
   const rows = await load(
@@ -86,7 +122,30 @@ ORDER BY a.price DESC LIMIT 5;
   if (rows.length === 0) return null;
   return rows;
 };
+export const auction = async (product_id, bidder_id, price) => {
+  const rows = await load(
+    `CALL proc_auction(${product_id},${price},${bidder_id});
+    `
+  );
+  if (rows.length === 0) return null;
+  return rows;
+};
 
+export const getAuctionLastModifier = async (product_id) => {
+  const rows = await load(
+    `SELECT a.*, c.user_id, c.fullname,c.username,b.price as 'price_current',b.updated_at 'last_modifiers'
+    FROM product a
+    JOIN product_bidder b on a.id = b.product_id
+    JOIN users c on b.bidder_id = c.user_id
+    WHERE a.id = ${product_id}
+    ORDER BY b.price DESC
+    LIMIT 1 
+    ;
+    `
+  );
+  if (rows.length === 0) return null;
+  return rows;
+}
 export const ProductDetail = async (product_id) => {
   const rows = await load(
     `select p.avatar, p.images, p.name, p.time_start, p.time_end, p.description, p.current_price, p.max_price,p.category_id ,u.fullname, u.address, u.email, u.ratting, u.ratting_negative from ${TBL_PRODUCT} p left join users u on p.seller_id = u.user_id where p.id = '${product_id}' and p.is_deleted = 0`
@@ -108,6 +167,22 @@ export const getTop5RelationByCategoryId = async (category_id, product_id) => {
 export const getProductByCategoryId = async (category_id) => {
   const rows = await load(
     `select * from ${TBL_PRODUCT} where category_id = ${category_id} and is_deleted = 0 order by name `
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+export const getProductByBrandId = async (brand_id) => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where brand_id = ${brand_id} and is_deleted = 0 order by name `
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+export const getProductBySeller = async (seller_id) => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where seller_id = ${seller_id} and is_deleted = 0 order by name `
   );
 
   if (rows.length === 0) return null;

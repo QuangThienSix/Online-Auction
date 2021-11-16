@@ -8,6 +8,7 @@ export interface HomeState {
     errormessage: string;
     product?: Product;
     productTopList: Product[];
+    productTop5PriceList: Product[];
 }
 
 const initialState: HomeState = {
@@ -15,6 +16,7 @@ const initialState: HomeState = {
     errormessage: '',
     product: undefined,
     productTopList: [],
+    productTop5PriceList: [],
 };
 
 
@@ -36,6 +38,9 @@ const homeSlice = createSlice({
         setProductTopList(state, action: PayloadAction<Product[]>) {
             state.productTopList = action.payload;
         },
+        setProductTop5PriceList(state, action: PayloadAction<Product[]>) {
+            state.productTop5PriceList = action.payload;
+        },
     }
 })
 
@@ -45,6 +50,7 @@ export const homeActions = homeSlice.actions;
 
 
 export const selecttorsProductTop = (state: RootState) => state.home.productTopList;
+export const selecttorsProduct5PriceTop = (state: RootState) => state.home.productTop5PriceList;
 // Reducer
 const homeReducer = homeSlice.reducer;
 export default homeReducer;

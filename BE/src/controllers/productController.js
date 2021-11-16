@@ -1,31 +1,19 @@
-import BaseController from "./baseController";
 import {
-  getTokenForUser,
-  deCodeTokenForUser,
-  sendMail,
-  getPagingData,
-  logger,
-  responsePaginationSuccess,
+  getNow
+} from "../db";
+import {
+  deCodeTokenForUser, logger,
+  responsePaginationSuccess
 } from "../lib/utils";
 import {
-  singleByProductId,
   addProduct,
-  deleteProduct,
-  updateProduct,
-  top5Ratting,
-  top5Price,
-  top5Active,
-  search,
-  top5Recoment,
-  ProductDetail,
-  getTop5RelationByCategoryId,
-  getProductByCategoryId,
+  auction,
+  deleteProduct, getProductByBrandId, getProductByCategoryId, getProductBySeller, getTop5RelationByCategoryId, ProductDetail, search, singleByProductId, top5Active, top5Price, top5Ratting, top5Recoment, updateProduct
 } from "../models/products";
-import bcrypt from "bcrypt";
-import appConfig from "../config/env/app.dev.json";
-import rn from "random-number";
-import apiConfig from "../config/api";
-
+import {
+  broadcastAll
+} from "../ws";
+import BaseController from "./baseController";
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -48,34 +36,42 @@ class ProductController extends BaseController {
     this.getTop5RelationByCategoryId =
       this.getTop5RelationByCategoryId.bind(this);
     this.getProductByCategoryId = this.getProductByCategoryId.bind(this);
+    this.getProductByBrandId = this.getProductByBrandId.bind(this);
+    this.createAuction = this.createAuction.bind(this);
+    this.getProductBySeller = this.getProductBySeller.bind(this);
   }
 
   async creatProduct(req, res) {
     logger.info("creatProduct");
-    const { accessToken, data } = req.body;
+    const {
+      accessToken,
+      data
+    } = req.body;
 
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1 && parseToken.payload.roles_id != 3)
         return this.responseError(
-          res,
-          {
+          res, {
             authenticated: false,
             message: "Method Not Allowed",
           },
           405
         );
       try {
+        data.created_at = getNow();
+        data.updated_at = getNow();
         let result = await addProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(res, {
+          message: exception
+        }, 500);
       }
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -85,14 +81,17 @@ class ProductController extends BaseController {
   }
   async updateProduct(req, res) {
     logger.info("updateProduct");
-    const { accessToken, data } = req.body;
+
+    const {
+      data
+    } = req.body;
+    const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1 && parseToken.payload.roles_id != 3)
         return this.responseError(
-          res,
-          {
+          res, {
             authenticated: false,
             message: "Method Not Allowed",
           },
@@ -102,12 +101,13 @@ class ProductController extends BaseController {
         let result = await updateProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(res, {
+          message: exception
+        }, 500);
       }
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -117,29 +117,32 @@ class ProductController extends BaseController {
   }
   async deleteProduct(req, res) {
     logger.info("deleteProduct");
-    const { accessToken, data } = req.body;
+    const {
+      data
+    } = req.body;
+    const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
-      //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
         return this.responseError(
-          res,
-          {
+          res, {
             authenticated: false,
             message: "Method Not Allowed",
           },
           405
         );
       try {
+        data.updated_at = getNow();
         let result = await deleteProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(res, {
+          message: exception
+        }, 500);
       }
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -150,14 +153,29 @@ class ProductController extends BaseController {
   async getProductById(req, res) {
     logger.info("getProduct id");
     try {
-      const { product_id } = req.params.id;
+      const {
+        product_id
+      } = req.params.id;
       let result = await singleByProductId(product_id);
-      console.log(result);
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getProductBySeller(req, res) {
+    logger.info("getProductBySeller id");
+    const { roles_id, user_id } = req.accessTokenPayload;
+    try {
+      let result = await getProductBySeller(user_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res, {
           message: error,
         },
         500
@@ -171,14 +189,58 @@ class ProductController extends BaseController {
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
       );
     }
   }
+
+
+  async createAuction(req, res) {
+    logger.info("createAuction");
+    const {
+      data
+    } = req.body;
+    const token = req.headers["x-access-token"];
+    const parseToken = deCodeTokenForUser(token);
+    if (parseToken) {
+      if (parseToken.payload.roles_id == 1)
+        return this.responseError(
+          res, {
+            authenticated: false,
+            message: "Method Not Allowed",
+          },
+          405
+        );
+      try {
+        data.bidder_id = parseToken.payload.user_id;
+        await auction(data.product_id, data.bidder_id, data.price);
+        const result = await singleByProductId(data.product_id);
+
+        await broadcastAll(result);
+        return this.responseSuccess(res, result);
+
+      } catch (exception) {
+        return this.responseError(res, {
+          message: exception.message
+        }, 500);
+      }
+
+
+    } else {
+      return this.responseError(
+        res, {
+          authenticated: false,
+          message: "token incorrect",
+        },
+        400
+      );
+    }
+  }
+
+
   async getTop5ProductPrice(req, res) {
     logger.info("getProduct Price");
     try {
@@ -186,8 +248,7 @@ class ProductController extends BaseController {
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
@@ -201,8 +262,7 @@ class ProductController extends BaseController {
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
@@ -216,18 +276,23 @@ class ProductController extends BaseController {
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
       );
     }
   }
+
+
   async Query(req, res) {
     logger.info("query Product");
     try {
-      const { q, page, size } = req.query;
+      const {
+        q,
+        page,
+        size
+      } = req.query;
       let result = await search(q, page || 1, size || 10);
       console.log(result);
       try {
@@ -252,8 +317,7 @@ class ProductController extends BaseController {
       }
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
@@ -268,8 +332,7 @@ class ProductController extends BaseController {
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
@@ -279,14 +342,16 @@ class ProductController extends BaseController {
 
   async getTop5RelationByCategoryId(req, res) {
     logger.info("getTop5RelationByCategoryId");
-    let { category_id, product_id } = req.params;
+    let {
+      category_id,
+      product_id
+    } = req.params;
     try {
       let result = await getTop5RelationByCategoryId(category_id, product_id);
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500
@@ -297,15 +362,35 @@ class ProductController extends BaseController {
   async getProductByCategoryId(req, res) {
     logger.info("getProductByCategoryId");
 
-    let { category_id } = req.params;
+    let {
+      category_id
+    } = req.params;
 
     try {
       let result = await getProductByCategoryId(category_id);
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getProductByBrandId(req, res) {
+    logger.info("getProductByBrandId");
+
+    let {
+      brand_id
+    } = req.params;
+
+    try {
+      let result = await getProductByBrandId(brand_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res, {
           message: error,
         },
         500

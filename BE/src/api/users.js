@@ -12,6 +12,7 @@ const users = () => {
   api.delete("/:user_id", UsersController.deleteUser);
   api.patch("/:user_id", UsersController.updateUser);
   api.post("/", UsersController.addUser);
+  api.post("/changepassword", UsersController.changePassUser);
   return api;
 };
 

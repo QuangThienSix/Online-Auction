@@ -6,7 +6,9 @@ import {
   getPagingData,
   responsePaginationSuccess,
 } from "../lib/utils";
-import { logger } from "../lib/utils";
+import {
+  logger
+} from "../lib/utils";
 import {
   singleByUserName,
   updateRefreshToken,
@@ -28,8 +30,12 @@ import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
 import apiConfig from "../config/api";
-import { RoleAdmin } from "../constants/user_roles";
-import { broadcastAll } from "../ws";
+import {
+  RoleAdmin
+} from "../constants/user_roles";
+import {
+  broadcastAll
+} from "../ws";
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -46,19 +52,26 @@ class UsersController extends BaseController {
     this.updateBidderUser = this.updateBidderUser.bind(this);
     this.changePassUser = this.changePassUser.bind(this);
     this.sendOTP = this.sendOTP.bind(this);
-    this.forgotPassword = this.forgotPassword.bind(this);
     this.updateUser = this.updateUser.bind(this);
   }
 
   async listUser(req, res) {
-    broadcastAll("abc");
     logger.info("Get List Users");
-
-    const { roles_id, user_id } = req.accessTokenPayload;
+    const {
+      roles_id,
+      user_id
+    } = req.accessTokenPayload;
     logger.info("roles_id: ", roles_id);
     logger.info("user_id: ", user_id);
     let users = null;
-    let { _page, _limit, name_like, role, _sort, _order } = req.query;
+    let {
+      _page,
+      _limit,
+      name_like,
+      role,
+      _sort,
+      _order
+    } = req.query;
     const user_id_query = req.params.user_id;
     logger.info(
       "_limit:_page: user_id_query : name_like ",
@@ -176,11 +189,15 @@ class UsersController extends BaseController {
   async deleteUser(req, res) {
     logger.info("Delete Users");
 
-    const { user_id } = req.params;
+    const {
+      user_id
+    } = req.params;
 
     logger.info("user_id: ", user_id);
 
-    const { roles_id } = req.accessTokenPayload;
+    const {
+      roles_id
+    } = req.accessTokenPayload;
 
     logger.info("roles_id: ", roles_id);
 
@@ -203,11 +220,15 @@ class UsersController extends BaseController {
 
     const entity = req.body;
 
-    const { user_id } = req.params;
+    const {
+      user_id
+    } = req.params;
 
     logger.info("user_id", user_id);
 
-    const { roles_id } = req.accessTokenPayload;
+    const {
+      roles_id
+    } = req.accessTokenPayload;
 
     logger.info("roles_id: ", roles_id);
 
@@ -234,8 +255,16 @@ class UsersController extends BaseController {
   }
   async addUser(req, res) {
     logger.info("Add user");
-    const { username, password, fullname, address, email, islock, roles_id } =
-      req.body;
+    const {
+      username,
+      password,
+      fullname,
+      address,
+      email,
+      islock,
+      roles_id
+    } =
+    req.body;
 
     const password_hash = bcrypt.hashSync(
       password,
@@ -253,10 +282,8 @@ class UsersController extends BaseController {
     ) {
       logger.info("Data null");
       return this.responseError(
-        res,
-        {
-          message:
-            "username || password || email ||fullname || address no data",
+        res, {
+          message: "username || password || email ||fullname || address no data",
         },
         400
       );
@@ -278,8 +305,7 @@ class UsersController extends BaseController {
     if (user) {
       logger.info("same username");
       return this.responseError(
-        res,
-        {
+        res, {
           message: "same username ",
         },
         400
@@ -290,8 +316,7 @@ class UsersController extends BaseController {
     if (mail) {
       logger.info("same Email");
       return this.responseError(
-        res,
-        {
+        res, {
           message: "same Email ",
         },
         400
@@ -302,8 +327,7 @@ class UsersController extends BaseController {
     try {
       resUser = await addUser(entity);
       return this.responseSuccess(
-        res,
-        {
+        res, {
           success: true,
           email: email,
         },
@@ -312,8 +336,7 @@ class UsersController extends BaseController {
     } catch (error) {
       logger.info("Failed add user", error);
       return this.responseError(
-        res,
-        {
+        res, {
           message: "Failed add user",
         },
         400
@@ -323,11 +346,15 @@ class UsersController extends BaseController {
   async updateSellerUser(req, res) {
     logger.info("Update Seller Users");
 
-    const { user_id } = req.query;
+    const {
+      user_id
+    } = req.query;
 
     logger.info("user_id: ", user_id);
 
-    const { roles_id } = req.accessTokenPayload;
+    const {
+      roles_id
+    } = req.accessTokenPayload;
 
     logger.info("roles_id: ", roles_id);
 
@@ -352,11 +379,15 @@ class UsersController extends BaseController {
   async updateBidderUser(req, res) {
     logger.info("Update Bidder Users");
 
-    const { user_id } = req.query;
+    const {
+      user_id
+    } = req.query;
 
     logger.info("user_id: ", user_id);
 
-    const { roles_id } = req.accessTokenPayload;
+    const {
+      roles_id
+    } = req.accessTokenPayload;
 
     logger.info("roles_id: ", roles_id);
 
@@ -381,11 +412,17 @@ class UsersController extends BaseController {
   async changePassUser(req, res) {
     logger.info("Change Password Users");
 
-    const { oldpassword, newpassword } = req.body;
+    const {
+      oldpassword,
+      newpassword
+    } = req.body;
 
-    logger.info("Password: ", password);
+    logger.info("Password: ", newpassword);
 
-    const { roles_id, user_id } = req.accessTokenPayload;
+    const {
+      roles_id,
+      user_id
+    } = req.accessTokenPayload;
 
     logger.info("roles_id :  user_id", roles_id, user_id);
 
@@ -393,8 +430,7 @@ class UsersController extends BaseController {
 
     if (!bcrypt.compareSync(oldpassword, user.password)) {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "Password is incorrect",
         },
@@ -416,7 +452,9 @@ class UsersController extends BaseController {
   }
   async sendOTP(req, res) {
     logger.info("sendOTP");
-    const { email } = req.body;
+    const {
+      email
+    } = req.body;
     const user = await singleByMail(email);
     if (user) {
       try {
@@ -434,8 +472,7 @@ class UsersController extends BaseController {
           await sendMail("phamquangthien.it@gmail.com", email, "[OTP]", html);
         }
         return this.responseSuccess(
-          res,
-          {
+          res, {
             success: true,
             email: email,
           },
@@ -443,42 +480,12 @@ class UsersController extends BaseController {
         );
       } catch (error) {
         return this.responseError(
-          res,
-          {
+          res, {
             message: "Failed send Email",
           },
           400
         );
       }
-    }
-  }
-  async forgotPassword(req, res) {
-    logger.info("forgotPassword");
-    const { email, tokenMail, newpassword } = req.body;
-
-    const user = await singleByMail(email);
-    if (user) {
-      if (user.tokenMail === tokenMail) {
-        logger.info("token === user.tokenMail");
-        const password_hash = bcrypt.hashSync(
-          newpassword,
-          appConfig.authentication.saltRounds
-        );
-        await updatePassUser(user.user_id, password_hash);
-        return this.responseSuccess(res, user, "Forgot successfully");
-      } else {
-        logger.info("Invalid token");
-        return this.responseError(res, {
-          authenticated: false,
-          message: `${user.email}: Invalid token`,
-        });
-      }
-    } else {
-      logger.info("Invalid Email");
-      return this.responseError(res, {
-        authenticated: false,
-        message: `${user.email}: Invalid Email`,
-      });
     }
   }
 }

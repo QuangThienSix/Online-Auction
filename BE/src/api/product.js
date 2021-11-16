@@ -1,11 +1,10 @@
-import { Router } from "express";
+import {
+  Router
+} from "express";
 import ProductController from "../controllers/ProductController";
-import { authMdw } from "../middleware/auth.mdw";
-import { Validate } from "../middleware/validate.mdw";
-import schema_auth from "../schemas/auth.json";
-import schema_signup from "../schemas/signUp.json";
-import schema_rfToken from "../schemas/rfToken.json";
-import schema_verify from "../schemas/verify.json";
+import {
+  authMdw
+} from "../middleware/auth.mdw";
 /**
  * Follow this format for normal routing
  */
@@ -13,9 +12,11 @@ import schema_verify from "../schemas/verify.json";
 const product = () => {
   let api = Router();
   api.post("/", ProductController.creatProduct);
+  api.post("/auction", ProductController.createAuction);
   api.put("/", ProductController.updateProduct);
   api.delete("/", ProductController.deleteProduct);
   api.get("/", ProductController.getProductById);
+  api.get("/seller", authMdw, ProductController.getProductBySeller);
   api.get("/top5-ratting", ProductController.getTop5ProductRatting);
   api.get("/top5-price", ProductController.getTop5ProductPrice);
   api.get("/top5-active", ProductController.getTop5ProductAcitve);
@@ -30,6 +31,10 @@ const product = () => {
   api.get(
     "/getProductByCategoryId/:category_id",
     ProductController.getProductByCategoryId
+  );
+  api.get(
+    "/getProductByBrandId/:brand_id",
+    ProductController.getProductByBrandId
   );
 
   return api;

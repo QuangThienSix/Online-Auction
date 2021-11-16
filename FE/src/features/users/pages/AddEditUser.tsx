@@ -1,8 +1,6 @@
 import { ChevronLeft } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import usersApi from 'api/usersApi';
-import { useAppSelector } from 'app/hooks';
-import { selectMessage } from 'features/socket/socketSlice';
 import { Users } from 'models';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
@@ -12,8 +10,8 @@ import UsersForm from '../components/UserForm';
 export interface IAddEdiProps {}
 
 export default function AddEditPage(props: IAddEdiProps) {
-  const testMessage = useAppSelector(selectMessage);
-  console.log('Message Server send: ', testMessage);
+  // const testMessage = useAppSelector(selectMessage);
+  // console.log('Message Server send: ', testMessage);
   const history = useHistory();
   const { user_id } = useParams<{ user_id: string }>();
   const isEdit = Boolean(user_id);

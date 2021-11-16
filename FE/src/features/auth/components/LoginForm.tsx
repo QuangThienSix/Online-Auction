@@ -34,7 +34,7 @@ export default function LoginForm({ initialValue, onSubmit }: LoginFormProps) {
     <Box maxWidth={400}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <InputField name="username" control={control} label="Username" />
-        <InputField name="password" control={control} label="Password" />
+        <InputField name="password" type="password" control={control} label="Password" />
         <Box mt={2}>
           <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
             {isSubmitting && <CircularProgress size={16} color="primary" />}&nbsp;Login

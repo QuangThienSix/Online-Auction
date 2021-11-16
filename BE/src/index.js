@@ -47,7 +47,7 @@ app.use(
     extended: false,
   })
 );
-app.use("/static", express.static(path.join(__dirname, "public")));
+app.use("/static", express.static(path.join(__dirname, "uploads")));
 
 app.use(morgan("combined"));
 
@@ -86,5 +86,7 @@ app.use(function (err, req, res, next) {
     },
   });
 });
+
+
 export default app;
 require('./ws');

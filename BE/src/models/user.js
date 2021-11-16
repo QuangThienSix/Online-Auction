@@ -1,4 +1,8 @@
-import { load, add, patch } from "../db";
+import {
+  load,
+  add,
+  patch
+} from "../db";
 
 const TBL_USER = "users";
 
@@ -44,6 +48,13 @@ export const singleByMail = async (email) => {
 export const updateIslock = async (user_id) => {
   const rows = await load(
     `update ${TBL_USER} set islock=0 , tokenMail='' where user_id='${user_id}'`
+  );
+  if (rows.length === 0) return null;
+  return rows[0];
+};
+export const updatetoken = async (tokenMail, user_id) => {
+  const rows = await load(
+    `update ${TBL_USER} set tokenMail='${tokenMail}' where user_id='${user_id}'`
   );
   if (rows.length === 0) return null;
   return rows[0];
@@ -102,7 +113,7 @@ export const updateBidderUser = async (user_id) => {
 };
 export const updatePassUser = async (user_id, password) => {
   const rows = await load(
-    `update ${TBL_USER} set password=${password} where user_id='${user_id}'`
+    `update ${TBL_USER} set password='${password}' where user_id='${user_id}'`
   );
   if (rows.length === 0) return null;
   return rows[0];
