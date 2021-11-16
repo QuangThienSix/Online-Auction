@@ -1,4 +1,7 @@
-import { load, add } from "../db";
+import {
+  load,
+  add
+} from "../db";
 
 const TBL_PRODUCT = "product";
 
@@ -119,7 +122,7 @@ ORDER BY a.price DESC LIMIT 5;
   if (rows.length === 0) return null;
   return rows;
 };
-export const auction = async (product_id ,bidder_id,price ) => {
+export const auction = async (product_id, bidder_id, price) => {
   const rows = await load(
     `CALL proc_auction(${product_id},${price},${bidder_id});
     `
@@ -172,6 +175,14 @@ export const getProductByCategoryId = async (category_id) => {
 export const getProductByBrandId = async (brand_id) => {
   const rows = await load(
     `select * from ${TBL_PRODUCT} where brand_id = ${brand_id} and is_deleted = 0 order by name `
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+export const getProductBySeller = async (seller_id) => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where seller_id = ${seller_id} and is_deleted = 0 order by name `
   );
 
   if (rows.length === 0) return null;

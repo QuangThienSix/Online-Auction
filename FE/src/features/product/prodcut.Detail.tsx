@@ -1,5 +1,8 @@
 import { FormControl, InputLabel, OutlinedInput } from '@mui/material';
+import axiosClient from 'api/axiosClient';
 import productApi from 'api/productApi';
+import { selecttorsIsLoggedIn } from 'features/auth/authSlice';
+import { selectMessage, socketActions } from 'features/socket/socketSlice';
 import { ListResponse } from 'models';
 import { Product, ProductDetaill } from 'models/product';
 import moment from 'moment';
@@ -8,11 +11,13 @@ import { Button } from 'primereact/button';
 import { Carousel } from 'primereact/carousel';
 import { Dialog } from 'primereact/dialog';
 import { Image } from 'primereact/image';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import './productDetail.css';
-import axiosClient from 'api/axiosClient';
 import { getItem } from 'utils';
+import './productDetail.css';
+import { addSingle } from 'utils';
+import { useAppDispatch } from 'app/hooks';
 
 export interface IProductDetailProps {
 }
@@ -22,13 +27,51 @@ export function ProductDetail(props: IProductDetailProps) {
     const [product, setProduct] = useState<ProductDetaill>();
     const [productList, setProductList] = useState<Product[]>();
     const [displayResponsive, setDisplayResponsive] = useState(false);
-    const searchRef = useRef<HTMLInputElement>();
-    // const dispatch = useAppDispatch();
-    const [priceAuction, setpriceAuction] = useState<any>(null);
+    const searchRef = useRef<any>();
+    const dispatch = useAppDispatch();
     const { accessToken } = getItem('users');
     axiosClient.defaults.headers.common['x-access-token'] = accessToken;
-
+    const socket = useSelector(selectMessage);
+    const IsLoggedIn = useSelector(selecttorsIsLoggedIn);
     const history = useHistory();
+
+
+    function isEmpty(obj: any) {
+        return Object.keys(obj).length === 0;
+    }
+
+
+    useEffect(() => {
+        if (!id) return
+        // IFFE
+        (async () => {
+            try {
+                if (!isEmpty(socket)) {
+                    const jsonsoket = JSON.parse(String(socket));
+                    const ListData: ListResponse<Product> = await productApi.getCategoryID(jsonsoket.category_id ? jsonsoket.category_id : '');
+                    setProductList(ListData.data);
+                    setProduct(jsonsoket);
+                    dispatch(dispatch(socketActions.SETMessage()));
+                }
+                else {
+                    const data: ListResponse<ProductDetaill> = await productApi.getDetail(id);
+                    const ListData: ListResponse<Product> = await productApi.getCategoryID(data.data[0].category_id ? data.data[0].category_id : '');
+                    setProductList(ListData.data);
+                    setProduct(data.data[0]);
+
+                }
+
+            } catch (error) {
+                console.log('Failed to fetch prodcut details', error);
+            }
+        })();
+
+
+    }, [id, socket, dispatch]);
+
+
+
+
     const handleDetail = (product: Product) => {
         history.push(`${product.id}`);
     };
@@ -36,15 +79,24 @@ export function ProductDetail(props: IProductDetailProps) {
         const data = {
             data: {
                 product_id: id,
-                price: priceAuction,
+                price: searchRef.current.value,
             },
         }
-        await productApi.auction(data);
-
+        const resulf = await productApi.auction(data);
+        if (resulf) {
+            addSingle('success', 'Đấu giá thành công');
+            setDisplayResponsive(false);
+        }
     }
 
     const onClick = () => {
-        setDisplayResponsive(true);
+        if (IsLoggedIn) {
+            setDisplayResponsive(true);
+        }
+        else {
+            history.push("/login");
+            addSingle('info', 'Đăng nhập mới đấu giá được');
+        }
     }
 
     const onHide = () => {
@@ -130,27 +182,18 @@ export function ProductDetail(props: IProductDetailProps) {
     };
 
 
-    useEffect(() => {
-        if (!id) return
 
-        // IFFE
-        (async () => {
-            try {
-                const data: ListResponse<ProductDetaill> = await productApi.getDetail(id);
-                const ListData: ListResponse<Product> = await productApi.getCategoryID(data.data[0].category_id);
-                setProductList(ListData.data);
-                setProduct(data.data[0]);
-            } catch (error) {
-                console.log('Failed to fetch prodcut details', error);
-            }
-        })();
 
-    }, [id]);
 
-    const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const data = e.target.value;
-        setpriceAuction(data);
-    };
+    // const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    //     const data = e.target.value;
+
+    //     clearTimeout();
+    //     searchRef.current = setTimeout(() => {
+    //         setpriceAuction(data);
+    //     }, 5000);
+
+    // };
 
 
     const productTemplate = (product: ProductDetaill) => {
@@ -180,8 +223,8 @@ export function ProductDetail(props: IProductDetailProps) {
                                         <OutlinedInput
                                             id="searchByName"
                                             label="Search by name"
-                                            defaultValue={priceAuction}
-                                            onChange={handleSearchChange}
+                                            defaultValue={product.current_price}
+                                            // onChange={handleSearchChange}
                                             inputRef={searchRef}
                                             type="number"
                                         />

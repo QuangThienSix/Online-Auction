@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
 
 export interface State {
-  messages: string | object;
+  messages: object;
   loading: boolean;
 }
 
@@ -17,6 +17,7 @@ const socketSlice = createSlice({
   reducers: {
     getMessage: (state, action: PayloadAction<State>) => {
       state.loading = true;
+      state.messages = action.payload;
     },
     getMessageSuccess: (state, action: PayloadAction<State>) => {
       state.loading = false;
@@ -24,6 +25,9 @@ const socketSlice = createSlice({
     },
     getMessageFailed: (state) => {
       state.loading = false;
+    },
+    SETMessage: (state) => {
+      state.messages = {};
     },
   },
 });

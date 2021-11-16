@@ -10,6 +10,7 @@ import usersReducer from 'features/users/usersSlice';
 import roleReducer from 'features/roles/roleSlice';
 import socketReducer from 'features/socket/socketSlice';
 import homeReducer from 'features/home/homeSlice';
+import productsReducer from 'features/seller/productsSlice';
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
   users: usersReducer,
   role: roleReducer,
   socket: socketReducer,
-  home: homeReducer
+  home: homeReducer,
+  product: productsReducer,
 });
 
 const SagaMiddleware = createSagaMiddleware();

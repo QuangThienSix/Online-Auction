@@ -2,7 +2,9 @@ import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
 import Sidebar from 'components/common/Sidebar';
+import { Bidding } from 'features/bidding/Bidding';
 import Dashboard from 'features/dashboard/index';
+import { Seller } from 'features/seller/indexPage';
 import Users from 'features/users';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -50,6 +52,12 @@ export function AdminLayout() {
             </Route>
             <Route path="/admin/user">
               <Users />
+            </Route>
+            <Route path="/admin/bidding">
+              <Bidding />
+            </Route>
+            <Route path="/admin/seller">
+              <Seller />
             </Route>
           </Switch>
         </Box>

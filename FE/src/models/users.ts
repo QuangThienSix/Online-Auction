@@ -12,3 +12,13 @@ export interface Users {
   islock: boolean;
   roles_id: number | string;
 }
+export interface ChangePass {
+  oldpassword?: string;
+  newpassword: string;
+}
+
+export interface ForgotPayload {
+  email: string;
+  newpassword: string;
+  tokenMail: string;
+}

@@ -25,9 +25,10 @@ export interface Product {
 }
 
 export interface ProductDetaill {
+    id?: string;
     address?: string;
-    avatar: string;
-    category_id: string;
+    avatar?: string;
+    category_id?: string;
     current_price?: string;
     description?: string;
     email?: string;

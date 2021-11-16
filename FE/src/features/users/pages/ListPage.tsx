@@ -9,6 +9,7 @@ import { ListParams, PaginationParams, Users } from 'models';
 import React, { useEffect } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { addSingle } from 'utils';
+import { SellerTable } from '../components/SellerTable';
 import UserFilters from '../components/UserFilters';
 import UserTable from '../components/UsersTable';
 import {
@@ -68,11 +69,41 @@ export default function ListPage({ roles_id }: IListPageProps) {
   const handleEditUsers = async (user: Users) => {
     history.push(`${match.url}/${user.user_id}`);
   };
+  const handleChangePassUsers = async (user: Users) => {
+    history.push(`${match.url}/changepass`);
+  };
   const handleRemoveUsers = async (user: Users) => {
     try {
       // Remove user API
       await usersApi.remove(user?.user_id || '');
       addSingle('success', 'Remove user successfully!');
+      // Trigger to re-fetch user list with current filter
+      const newFilter = { ...filter };
+      dispatch(usersAction.setFilter(newFilter));
+    } catch (error) {
+      // Toast error
+      console.log('Failed to fetch user', error);
+    }
+  };
+  const handleUpSellerUsers = async (user: Users) => {
+    console.log('Sellet');
+    try {
+      // upseller user API
+      await usersApi.upseller(user);
+      addSingle('success', 'upseller user successfully!');
+      // Trigger to re-fetch user list with current filter
+      const newFilter = { ...filter };
+      dispatch(usersAction.setFilter(newFilter));
+    } catch (error) {
+      // Toast error
+      console.log('Failed to fetch user', error);
+    }
+  };
+  const handleDownSellerUsers = async (user: Users) => {
+    try {
+      // upseller user API
+      await usersApi.upseller(user?.user_id || '');
+      addSingle('success', 'upseller user successfully!');
       // Trigger to re-fetch user list with current filter
       const newFilter = { ...filter };
       dispatch(usersAction.setFilter(newFilter));
@@ -118,8 +149,12 @@ export default function ListPage({ roles_id }: IListPageProps) {
         roleMap={roleMap}
         usersList={usersList}
         onEdit={handleEditUsers}
+        changePassword={handleChangePassUsers}
         onRemove={handleRemoveUsers}
+        onUpseller={handleUpSellerUsers}
+        onDownseller={handleDownSellerUsers}
       />
+
 
       {/* Pagination */}
 
@@ -131,6 +166,8 @@ export default function ListPage({ roles_id }: IListPageProps) {
           onChange={handlePageChange}
         />
       </Box>
+      {/* Seller Table */}
+      <SellerTable />
     </Box>
   );
 }
