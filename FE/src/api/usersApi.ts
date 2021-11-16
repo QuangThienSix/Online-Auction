@@ -1,6 +1,6 @@
 import { LoginPayload } from 'features/auth/authSlice';
 import { urlLink } from 'helper/route';
-import { ListParams, ListResponse, ListResponses, Users } from 'models';
+import { ChangePass, ForgotPayload, ListParams, ListResponse, ListResponses, Users } from 'models';
 import axiosClient from './axiosClient';
 import { getItem } from 'utils';
 
@@ -52,6 +52,18 @@ const usersApi = {
   update(data: Partial<Users>): Promise<Users> {
     const url = `/users/${data.user_id}`;
     return axiosClient.patch(url, data);
+  },
+  changePasss(data: Partial<ChangePass>): Promise<Users> {
+    const url = `/users/changepassword`;
+    return axiosClient.post(url, data);
+  },
+  forgotPass(data: Partial<ForgotPayload>): Promise<Users> {
+    const url = `/auth/forgot`;
+    return axiosClient.post(url, data);
+  },
+  sendOTP(data: Partial<any>): Promise<Users> {
+    const url = `/auth/sendotp`;
+    return axiosClient.post(url, data);
   },
 };
 

@@ -28,6 +28,7 @@ export interface IUserTableProps {
   onRemove?: (users: Users) => void;
   onUpseller?: (users: Users) => void;
   onDownseller?: (users: Users) => void;
+  changePassword?: (users: Users) => void;
 }
 
 const usetheme = createTheme();
@@ -42,7 +43,7 @@ const useStyles = makeStyles(() => ({
   table: {},
 }));
 
-export default function UserTable({ usersList, roleMap, onRemove, onUpseller,onDownseller, onEdit }: IUserTableProps) {
+export default function UserTable({ usersList, roleMap, onRemove, onUpseller,onDownseller,changePassword, onEdit }: IUserTableProps) {
   const classes = useStyles();
   const [selectedUsers, setSelectedUsers] = useState<Users>();
   const [open, setOpen] = useState(false);
@@ -127,6 +128,14 @@ export default function UserTable({ usersList, roleMap, onRemove, onUpseller,onD
                     onClick={() => onEdit?.(user)}
                   >
                     Edit
+                  </Button>
+                  <Button
+                    size="small"
+                    className={classes.edit}
+                    color="primary"
+                    onClick={() => changePassword?.(user)}
+                  >
+                    Change Password
                   </Button>
 
                   <Button size="small" color="secondary" onClick={() => handleRemoveClick(user)}>

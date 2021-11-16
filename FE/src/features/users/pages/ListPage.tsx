@@ -69,6 +69,9 @@ export default function ListPage({ roles_id }: IListPageProps) {
   const handleEditUsers = async (user: Users) => {
     history.push(`${match.url}/${user.user_id}`);
   };
+  const handleChangePassUsers = async (user: Users) => {
+    history.push(`${match.url}/changepass`);
+  };
   const handleRemoveUsers = async (user: Users) => {
     try {
       // Remove user API
@@ -146,12 +149,12 @@ export default function ListPage({ roles_id }: IListPageProps) {
         roleMap={roleMap}
         usersList={usersList}
         onEdit={handleEditUsers}
+        changePassword={handleChangePassUsers}
         onRemove={handleRemoveUsers}
         onUpseller={handleUpSellerUsers}
         onDownseller={handleDownSellerUsers}
       />
-      {/* Seller Table */}
-      <SellerTable />
+
 
       {/* Pagination */}
 
@@ -163,6 +166,8 @@ export default function ListPage({ roles_id }: IListPageProps) {
           onChange={handlePageChange}
         />
       </Box>
+      {/* Seller Table */}
+      <SellerTable />
     </Box>
   );
 }

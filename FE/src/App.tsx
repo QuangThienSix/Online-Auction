@@ -23,6 +23,7 @@ import Category from 'features/category/categoryPage';
 import Brand from 'features/brand/brandPage';
 import { clear } from 'utils';
 import { authActions } from 'features/auth/authSlice';
+import ForgotPage from 'features/auth/pages/FotgotPage';
 
 const URL = 'ws://localhost:45678';
 
@@ -82,6 +83,7 @@ function App() {
             <Route path="/product/:id" component={ProductDetail} exact />
             <Route path="/login" component={LoginPage} />
             <Route path="/regis" component={Regis} />
+            <Route path="/forgot" component={ForgotPage} />
             <Route path="/verify/:email" component={VerifyPage} />
             <Route path="/verify" component={VerifyPage} />
             <Route path="/category/:id" component={Category} />
