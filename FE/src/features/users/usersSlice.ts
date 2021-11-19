@@ -1,22 +1,39 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
-import { ListParams, ListResponse, PaginationParams, Users } from 'models';
+import { Category, ListParams, ListResponse, PaginationParams, Users } from 'models';
 
 export interface UsersState {
+  loadingDas: boolean;
   loading: boolean;
+  loadingCate: boolean;
   list: Users[];
+  listcategory: Category[];
   filter: ListParams;
   pagination: PaginationParams;
+  filterCate: ListParams;
+  paginationCate: PaginationParams;
 }
 
 const initialState: UsersState = {
+  loadingDas: false,
   loading: false,
+  loadingCate: false,
   list: [],
+  listcategory: [],
   filter: {
     _page: 1,
     _limit: 1,
   },
   pagination: {
+    _page: 1,
+    _limit: 1,
+    _totalRows: 1,
+  },
+  filterCate: {
+    _page: 1,
+    _limit: 1,
+  },
+  paginationCate: {
     _page: 1,
     _limit: 1,
     _totalRows: 1,
@@ -41,17 +58,40 @@ const userSlice = createSlice({
     setFilter(state, action: PayloadAction<ListParams>) {
       state.filter = action.payload;
     },
-    setFilterWithDebounce(state, action: PayloadAction<ListParams>) {},
+    fetchCategoryList(state, action: PayloadAction<ListParams>) {
+      state.loadingCate = true;
+    },
+    fetchCategoryListSuccess(state, action: PayloadAction<ListResponse<Category>>) {
+      state.listcategory = action.payload.data;
+      state.paginationCate = action.payload.pagination;
+      state.loadingCate = false;
+    },
+    fetchCategoryListFailed(state) {
+      state.loadingCate = false;
+    },
+    setFilterCate(state, action: PayloadAction<ListParams>) {
+      state.filterCate = action.payload;
+    },
+    setFilterWithDebounce(state, action: PayloadAction<ListParams>) { },
+    fetchDataSuccess(state) {
+      state.loadingDas = false;
+    },
+    fetchDataFailed(state) {
+      state.loadingDas = false;
+    },
   },
 });
 
 // Action
 
-export const  usersAction = userSlice.actions;
-export const selectUsersList = (state: RootState) => state.users.list;
+export const usersAction = userSlice.actions;
 export const selectUsersLoading = (state: RootState) => state.users.loading;
+export const selectUsersList = (state: RootState) => state.users.list;
 export const selectUsersFilter = (state: RootState) => state.users.filter;
 export const selectUsersPagination = (state: RootState) => state.users.pagination;
+export const selectCategoryList = (state: RootState) => state.users.listcategory;
+export const selectCategoryFilter = (state: RootState) => state.users.filterCate;
+export const selectCategoryPagination = (state: RootState) => state.users.paginationCate;
 
 
 // Selecttors
