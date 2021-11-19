@@ -10,6 +10,7 @@ import AddEditPage from './pages/AddEditUser';
 import ChangePassWordPage from './pages/ChangePass';
 import AddEditCategoryPage from './pages/AddEditCategory';
 import AddEditBrand from './pages/AddEditBrand';
+import AddEditProduct from './pages/AddEditProduct';
 
 export default function Users() {
   const { accessToken } = getItem('users');
@@ -36,6 +37,13 @@ export default function Users() {
       </Route>
       <Route path={`${match.path}/category/:id`}>
         <AddEditCategoryPage />
+      </Route>
+
+      <Route path={`${match.path}/product/:id`}>
+        <AddEditProduct />
+      </Route>
+      <Route path={`${match.path}/product`}>
+        <AddEditProduct />
       </Route>
       <Route path={`${match.path}/category`}>
         <AddEditCategoryPage />

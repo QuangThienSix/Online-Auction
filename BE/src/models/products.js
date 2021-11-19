@@ -27,13 +27,20 @@ export const singleByProductId = async (id) => {
   if (rows.length === 0) return null;
   return rows[0];
 };
+export const getProduct = async () => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT}`
+  );
+  if (rows.length === 0) return null;
+  return rows;
+};
 export const addProduct = async (entity) => {
   return await add(TBL_PRODUCT, entity);
 };
 
-export const deleteProduct = async (data) => {
+export const deleteProduct = async (id) => {
   const rows = await load(
-    `update ${TBL_PRODUCT} set is_deleted='1' where id='${data.id}'`
+    `update ${TBL_PRODUCT} set is_deleted='1' where id='${id}'`
   );
   if (rows.length === 0) return null;
   return rows[0];
@@ -44,23 +51,19 @@ export const updateProduct = async (entity) => {
     `
 UPDATE product 
 set name = '${entity.name}',
-updated_at = ${entity.update_at},
-ratting = ${entity.ratting},
-time_end = ${entity.time_end},
-time_start = ${entity.time_start},
-price = ${entity.price},
-category_id = ${entity.category_id},
-category_name = '${entity.category_name}',
-timestamp = ${entity.timestamp},
-avatar = '${entity.avatar}',
+time_end = '${entity.time_end}',
+time_start = '${entity.time_start}',
 images = ${entity.images},
-current_price = ${entity.current_price}
-max_price = ${entity.max_price},
+current_price = ${entity.current_price},
 count_quantity_bidder = ${entity.count_quantity_bidder},
 seller_id = ${entity.seller_id},
 step = ${entity.step},
+max_price = ${entity.max_price},
+timestamp = '${entity.timestamp}',
 is_automatic = ${entity.is_automatic},
-is_done = ${entity.is_done}
+is_done = ${entity.is_done},
+avatar = '${entity.avatar}'
+
 WHERE id = ${entity.id}
     `
   );
@@ -187,4 +190,12 @@ export const getProductBySeller = async (seller_id) => {
 
   if (rows.length === 0) return null;
   return rows;
+};
+
+export const getPrDetail = async (id) => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where id = ${id}`
+  );
+  if (rows.length === 0) return null;
+  return rows[0];
 };
