@@ -1,18 +1,21 @@
 import { Box, Button, Pagination, Typography } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
+import categoryApi from 'api/category';
 import usersApi from 'api/usersApi';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { RoleAdmin } from 'constants/user_roles';
 import { selectRoleList, selectRoleMap } from 'features/roles/roleSlice';
-import { ListParams, PaginationParams, Users } from 'models';
+import { Brands, Category, ListParams, PaginationParams, Users } from 'models';
 import React, { useEffect } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { addSingle } from 'utils';
-import { SellerTable } from '../components/SellerTable';
+import { CategoryTable } from '../components/CategoryTable';
 import UserFilters from '../components/UserFilters';
 import UserTable from '../components/UsersTable';
 import {
+  selectCategoryFilter,
+  selectCategoryList,
   selectUsersFilter,
   selectUsersList,
   selectUsersPagination,
@@ -42,14 +45,17 @@ const useStyles = makeStyles(() => ({
 
 export default function ListPage({ roles_id }: IListPageProps) {
   const usersList = useAppSelector(selectUsersList);
+  const categoryList = useAppSelector(selectCategoryList);
   const dispatch = useAppDispatch();
   const filter = useAppSelector(selectUsersFilter);
+  const filterCate = useAppSelector(selectCategoryFilter);
   const roleMap = useAppSelector(selectRoleMap);
   const history = useHistory();
   const match = useRouteMatch();
   const roleList = useAppSelector(selectRoleList);
 
   const pagination = useAppSelector<PaginationParams>(selectUsersPagination);
+
 
   const handlePageChange = (e: any, page: number) => {
     dispatch(
@@ -64,10 +70,20 @@ export default function ListPage({ roles_id }: IListPageProps) {
 
   useEffect(() => {
     dispatch(usersAction.fetchUsersList(filter));
-  }, [dispatch, filter]);
+    dispatch(usersAction.fetchCategoryList(filterCate));
+  }, [dispatch, filter, filterCate]);
 
   const handleEditUsers = async (user: Users) => {
     history.push(`${match.url}/${user.user_id}`);
+  };
+  const handleEditCategory = async (category: Category) => {
+    history.push(`${match.url}/category/${category.id}`);
+  };
+  const handleAddBrandInCategory = async (category: Category) => {
+    history.push(`${match.url}/brand`);
+  };
+  const handleEditBrand = async (brand: Brands) => {
+    history.push(`${match.url}/brand/${brand.id}`);
   };
   const handleChangePassUsers = async (user: Users) => {
     history.push(`${match.url}/changepass`);
@@ -83,6 +99,32 @@ export default function ListPage({ roles_id }: IListPageProps) {
     } catch (error) {
       // Toast error
       console.log('Failed to fetch user', error);
+    }
+  };
+  const handleRemoveCategory = async (category: Category) => {
+    try {
+      // Remove category API
+      await categoryApi.remove(category?.id || '');
+      addSingle('success', 'Remove category successfully!');
+      // Trigger to re-fetch category list with current filter
+      const newFilter = { ...filter };
+      dispatch(usersAction.setFilter(newFilter));
+    } catch (error) {
+      // Toast error
+      console.log('Failed to Remove category', error);
+    }
+  };
+  const handleRemoveBrand = async (category: Brands) => {
+    try {
+      // Remove Brands API
+      await categoryApi.removeBrands(category?.id || '');
+      addSingle('success', 'Remove category successfully!');
+      // Trigger to re-fetch Brands list with current filter
+      const newFilter = { ...filter };
+      dispatch(usersAction.setFilter(newFilter));
+    } catch (error) {
+      // Toast error
+      console.log('Failed to Remove Brands', error);
     }
   };
   const handleUpSellerUsers = async (user: Users) => {
@@ -166,8 +208,26 @@ export default function ListPage({ roles_id }: IListPageProps) {
           onChange={handlePageChange}
         />
       </Box>
-      {/* Seller Table */}
-      <SellerTable />
+      {/* Category Table */}
+      {String(roles_id) === RoleAdmin && (
+        <Box className={classes.titleContainer}>
+          <Typography variant="h4">Category</Typography>
+
+          <Link to={`${match.url}/category`} style={{ textDecoration: 'none' }}>
+            <Button variant="contained" color="primary">
+              Add new category
+            </Button>
+          </Link>
+        </Box>
+      )}
+      <CategoryTable
+        categoryList={categoryList}
+        onRemove={handleRemoveCategory}
+        onRemoveBrand={handleRemoveBrand}
+        onEdit={handleEditCategory}
+        onAddBrand={handleAddBrandInCategory}
+        onEditBrand={handleEditBrand}
+      />
     </Box>
   );
 }

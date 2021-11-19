@@ -13,9 +13,11 @@ import schema_verify from "../schemas/verify.json";
 const category = () => {
   let api = Router();
   api.post("/", categoryController.creatCategory);
-  api.put("/", categoryController.updateCategory);
-  api.delete("/", categoryController.deleteCategory);
+  api.patch("/:id", categoryController.updateCategory);
+  api.delete("/:id", categoryController.deleteCategory);
   api.get("/", categoryController.getCateroy);
+  api.get("/nobrand", categoryController.getCateroyNoBrand);
+  api.get("/:id", categoryController.getCateroyDetail);
   api.get(
     "/getListCategoryAndBrand",
     categoryController.getListCategoryAndBrand

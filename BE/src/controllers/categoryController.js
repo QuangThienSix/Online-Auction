@@ -6,10 +6,12 @@ import {
 } from "../lib/utils";
 import {
   creatCategory,
-  updateCategory,
-  deleteCategory,
+  updateCateroy,
+  deleteCateroy,
   getCateroy,
   getListCategoryAndBrand,
+  singleByCategoryName,
+  getCategoryNoBrand
 } from "../models/category";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -31,15 +33,17 @@ class CategoryController extends BaseController {
     this.updateCategory = this.updateCategory.bind(this);
     this.deleteCategory = this.deleteCategory.bind(this);
     this.getCateroy = this.getCateroy.bind(this);
+    this.getCateroyDetail = this.getCateroyDetail.bind(this);
     this.getListCategoryAndBrand = this.getListCategoryAndBrand.bind(this);
+    this.getCateroyNoBrand = this.getCateroyNoBrand.bind(this);
   }
 
   async creatCategory(req, res) {
     logger.info("creatCategory");
 
-    const {
-      data
-    } = req.body;
+    const
+      data = req.body;
+   
     const token = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(token);
 
@@ -53,7 +57,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        data.created_at = getNow();
+        data.cateted_at = getNow();
         data.updated_at = getNow();
         let result = await creatCategory(data);
         return this.responseSuccess(res, result);
@@ -74,9 +78,9 @@ class CategoryController extends BaseController {
   }
   async updateCategory(req, res) {
     logger.info("updateCategory");
-    const {
-      data
-    } = req.body;
+    const
+      data = req.body;
+    console.log(req.body);
     const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
@@ -90,8 +94,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        data.updated_at = getNow();
-        let result = await updateCategory(data);
+        let result = await updateCateroy(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
         return this.responseError(res, {
@@ -111,11 +114,13 @@ class CategoryController extends BaseController {
   async deleteCategory(req, res) {
     logger.info("deleteCategory");
 
-    const token = req.headers["x-access-token"];
+    const accessToken = req.headers["x-access-token"];
+
     const {
-      data
-    } = req.body;
+      id
+    } = req.params;
     const parseToken = deCodeTokenForUser(accessToken);
+
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
       if (parseToken.payload.roles_id != 1)
@@ -127,8 +132,7 @@ class CategoryController extends BaseController {
           405
         );
       try {
-        data.updated_at = getNow();
-        let result = await deleteCategory(data);
+        let result = await deleteCateroy(id);
         return this.responseSuccess(res, result);
       } catch (exception) {
         return this.responseError(res, {
@@ -149,10 +153,45 @@ class CategoryController extends BaseController {
     logger.info("getCateroy");
     try {
       let result = await getCateroy();
+
       result.map((item) => {
         const brands = convertStringArraytoArray(item.brands);
-        item.brands = brands;
+        if (brands) {
+          item.brands = brands;
+        } else {
+          item.brands = [];
+        }
+
       });
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res, {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getCateroyDetail(req, res) {
+    logger.info("getCateroyDetail");
+    const id = req.params.id;
+    try {
+      let result = await singleByCategoryName(id);
+      return res.json(result);
+    } catch (error) {
+      return this.responseError(
+        res, {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getCateroyNoBrand(req, res) {
+    logger.info("getCateroyNoBrand");
+    try {
+      let result = await getCategoryNoBrand();
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
