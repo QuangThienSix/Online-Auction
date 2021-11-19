@@ -2,14 +2,13 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable array-callback-return */
 import { Button, Typography } from '@mui/material';
-import categoryApi from 'api/category';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { authActions, selecttorsIsLoggedIn } from 'features/auth/authSlice';
-import { ListResponse } from 'models';
+import { selectCategoryFilter, selectCategoryList, usersAction } from 'features/users/usersSlice';
 import { Brands, Category } from 'models/category';
 import { InputText } from 'primereact/inputtext';
 import { Menubar } from 'primereact/menubar';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import './header.css';
 
@@ -17,9 +16,10 @@ export function HeaderHome() {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const isLoggedIn = useAppSelector(selecttorsIsLoggedIn);
-
-  const [category, SetCategory] = useState<ListResponse<Category>>();
-
+  const filterCate = useAppSelector(selectCategoryFilter);
+  // const [category, SetCategory] = useState<ListResponse<Category>>();
+  const categoryList = useAppSelector(selectCategoryList);
+  // console.log(categoryList);
   const handleLogoutClick = () => {
     dispatch(authActions.logout());
   };
@@ -30,18 +30,22 @@ export function HeaderHome() {
   const handlePathLogin = () => {
     history.push('/login');
   };
+  const handlePathAdmin = () => {
+    history.push('/admin');
+  };
 
   useEffect(() => {
-    async function loadCategory() {
-      const res: ListResponse<Category> = await categoryApi.getAll();
-      SetCategory(res);
-    }
-    loadCategory();
-  }, []);
+    // async function loadCategory() {
+    //   const res: ListResponse<Category> = await categoryApi.getAll();
+    //   SetCategory(res);
+    // }
+    // loadCategory();
+    dispatch(usersAction.fetchCategoryList(filterCate));
+  }, [dispatch, filterCate]);
   const Tiem: { id: string | undefined; label: string | undefined; icon: string; items: {}[] }[] =
     [];
   // eslint-disable-next-line array-callback-return
-  category?.data.map((category: Category) => {
+  categoryList.filter((item) =>  Number(item.is_deleted) === 0).map((category: Category) => {
     const brands = category.brands;
     const newLocal: {}[] = [];
     const Item = {
@@ -56,17 +60,19 @@ export function HeaderHome() {
     };
     // eslint-disable-next-line array-callback-return
     brands.map((brand: Brands) => {
-      let itemChil = {
-        id: '',
-        label: '',
-        icon: '',
-        command: () => {
-          history.push(`/brand/${brand.id}`);
-        },
-      };
-      itemChil.id = brand.id ? brand?.id : '';
-      itemChil.label = brand.name ? brand.name : '';
-      Item.items.push(itemChil);
+      if (Number(brand.is_deleted) === 0) {
+        let itemChil = {
+          id: '',
+          label: '',
+          icon: '',
+          command: () => {
+            history.push(`/brand/${brand.id}`);
+          },
+        };
+        itemChil.id = brand.id ? brand?.id : '';
+        itemChil.label = brand.name ? brand.name : '';
+        Item.items.push(itemChil);
+      }
     });
 
     Tiem.push(Item);
@@ -91,19 +97,26 @@ export function HeaderHome() {
               <Button color="inherit">Logo</Button>
             </Typography>
           </div>
-          <div className="col-10 menu">
+          <div className="col-8 menu">
             <Menubar model={items} end={end} />
           </div>
-          <div className="col-1 users">
+          <div className="col-3 users" style={{ textAlign: 'right' }}>
             {/* {console.log(isLoggedIn)} */}
+
             {isLoggedIn ? (
-              <Button color="inherit" onClick={handleLogoutClick}>
-                Logout
-              </Button>
+              <>
+                <Button color="primary" style={{ marginRight: '5px' }} onClick={handlePathAdmin}>
+                  Manager
+                </Button>
+                <Button color="inherit" onClick={handleLogoutClick}>
+                  Logout
+                </Button>
+              </>
             ) : (
               <Button color="inherit" onClick={handlePathLogin}>
                 Login
               </Button>
+
             )}
           </div>
         </div>

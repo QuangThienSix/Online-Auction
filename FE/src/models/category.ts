@@ -3,11 +3,14 @@ export interface Category {
     name?: string;
     cateted_at?: string;
     updated_at?: string;
+    is_deleted?: string;
     brands: Brands[];
   }
   export interface Brands {
     id?: string;
     name?: string;
+    is_deleted?: string;
+    category_id?: string;
   }
   
   export interface MenuItem {

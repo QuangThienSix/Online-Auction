@@ -15,6 +15,8 @@ const brand = () => {
   api.post("/", brandController.creatBrand);
   api.put("/",  brandController.updateBrand);
   api.get("/:id", brandController.getBrand);
+  api.patch("/:id", brandController.updateBrand);
+  api.delete("/:id", brandController.deleteBrand);
   return api;
 };
 
