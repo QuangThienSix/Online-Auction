@@ -31,7 +31,7 @@ class TransformController extends BaseController {
     // pinning context, when used in routers
     this.creatTransform = this.creatTransform.bind(this);
     this.getTransform = this.getTransform.bind(this);
-    this.actionTransform = this.actionTransform(this);
+    this.actionTransform = this.actionTransform.bind(this);
   }
 
   async creatTransform(req, res) {
