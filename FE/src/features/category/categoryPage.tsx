@@ -60,7 +60,7 @@ export default function Category(props: ICategoryProps) {
                             <i className="pi pi-tag product-category-icon"></i>
                             <span className="product-category">{data.category_name}</span>
                         </div>
-                        <span className={`product-badge status-${data.brand_name.toLowerCase()}`}>{data.brand_name}</span>
+                        <span className={`product-badge`}>{data.brand_name}</span>
                     </div>
                     <div className="product-grid-item-content">
                         <img src={`https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png`} alt={data.name} />
