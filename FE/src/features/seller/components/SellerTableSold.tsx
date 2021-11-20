@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
     table: {},
 }));
 
-export function SellerTableSelling({ productList, onEdit, onRemove }: IProductProps) {
+export function SellerTableSold({ productList, onEdit, onRemove }: IProductProps) {
     const classes = useStyles();
     const [selectedProduct, setSelectedProduct] = useState<Product>();
     const [open, setOpen] = useState(false);
@@ -60,7 +60,7 @@ export function SellerTableSelling({ productList, onEdit, onRemove }: IProductPr
     };
 
     return (
-        <><h3>Product Selling</h3>
+        <><h3>TableSold</h3>
             <TableContainer component={Paper}>
                 <Table className={classes.table} size="small" aria-label="simple table">
                     <TableHead>

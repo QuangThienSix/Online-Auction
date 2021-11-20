@@ -9,7 +9,8 @@ import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { addSingle } from 'utils';
 import { SellerTable } from '../components/SellerTable';
 import { SellerTableSelling } from '../components/SellerTableSelling';
-import { productsAction, selectProductSelling, selectProductsFilter, selectProductsList, selectProductsPagination } from '../productsSlice';
+import { SellerTableSold } from '../components/SellerTableSold';
+import { productsAction, selectProductSelling, selectProductsFilter, selectProductsList, selectProductSold, selectProductsPagination } from '../productsSlice';
 
 const usetheme = createTheme();
 const useStyles = makeStyles(() => ({
@@ -36,6 +37,7 @@ export function ListPage() {
     const dispatch = useAppDispatch();
     const productsList = useAppSelector(selectProductsList);
     const productSelling = useAppSelector(selectProductSelling);
+    const productProductSold = useAppSelector(selectProductSold);
     const filter = useAppSelector(selectProductsFilter);
     const paginationProduct = useAppSelector<PaginationParams>(selectProductsPagination);
     const handleEditProduct = async (user: Product) => {
@@ -99,7 +101,11 @@ export function ListPage() {
             </Box>
 
             <SellerTableSelling
-                productList={productSelling}
+                productList={productSelling ? productSelling : []}
+            />
+            <div className="mt-3 mb-3"></div>
+            <SellerTableSold
+                productList={productProductSold ? productProductSold : []}
             />
         </Box>
     );
