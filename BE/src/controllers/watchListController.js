@@ -64,46 +64,30 @@ class WatchListController extends BaseController {
   }
 
   async getWatchListProduct(req, res) {
-    logger.info("getWatchListProduct");
-    const { bidder_id } = req.params;
-    try {
-      logger.info("creatWatchList");
-      const { accessToken, data } = req.body;
-
-      const parseToken = deCodeTokenForUser(accessToken);
-      if (parseToken) {
-        //this.responseSuccess(res, parseToken);
-        if (
-          parseToken.payload.roles_id != 1 &&
-          parseToken.payload.roles_id != 3
-        )
-          return this.responseError(
-            res,
-            {
-              authenticated: false,
-              message: "Method Not Allowed",
-            },
-            405
-          );
-        let result = await this.getuser_WatchList(bidder_id);
+    const token = req.headers["x-access-token"];
+    const parseToken = deCodeTokenForUser(token);
+    if (parseToken) {
+      try {
+       var bidder_id = parseToken.payload.user_id;
+        const result = await getuser_WatchList(bidder_id);
         return this.responseSuccess(res, result);
-      } else {
+      } catch (exception) {
         return this.responseError(
           res,
           {
-            authenticated: false,
-            message: "token incorrect",
+            message: exception.message,
           },
-          400
+          500
         );
       }
-    } catch (error) {
+    } else {
       return this.responseError(
         res,
         {
-          message: error,
+          authenticated: false,
+          message: "token incorrect",
         },
-        500
+        400
       );
     }
   }

@@ -19,7 +19,7 @@ const product = () => {
   api.get("/top5-price", ProductController.getTop5ProductPrice);
   api.get("/top5-active", ProductController.getTop5ProductAcitve);
   api.get("/top5-recomment", ProductController.getTop5ProductRecoment);
-  api.get("/:product_id/user-modified ", ProductController.getUserLastModifile);
+  api.get("/:product_id/user-modified", ProductController.getUserLastModifile);
   api.get("/search", ProductController.Query);
   api.get("/getTop5CountBidder", ProductController.top5CountBidder);
   api.get(
