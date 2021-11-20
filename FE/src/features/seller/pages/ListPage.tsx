@@ -8,7 +8,8 @@ import React, { useEffect } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { addSingle } from 'utils';
 import { SellerTable } from '../components/SellerTable';
-import { productsAction, selectProductsFilter, selectProductsList, selectProductsPagination } from '../productsSlice';
+import { SellerTableSelling } from '../components/SellerTableSelling';
+import { productsAction, selectProductSelling, selectProductsFilter, selectProductsList, selectProductsPagination } from '../productsSlice';
 
 const usetheme = createTheme();
 const useStyles = makeStyles(() => ({
@@ -34,6 +35,7 @@ export function ListPage() {
     const match = useRouteMatch();
     const dispatch = useAppDispatch();
     const productsList = useAppSelector(selectProductsList);
+    const productSelling = useAppSelector(selectProductSelling);
     const filter = useAppSelector(selectProductsFilter);
     const paginationProduct = useAppSelector<PaginationParams>(selectProductsPagination);
     const handleEditProduct = async (user: Product) => {
@@ -49,6 +51,11 @@ export function ListPage() {
     };
     useEffect(() => {
         dispatch(productsAction.fetchProductsList(filter));
+        dispatch(productsAction.fetchlistProductSelling(filter));
+        dispatch(productsAction.fetchProductSoldSearch(filter));
+
+
+
     }, [dispatch, filter]);
 
     const handleRemoveProduct = async (product: Product) => {
@@ -90,6 +97,10 @@ export function ListPage() {
                     onChange={handlePageChangeProduct}
                 />
             </Box>
+
+            <SellerTableSelling
+                productList={productSelling}
+            />
         </Box>
     );
 }

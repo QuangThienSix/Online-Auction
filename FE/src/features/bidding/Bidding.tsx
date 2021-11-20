@@ -8,6 +8,7 @@ import { ListResponse, Watch } from 'models';
 import { bidderProduct } from 'models/bidderProduct';
 import React, { useEffect, useState } from 'react';
 import { addSingle, getItem } from 'utils';
+import { BidderTableGetWon } from './components/BidderTableGetWon';
 import { BidderTableProduct } from './components/BidderTableProduct';
 import { BidderTableWatch } from './components/BidderTableWatch';
 export interface IBiddingProps {
@@ -21,6 +22,7 @@ export function Bidding(props: IBiddingProps) {
     axiosClient.defaults.headers.common['x-access-token'] = accessToken;
     const [watchList, setWtchList] = useState<Watch[]>([]);
     const [bidderProduct, setBidderProduct] = useState<bidderProduct[]>([]);
+    const [dataGetWonList, setDataGetWonList] = useState<bidderProduct[]>([]);
 
 
     const handleUpSeller = async () => {
@@ -43,8 +45,10 @@ export function Bidding(props: IBiddingProps) {
         (async () => {
             const data: ListResponse<bidderProduct> = await bidderApi.getAll();
             const dataWatch: ListResponse<Watch> = await watchApi.getAll();
+            const dataGetWonList: ListResponse<any> = await bidderApi.getWonList();
             setWtchList(dataWatch.data ? dataWatch.data : []);
             setBidderProduct(data.data ? data.data : []);
+            setDataGetWonList(dataGetWonList.data ? dataGetWonList.data : []);
         })();
 
     }, [decoded.user_id]);
@@ -60,6 +64,10 @@ export function Bidding(props: IBiddingProps) {
             <div className="mt-3 mt-3"></div>
             <BidderTableProduct
                 bidderProduct={bidderProduct}
+            />
+            <div className="mt-3 mt-3"></div>
+            <BidderTableGetWon
+                bidderProduct={dataGetWonList}
             />
         </div >
     );

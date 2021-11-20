@@ -38,7 +38,7 @@ const productApi = {
     },
     getAllBySeller(params: ListParams): Promise<ListResponse<Product>> {
         const url = '/product/seller';
-        return axiosClient.get(url);
+        return axiosClient.get(url, { params });
     },
     getAllPrice(params: ListParams): Promise<ListResponse<Product>> {
         const url = '/product/getTop5AlmostExpiredWithPrice';
@@ -70,6 +70,14 @@ const productApi = {
     },
     getSearch(query: ListParams): Promise<ListResponse<Product>> {
         const url = `/product/search?q=${query}&page=1&size=10`;
+        return axiosClient.get(url);
+    },
+    getProductSelling(query: ListParams): Promise<ListResponse<Product>> {
+        const url = `/seller/getProductSelling`;
+        return axiosClient.get(url);
+    },
+    ProductSold(query: ListParams): Promise<ListResponse<Product>> {
+        const url = `/seller/getProductSold`;
         return axiosClient.get(url);
     },
     auction(data: Partial<any>): Promise<any> {

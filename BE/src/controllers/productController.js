@@ -278,9 +278,38 @@ class ProductController extends BaseController {
       roles_id,
       user_id
     } = req.accessTokenPayload;
+    let {
+      _page,
+      _limit,
+    } = req.query;
+
     try {
       let result = await getProductBySeller(user_id);
-      return this.responseSuccess(res, result);
+
+      if (!result) {
+        return responsePaginationSuccess(
+          res,
+          [],
+          _page,
+          _limit,
+          "List products successfully"
+        );
+      }
+      _page = Number(_page);
+      _limit = Number(_limit);
+
+      const pageCount = Math.ceil(result.length / _limit);
+      if (_page > pageCount) {
+        _page = pageCount;
+      }
+
+      return responsePaginationSuccess(
+        res,
+        result,
+        _page,
+        _limit,
+        "List products successfully"
+      );
     } catch (error) {
       return this.responseError(
         res, {

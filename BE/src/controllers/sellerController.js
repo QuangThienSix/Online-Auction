@@ -31,7 +31,7 @@ class sellerController extends BaseController {
         return this.responseError(
           res,
           {
-            message: exception,
+            message: err,
           },
           500
         );
@@ -55,7 +55,7 @@ class sellerController extends BaseController {
         return this.responseError(
           res,
           {
-            message: exception,
+            message: err,
           },
           500
         );

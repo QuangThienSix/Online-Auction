@@ -7,6 +7,10 @@ const bidderApi = {
     const url = '/bidder/getProductBidding';
     return axiosClient.get(url);
   },
+  getWonList(): Promise<ListResponse<bidderProduct>> {
+    const url = '/bidder/getWonList';
+    return axiosClient.get(url);
+  },
 
 };
 

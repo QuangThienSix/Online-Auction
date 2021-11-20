@@ -37,6 +37,7 @@ export default () => {
   api.use("/transform", transform);
   api.use("/upload", upload);
   api.use("/bidder", bidder);
+  api.use("/seller", seller);
   // bul
 
   api.use("/users", authMdw, users);
