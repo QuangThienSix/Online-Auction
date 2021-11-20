@@ -22,6 +22,15 @@ function* fetchStudentAllList(action: PayloadAction<ListParams>) {
     yield put(productsAction.fetchProductsAllListFailed());
   }
 }
+function* fetchProductSearch(action: PayloadAction<ListParams>) {
+  try {
+    const response: ListResponse<Product> = yield call(productApi.getSearch, action.payload);
+    yield put(productsAction.fetchProductsListSearchSuccess(response));
+  } catch (error) {
+    console.log('Failed to fetch student list', error);
+    yield put(productsAction.fetchProductsListSearchFailed());
+  }
+}
 
 
 function* handleSearchDebounce(action: PayloadAction<ListParams>) {
@@ -31,6 +40,7 @@ function* handleSearchDebounce(action: PayloadAction<ListParams>) {
 export default function* productsSaga() {
   yield takeLatest(productsAction.fetchProductsList, fetchStudentList);
   yield takeLatest(productsAction.fetchProductsAllList, fetchStudentAllList);
+  yield takeLatest(productsAction.fetchProductsListSearch, fetchProductSearch);
 
   yield debounce(500, productsAction.setFilterWithDebounce.type, handleSearchDebounce);
 }

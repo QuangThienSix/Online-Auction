@@ -23,3 +23,13 @@ export interface bidderProduct {
     updated_at: string;
     is_done: string;
 }
+
+export interface modified {
+    username: string;
+    fullname: number;
+    address: string;
+    email: string;
+    ratting: string;
+    ratting_negative: string;
+    id: string;
+}

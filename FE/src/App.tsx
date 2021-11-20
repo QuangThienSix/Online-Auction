@@ -24,6 +24,7 @@ import Brand from 'features/brand/brandPage';
 import { clear } from 'utils';
 import { authActions } from 'features/auth/authSlice';
 import ForgotPage from 'features/auth/pages/FotgotPage';
+import Searchpage from 'features/search/SearchPage';
 
 const URL = 'ws://localhost:45678';
 
@@ -80,6 +81,7 @@ function App() {
         <Box className={classes.main}>
           <Switch>
             <Route path="/" component={HomePage} exact />
+            <Route path="/search" component={Searchpage} exact />
             <Route path="/product/:id" component={ProductDetail} exact />
             <Route path="/login" component={LoginPage} />
             <Route path="/regis" component={Regis} />

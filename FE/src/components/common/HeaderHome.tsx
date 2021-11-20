@@ -4,17 +4,18 @@
 import { Button, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { authActions, selecttorsIsLoggedIn } from 'features/auth/authSlice';
+import { productsAction } from 'features/seller/productsSlice';
 import { selectCategoryFilter, selectCategoryList, usersAction } from 'features/users/usersSlice';
 import debounce from "lodash.debounce";
 import { Brands, Category } from 'models/category';
 import { InputText } from 'primereact/inputtext';
 import { Menubar } from 'primereact/menubar';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import './header.css';
 
+
 export function HeaderHome() {
-  const [search, setSearch] = useState('');
   const dispatch = useAppDispatch();
   const history = useHistory();
   const isLoggedIn = useAppSelector(selecttorsIsLoggedIn);
@@ -81,10 +82,19 @@ export function HeaderHome() {
   });
 
   const items = Tiem;
-  const updateQuery = (e: any) => setSearch(e?.target?.value);
 
-  const handleOnChange = debounce(updateQuery, 200);
-  console.log(search);
+  const updateQuery = async (e: any) => {
+    const value = e?.target?.value;
+    history.push('/search');
+    dispatch(productsAction.fetchProductsListSearch(value));
+
+  };
+
+  const handleOnChange = debounce(updateQuery, 1000);
+
+
+
+
 
   const end = <InputText placeholder="Search" type="text" onChange={handleOnChange} />;
 

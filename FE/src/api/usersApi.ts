@@ -65,6 +65,11 @@ const usersApi = {
     const url = `/auth/sendotp`;
     return axiosClient.post(url, data);
   },
+  getPoint(user_id: string): Promise<any> {
+    const url = `/users/point/${user_id}`;
+    return axiosClient.get(url);
+  },
+ 
 };
 
 export default usersApi;

@@ -2,8 +2,9 @@ import { Button } from '@mui/material';
 import axiosClient from 'api/axiosClient';
 import bidderApi from 'api/bidder';
 import usersApi from 'api/usersApi';
+import watchApi from 'api/watch';
 import jwt_decode from 'jwt-decode';
-import { Watch } from 'models';
+import { ListResponse, Watch } from 'models';
 import { bidderProduct } from 'models/bidderProduct';
 import React, { useEffect, useState } from 'react';
 import { addSingle, getItem } from 'utils';
@@ -40,9 +41,10 @@ export function Bidding(props: IBiddingProps) {
         if (!decoded.user_id) return
         // IFFE
         (async () => {
-            const data = bidderApi.getAll();
-            console.log(data);
-            setWtchList([]);
+            const data: ListResponse<bidderProduct> = await bidderApi.getAll();
+            const dataWatch: ListResponse<Watch> = await watchApi.getAll();
+            setWtchList(dataWatch.data ? dataWatch.data : []);
+            setBidderProduct(data.data ? data.data : []);
         })();
 
     }, [decoded.user_id]);

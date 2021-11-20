@@ -27,6 +27,7 @@ import {
   top5CountBidder,
   top5AlmostExpiredWithPrice,
   top5AlmostExpired,
+  getUserLastModifile
 } from "../models/products";
 import {
   broadcastAll
@@ -63,6 +64,7 @@ class ProductController extends BaseController {
     this.top5AlmostExpiredWithPrice =
       this.top5AlmostExpiredWithPrice.bind(this);
     this.top5AlmostExpired = this.top5AlmostExpired.bind(this);
+    this.getUserLastModifile = this.getUserLastModifile.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -562,6 +564,25 @@ class ProductController extends BaseController {
       );
     }
   }
+
+  async getUserLastModifile(req, res) {
+
+    try {
+      const {
+        product_id
+      } = req.params
+      let result = await getUserLastModifile(product_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res, {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
 }
 
 export default new ProductController();

@@ -14,7 +14,7 @@ const transform = () => {
   let api = Router();
   api.post("/", transformController.creatTransform);
   api.put("/",  transformController.actionTransform);
-  api.get("/", transformController.getTransform);
+ api.get("/", transformController.getTransform);
   return api;
 };
 

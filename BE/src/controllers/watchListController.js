@@ -1,12 +1,20 @@
 import BaseController from "./baseController";
-import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import { logger } from "../lib/utils";
 import {
-  adduser_WatchList,
-  getuser_WatchList,
+  getTokenForUser,
+  deCodeTokenForUser,
+  sendMail
+} from "../lib/utils";
+import {
+  logger
+} from "../lib/utils";
+import {
+  addwatch_list,
+  getwatch_list,
   getBidderHasMaxPrice,
 } from "../models/watch_list";
-import { getNow } from "../db";
+import {
+  getNow
+} from "../db";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
 import rn from "random-number";
@@ -28,33 +36,40 @@ class WatchListController extends BaseController {
 
   async creatWatchList(req, res) {
     logger.info("creatWatchList");
-    const { accessToken, data } = req.body;
+    const {
+      accessToken,
+      data
+    } = req.body;
 
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       //this.responseSuccess(res, parseToken);
-      if (parseToken.payload.roles_id != 1 && parseToken.payload.roles_id != 3)
+      if (parseToken.payload.roles_id === 2) {
+        try {
+          data.bidder_name = parseToken.payload.fullname;
+          data.bidder_id = parseToken.payload.user_id;
+          data.created_at = getNow();
+          data.updated_at = getNow();
+          let result = await addwatch_list(data);
+          return this.responseSuccess(res, result);
+        } catch (exception) {
+          return this.responseError(res, {
+            message: exception
+          }, 500);
+        }
+      } else {
         return this.responseError(
-          res,
-          {
+          res, {
             authenticated: false,
             message: "Method Not Allowed",
           },
           405
         );
-      try {
-        data.bidder_name = parseToken.payload.fullname;
-        data.bidder_id = parseToken.payload.user_id;
-        data.created_at = getNow();
-        let result = await adduser_WatchList(data);
-        return this.responseSuccess(res, result);
-      } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
       }
+
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -64,46 +79,28 @@ class WatchListController extends BaseController {
   }
 
   async getWatchListProduct(req, res) {
-    logger.info("getWatchListProduct");
-    const { bidder_id } = req.params;
-    try {
-      logger.info("creatWatchList");
-      const { accessToken, data } = req.body;
-
-      const parseToken = deCodeTokenForUser(accessToken);
-      if (parseToken) {
-        //this.responseSuccess(res, parseToken);
-        if (
-          parseToken.payload.roles_id != 1 &&
-          parseToken.payload.roles_id != 3
-        )
-          return this.responseError(
-            res,
-            {
-              authenticated: false,
-              message: "Method Not Allowed",
-            },
-            405
-          );
-        let result = await this.getuser_WatchList(bidder_id);
+    const token = req.headers["x-access-token"];
+    const parseToken = deCodeTokenForUser(token);
+    if (parseToken) {
+      try {
+        var bidder_id = parseToken.payload.user_id;
+        const result = await getwatch_list(bidder_id);
         return this.responseSuccess(res, result);
-      } else {
+      } catch (exception) {
         return this.responseError(
-          res,
-          {
-            authenticated: false,
-            message: "token incorrect",
+          res, {
+            message: exception.message,
           },
-          400
+          500
         );
       }
-    } catch (error) {
+    } else {
       return this.responseError(
-        res,
-        {
-          message: error,
+        res, {
+          authenticated: false,
+          message: "token incorrect",
         },
-        500
+        400
       );
     }
   }
@@ -115,8 +112,7 @@ class WatchListController extends BaseController {
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
-        res,
-        {
+        res, {
           message: error,
         },
         500

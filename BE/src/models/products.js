@@ -112,12 +112,12 @@ export const top5Active = async () => {
 
 export const search = async (query = "", page = 1, size = 10) => {
   const rows = await load(
-    `SELECT a.avatar,a.name,a.current_price,a.max_price,c.fullname,c.ratting,a.created_at,a.time_start,a.time_end,a.count_quantity_bidder
+    `SELECT a.avatar,a.name,a.current_price,a.max_price,c.fullname,c.ratting,a.created_at,a.time_start,a.id,a.time_end,a.count_quantity_bidder
     FROM ${TBL_PRODUCT} a
     left join product_bidder b on a.id = b.product_id
     left join users c on b.bidder_id = c.user_id
     Where  a.is_deleted = 0
-    and (a.name like '%${query}%' or '${query}' is null ) and (a.category_name like '%${query}%' or '${query}' is null) and (a.brand_name like '%${query}%' or '${query}' is null )
+    and (a.name like '%${query}%' or '${query}' is null ) or (a.category_name like '%${query}%' or '${query}' is null) or (a.brand_name like '%${query}%' or '${query}' is null )
     ORDER BY a.price asc
     LIMIT ${(page - 1) * size},${size}
     `
@@ -163,7 +163,7 @@ export const getAuctionLastModifier = async (product_id) => {
 };
 export const ProductDetail = async (product_id) => {
   const rows = await load(
-    `select p.avatar, p.images, p.name, p.time_start, p.time_end, p.description, p.current_price, p.max_price,p.category_id ,u.fullname, u.address, u.email, u.ratting, u.ratting_negative from ${TBL_PRODUCT} p left join users u on p.seller_id = u.user_id where p.id = '${product_id}' and p.is_deleted = 0`
+    `select p.avatar, p.images, p.name, p.id, p.time_start, p.time_end, p.description, p.current_price, p.max_price,p.category_id ,u.fullname, u.address, u.email, u.ratting, u.ratting_negative from ${TBL_PRODUCT} p left join users u on p.seller_id = u.user_id where p.id = '${product_id}' and p.is_deleted = 0`
   );
 
   if (rows.length === 0) return null;
@@ -231,6 +231,20 @@ export const top5AlmostExpiredWithPrice = async () => {
 export const top5AlmostExpired = async () => {
   const rows = await load(
     `select * from ${TBL_PRODUCT} WHERE time_end > now() and is_deleted = 0 and (is_done = 0 or is_done is null) ORDER by time_end desc LIMIT 5`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+
+export const getUserLastModifile = async (product_id) => {
+  const rows = await load(
+    `SELECT b.username	,	b.fullname	,b.address,	b.email	,b.ratting,b.ratting_negative,a.id
+    FROM product_bidder a
+    JOIN users  b on a.bidder_id = b.user_id
+    WHERE product_id  = ${product_id}
+    ORDER BY price DESC
+    LIMIT 1 ;`
   );
 
   if (rows.length === 0) return null;

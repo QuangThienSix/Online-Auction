@@ -6,6 +6,7 @@ export interface ProductState {
   loading: boolean;
   loadingAll: boolean;
   list: Product[];
+  listSearch: Product[];
   listALL: Product[];
   filter: ListParams;
   pagination: PaginationParams;
@@ -17,6 +18,7 @@ const initialState: ProductState = {
   loading: false,
   loadingAll: false,
   list: [],
+  listSearch: [],
   listALL: [],
   filter: {
     _page: 1,
@@ -44,6 +46,13 @@ const productSlice = createSlice({
   reducers: {
     fetchProductsList(state, action: PayloadAction<ListParams>) {
       state.loading = true;
+    },
+    fetchProductsListSearch(state, action: PayloadAction<ListParams>) {
+    },
+    fetchProductsListSearchSuccess(state, action: PayloadAction<ListParams>) {
+      state.listSearch = action.payload.data;
+    },
+    fetchProductsListSearchFailed(state) {
     },
     fetchProductsAllList(state, action: PayloadAction<ListParams>) {
       state.loadingAll = true;
@@ -78,6 +87,7 @@ const productSlice = createSlice({
 
 export const productsAction = productSlice.actions;
 export const selectProductsList = (state: RootState) => state.product.list;
+export const selectProductsListSearch = (state: RootState) => state.product.listSearch;
 export const selectProductsAllList = (state: RootState) => state.product.listALL;
 export const selectProductsLoading = (state: RootState) => state.product.loading;
 export const selectProductsFilter = (state: RootState) => state.product.filter;

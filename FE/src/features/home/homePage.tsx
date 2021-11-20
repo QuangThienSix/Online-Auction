@@ -18,8 +18,8 @@ export default function HomePage(props: IHomePageProps) {
   const history = useHistory();
 
   const ProductTopList = useAppSelector(selecttorsProductTop);
-  // const ProductTop5PriceList = useAppSelector(selecttorsProduct5PriceTop);
-  // const ProductTop5AlmostExpired = useAppSelector(selectProductTop5AlmostExpired);
+  const ProductTop5PriceList = useAppSelector(selecttorsProduct5PriceTop);
+  const ProductTop5AlmostExpired = useAppSelector(selectProductTop5AlmostExpired);
 
 
 
@@ -137,14 +137,14 @@ export default function HomePage(props: IHomePageProps) {
           </div>
         </div>
       </section>
-      {/* <section>
+      <section>
         <div className="container">
           <div className="row">
             <div className="col">
               <div className="carousel-demo">
                 <div className="card" style={{ border: "none" }}>
                   <Carousel
-                    value={ProductTop5PriceList}
+                    value={ProductTop5PriceList ? ProductTop5PriceList : []}
                     numVisible={4}
                     numScroll={1}
                     responsiveOptions={responsiveOptions}
@@ -159,15 +159,15 @@ export default function HomePage(props: IHomePageProps) {
             </div>
           </div>
         </div>
-      </section> */}
-      {/* <section>
+      </section>
+      <section>
         <div className="container">
           <div className="row">
             <div className="col">
               <div className="carousel-demo">
                 <div className="card" style={{ border: "none" }}>
                   <Carousel
-                    value={ProductTop5AlmostExpired}
+                    value={ProductTop5AlmostExpired ? ProductTop5AlmostExpired : []}
                     numVisible={4}
                     numScroll={1}
                     responsiveOptions={responsiveOptions}
@@ -182,7 +182,7 @@ export default function HomePage(props: IHomePageProps) {
             </div>
           </div>
         </div>
-      </section> */}
+      </section>
     </div>
   );
 }

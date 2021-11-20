@@ -52,6 +52,10 @@ const productApi = {
         const url = `/product/productdetail/${id}`;
         return axiosClient.get(url);
     },
+    getDetailModified(id: string): Promise<any> {
+        const url = `/product/${id}/user-modified`;
+        return axiosClient.get(url);
+    },
     getPrDetail(id: string): Promise<any> {
         const url = `/product/${id}`;
         return axiosClient.get(url);
@@ -62,6 +66,10 @@ const productApi = {
     },
     getBrandID(id: string): Promise<ListResponse<Product>> {
         const url = `/product/getProductByBrandId/${id}`;
+        return axiosClient.get(url);
+    },
+    getSearch(query: ListParams): Promise<ListResponse<Product>> {
+        const url = `/product/search?q=${query}&page=1&size=10`;
         return axiosClient.get(url);
     },
     auction(data: Partial<any>): Promise<any> {

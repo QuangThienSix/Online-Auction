@@ -1,9 +1,14 @@
 import { FormControl, InputLabel, OutlinedInput } from '@mui/material';
 import axiosClient from 'api/axiosClient';
 import productApi from 'api/productApi';
+import usersApi from 'api/usersApi';
+import watchApi from 'api/watch';
+import { useAppDispatch } from 'app/hooks';
 import { selecttorsIsLoggedIn } from 'features/auth/authSlice';
 import { selectMessage, socketActions } from 'features/socket/socketSlice';
+import jwt_decode from 'jwt-decode';
 import { ListResponse } from 'models';
+import { modified } from 'models/bidderProduct';
 import { Product, ProductDetaill } from 'models/product';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -14,10 +19,8 @@ import { Image } from 'primereact/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { getItem } from 'utils';
+import { addSingle, getItem } from 'utils';
 import './productDetail.css';
-import { addSingle } from 'utils';
-import { useAppDispatch } from 'app/hooks';
 
 export interface IProductDetailProps {
 }
@@ -26,6 +29,7 @@ export function ProductDetail(props: IProductDetailProps) {
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<ProductDetaill>();
     const [productList, setProductList] = useState<Product[]>();
+    const [modified, setModified] = useState<modified>();
     const [displayResponsive, setDisplayResponsive] = useState(false);
     const searchRef = useRef<any>();
     const dispatch = useAppDispatch();
@@ -47,17 +51,29 @@ export function ProductDetail(props: IProductDetailProps) {
         (async () => {
             try {
                 if (!isEmpty(socket)) {
+                    const data_modified: ListResponse<modified> = await productApi.getDetailModified(id);
+                    setModified(data_modified.data ? data_modified.data[0] : undefined)
+
+
                     const jsonsoket = JSON.parse(String(socket));
                     const ListData: ListResponse<Product> = await productApi.getCategoryID(jsonsoket.category_id ? jsonsoket.category_id : '');
                     setProductList(ListData.data);
                     setProduct(jsonsoket);
                     dispatch(dispatch(socketActions.SETMessage()));
+
                 }
                 else {
+
+                    const data_modified: ListResponse<modified> = await productApi.getDetailModified(id);
+                    setModified(data_modified.data ? data_modified.data[0] : undefined)
+
+
+
                     const data: ListResponse<ProductDetaill> = await productApi.getDetail(id);
                     const ListData: ListResponse<Product> = await productApi.getCategoryID(data.data[0].category_id ? data.data[0].category_id : '');
                     setProductList(ListData.data);
                     setProduct(data.data[0]);
+
 
                 }
 
@@ -89,9 +105,19 @@ export function ProductDetail(props: IProductDetailProps) {
         }
     }
 
-    const onClick = () => {
+    const onClick = async () => {
         if (IsLoggedIn) {
-            setDisplayResponsive(true);
+
+            const decoded = jwt_decode<{ user_id: string }>(accessToken);
+            const data = await usersApi.getPoint(decoded.user_id);
+            console.log(data);
+            if (data.message === 'Success') {
+                setDisplayResponsive(true);
+            }
+            else {
+                addSingle('info', 'Điểm bạn Quá Thâp???');
+            }
+
         }
         else {
             history.push("/login");
@@ -110,6 +136,29 @@ export function ProductDetail(props: IProductDetailProps) {
                 <Button label="Yes" icon="pi pi-check" onClick={() => handleOnction(product)} autoFocus />
             </div>
         );
+    }
+
+    const onAddWatchList = async (product: ProductDetaill) => {
+        if (IsLoggedIn) {
+            const data = {
+                data: {
+                    product_id: product.id,
+                    price: product.current_price
+                },
+                accessToken: accessToken
+            }
+            try {
+                await watchApi.add(data);
+                addSingle('success', 'Đã thêm vào watch list');
+            } catch (error: any) {
+                addSingle('error', error);
+            }
+
+        }
+        else {
+            history.push("/login");
+            addSingle('info', 'Đăng nhập mới theo dõi được');
+        }
     }
 
     const responsiveOptionsList = [
@@ -202,11 +251,13 @@ export function ProductDetail(props: IProductDetailProps) {
                 <div className="product-item-content text-center">
                     <div>
                         <h4 className="p-mb-3">{product.name}</h4>
+                        <Button onClick={() => onAddWatchList(product)} label="Theo dõi" icon="pi pi-check" iconPos="right" className="p-button-success p-button-rounded p-mr-2" />
                         <h6 className="p-mt-0 p-mb-1">Giá Mua Ngay: {numeral(product.max_price).format('0,0')} đ</h6>
                         <h6 className="p-mt-0 p-mb-1" style={{ fontWeight: 700 }}>Giá Hiện Tại: {numeral(product.current_price).format('0,0')} đ</h6>
                         <h6 className="p-mt-0 p-mb-1">Ngày Bắt Đầu: {moment(product.time_start).format('DD/MM/YYYY')}</h6>
                         <h6 className="p-mt-0 p-mb-1">Ngày Kết Thức: {moment(product.time_end).format('DD/MM/YYYY')}</h6>
                         <h6 className="p-mt-0 p-mb-1">Người Bán: {product.fullname}</h6>
+                        <h6 className="p-mt-0 p-mb-1">Người Đang Trả Giá Cao: {modified?.fullname}</h6>
                         <div className="item-rating">
                             Tôt: <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i> {product.ratting}
                         </div>
@@ -253,7 +304,16 @@ export function ProductDetail(props: IProductDetailProps) {
                             </div>
                         </div>
                         <div className="col-8 col__product-detail">
-                            {product && productTemplate(product)}
+                            <div className="row">
+                                <div className="col-8">
+                                    {product && productTemplate(product)}
+                                </div>
+                                <div className="col-4">
+                                    <h5>Nội Dung</h5>
+                                    <div dangerouslySetInnerHTML={{ __html: String(product?.description) }}></div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
