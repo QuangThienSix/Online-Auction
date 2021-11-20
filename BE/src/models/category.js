@@ -1,25 +1,15 @@
-import {
-  load,
-  add,
-  getNow
-} from "../db";
-
+import { load, add, getNow } from "../db";
 
 const TBL_CATEGORY = "category";
 const TBL_BRAND = "brand";
 
 export const singleByCategoryName = async (id) => {
-  const rows = await load(
-    `select * from ${TBL_CATEGORY} where id = '${id}'`
-  );
+  const rows = await load(`select * from ${TBL_CATEGORY} where id = '${id}'`);
   if (rows.length === 0) return null;
   return rows[0];
 };
 export const getCategoryNoBrand = async () => {
-  console.log(1111);
-  const rows = await load(
-    `select * from ${TBL_CATEGORY}`
-  );
+  const rows = await load(`select * from ${TBL_CATEGORY}`);
 
   if (rows.length === 0) return null;
   return rows;
@@ -37,8 +27,6 @@ export const updateCateroy = async (entity) => {
   );
   if (rows.length === 0) return null;
   return rows[0];
-
-
 };
 
 export const deleteCateroy = async (id) => {
@@ -52,8 +40,12 @@ export const deleteCateroy = async (id) => {
 export const getCateroy = async () => {
   const rows = await load(
     `SELECT a.* , 
-    (SELECT JSON_ARRAYAGG(JSON_OBJECT('name', b.name, 'id', b.id,'is_deleted',b.is_deleted)) from brand b WHERE b.category_id = a.id) as 'brands'
-    FROM ${TBL_CATEGORY} a
+    (SELECT CONCAT(
+    '[', 
+    GROUP_CONCAT(JSON_OBJECT('name', b.name, 'id', b.id,'is_deleted',b.is_deleted)),
+    ']'
+)  from brand b WHERE b.category_id = a.id) as 'brands'
+FROM ${TBL_CATEGORY} a
    `
   );
   if (rows.length === 0) return null;

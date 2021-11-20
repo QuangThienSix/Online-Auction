@@ -1,9 +1,5 @@
-import WebSocket, {
-  WebSocketServer
-} from "ws";
-import {
-  logger
-} from "./lib/utils";
+import WebSocket, { WebSocketServer } from "ws";
+import { logger } from "./lib/utils";
 const WS_PORT = 45678;
 const CLIENTS = [];
 
@@ -49,10 +45,10 @@ export const broadcastAll = async (msg) => {
   // let pop = JSON.stringify(data);
   // console.log(pop);
 
-  const message = 'thien';
+  const message = "thien";
 
   for (var i = 0; i < CLIENTS.length; i++) {
-    if (CLIENTS[i].readyState === WebSocket.OPEN) CLIENTS[i].send(JSON.stringify(msg));
+    if (CLIENTS[i].readyState === WebSocket.OPEN)
+      CLIENTS[i].send(JSON.stringify(msg));
   }
-
 };

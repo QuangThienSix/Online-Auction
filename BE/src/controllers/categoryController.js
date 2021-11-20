@@ -80,7 +80,6 @@ class CategoryController extends BaseController {
     logger.info("updateCategory");
     const
       data = req.body;
-    console.log(req.body);
     const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
@@ -210,7 +209,6 @@ class CategoryController extends BaseController {
       let result = await getListCategoryAndBrand();
       return this.responseSuccess(res, result);
     } catch (error) {
-      console.log(error);
       return this.responseError(
         res, {
           message: error,

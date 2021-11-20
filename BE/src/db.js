@@ -1,7 +1,5 @@
 import appConfig from "./config/env";
-import {
-  logger
-} from "./lib/utils";
+import { logger } from "./lib/utils";
 import mysql from "mysql";
 const pool = mysql.createPool(appConfig.mysql);
 export default (init) => {
@@ -21,7 +19,6 @@ export default (init) => {
 };
 
 export const load = (sql) => {
-  console.log(sql);
   return new Promise(function (resolve, reject) {
     pool.query(sql, function (error, results, fields) {
       if (error) {
@@ -33,10 +30,8 @@ export const load = (sql) => {
   });
 };
 export const add = (table, entity) => {
-  console.log('entity', entity);
   return new Promise(function (resolve, reject) {
     const sql = `insert into ${table} set ?`;
-    console.log(sql);
     pool.query(sql, entity, function (error, results) {
       if (error) {
         return reject(error);

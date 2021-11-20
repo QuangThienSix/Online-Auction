@@ -4,7 +4,6 @@ const TBL_transform_seller = "transform_seller";
 const TBL_USER = "user";
 
 export const addtransform_seller = async (entity) => {
-  console.log(entity);
   return await add(TBL_transform_seller, entity);
 };
 

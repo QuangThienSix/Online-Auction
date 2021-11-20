@@ -1,13 +1,5 @@
-import {
-  remove
-} from "winston";
-import {
-  load,
-  add,
-  update,
-  del,
-  getNow
-} from "../db";
+import { remove } from "winston";
+import { load, add, update, del, getNow } from "../db";
 
 const TBL_BRAND = "brand";
 
@@ -23,7 +15,6 @@ export const addBrand = async (entity) => {
   return await add(TBL_BRAND, entity);
 };
 export const updateBrand = async (entity) => {
-  console.log(entity);
   const rows = await load(
     `
     UPDATE brand set 
@@ -32,7 +23,6 @@ export const updateBrand = async (entity) => {
     is_deleted = ${entity.is_deleted}
     WHERE id = ${entity.id}`
   );
-  console.log(rows);
   if (rows.length === 0) return null;
   return rows[0];
 };
@@ -46,9 +36,7 @@ export const deleteBrand = async (id) => {
 };
 
 export const getBrand = async (id) => {
-  const rows = await load(
-    `select * from ${TBL_BRAND} where id = ${id}`
-  );
+  const rows = await load(`select * from ${TBL_BRAND} where id = ${id}`);
   if (rows.length === 0) return null;
   return rows[0];
 };

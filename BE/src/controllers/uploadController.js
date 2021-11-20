@@ -1,10 +1,10 @@
-import {
-  logger
-} from "../lib/utils";
+import { logger } from "../lib/utils";
 import BaseController from "./baseController";
-var express = require('express');
-var multer = require('multer');
-var fs = require('fs');
+import configApi from "../config/api/api.json";
+const express = require("express");
+const multer = require("multer");
+const fs = require("fs");
+const ip = require("ip");
 
 var options = {
   // example input , yes negative values do work
@@ -13,7 +13,7 @@ var options = {
 };
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    var dir = 'src/uploads';
+    var dir = "src/uploads";
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -21,11 +21,11 @@ var storage = multer.diskStorage({
   },
   filename: function (req, file, callback) {
     callback(null, file.originalname);
-  }
+  },
 });
 var upload = multer({
-  storage: storage
-}).array('files', 12);
+  storage: storage,
+}).array("files", 12);
 
 class UploadController extends BaseController {
   constructor() {
@@ -38,22 +38,27 @@ class UploadController extends BaseController {
   async single(req, res) {
     logger.info("uploadfile");
     const {
-      accessToken,
-      files
+      //accessToken,
+      files,
     } = req.body;
 
+    let ipAdress = ip.address();
+
     //const parseToken = deCodeTokenForUser(accessToken);
-    //if (parseToken) 
+    //if (parseToken)
     {
       var images = [];
       var data = await upload(req, res, function (err, result) {
-        console.log(err);
         if (err) {
           return res.end("Error uploading file." + err);
         }
 
-        req.files.map(x => images.push(x.path));
-        res.send(images);
+        req.files.map((x) => {
+          images.push(x.filename);
+        });
+
+        let adress = `${ipAdress}:${configApi.port}/static/${images}`;
+        res.send(adress);
       });
     }
     //else {
@@ -68,14 +73,9 @@ class UploadController extends BaseController {
     // }
   }
   async getFile(req, res) {
-    const {
-      name
-    } = req.params.name;
+    const { name } = req.params.name;
     res.sendFile(__dirname + `./uploads/${name}`);
-  };
-
-
-
+  }
 }
 
 export default new UploadController();
