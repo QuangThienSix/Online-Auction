@@ -1,4 +1,4 @@
-export interface Product {
+export interface bidderProduct {
     avatar?: string;
     brand_id: string;
     brand_name: string;
@@ -22,22 +22,4 @@ export interface Product {
     timestamp: string;
     updated_at: string;
     is_done: string;
-}
-
-export interface ProductDetaill {
-    id?: string;
-    address?: string;
-    avatar?: string;
-    category_id?: string;
-    current_price?: string;
-    description?: string;
-    email?: string;
-    fullname?: string;
-    images?: string;
-    max_price?: string;
-    name?: string;
-    ratting_negative?: string;
-    time_end?: string;
-    time_start?: string;
-    ratting?: string;
 }

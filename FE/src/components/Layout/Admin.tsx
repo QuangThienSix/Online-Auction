@@ -6,6 +6,8 @@ import { Bidding } from 'features/bidding/Bidding';
 import Dashboard from 'features/dashboard/index';
 import { Seller } from 'features/seller/indexPage';
 import Users from 'features/users';
+import CategoryIndex from 'features/users/indexCategory';
+import ProductIndex from 'features/users/indexProduct';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
@@ -58,6 +60,12 @@ export function AdminLayout() {
             </Route>
             <Route path="/admin/seller">
               <Seller />
+            </Route>
+            <Route path="/admin/categorys">
+              <CategoryIndex />
+            </Route>
+            <Route path="/admin/products">
+              <ProductIndex />
             </Route>
           </Switch>
         </Box>

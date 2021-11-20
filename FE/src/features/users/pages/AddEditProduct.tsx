@@ -24,6 +24,8 @@ export default function AddEditProduct(props: IAddEdiProps) {
     (async () => {
       try {
         const data: Product = await productApi.getPrDetail(id);
+        data.time_end = new Date(data.time_end);
+        data.time_start = new Date(data.time_start);
         setCategory(data);
       } catch (error) {
         console.log('Failed to fetch product details', error);
@@ -33,6 +35,7 @@ export default function AddEditProduct(props: IAddEdiProps) {
 
   const handleUserFormSubmit = async (formValues: Product) => {
     // TODO: Handle submit here, call API  to add/update user
+
     if (isEdit) {
       try {
         await productApi.updateProduct(formValues);
@@ -40,7 +43,7 @@ export default function AddEditProduct(props: IAddEdiProps) {
         addSingle('success', 'Save Product successfully!');
 
         // Redirect back to user list
-        history.push('/admin/user');
+        history.push('/admin/products');
       } catch (error: any) {
         console.log(error);
         addSingle(
@@ -55,12 +58,13 @@ export default function AddEditProduct(props: IAddEdiProps) {
         addSingle('success', 'Save Product successfully!');
 
         // Redirect back to user list
-        history.push('/admin/user');
+        history.push('/admin/products');
       } catch (error: any) {
         addSingle('error', error.data.errormessage ? error.data.errormessage : 'Failed users add!');
       }
     }
   };
+
   const initialValues: Product = {
     name: '',
     price: '',

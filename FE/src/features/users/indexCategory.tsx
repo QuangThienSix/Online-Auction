@@ -4,17 +4,15 @@ import { roleActions } from 'features/roles/roleSlice';
 import React, { useEffect } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router';
 import { getItem } from 'utils';
-import ListPage from './pages/ListPage';
-import jwt_decode from 'jwt-decode';
-import AddEditPage from './pages/AddEditUser';
-import ChangePassWordPage from './pages/ChangePass';
-import AddEditCategoryPage from './pages/AddEditCategory';
 import AddEditBrand from './pages/AddEditBrand';
-import AddEditProduct from './pages/AddEditProduct';
+import AddEditCategoryPage from './pages/AddEditCategory';
+import AddEditPage from './pages/AddEditUser';
+import { CategoryPage } from './pages/CategoryPage';
+import ChangePassWordPage from './pages/ChangePass';
 
-export default function Users() {
+export default function CategoryIndex() {
   const { accessToken } = getItem('users');
-  const decoded = jwt_decode<{ roles_id: string }>(accessToken);
+  // const decoded = jwt_decode<{ roles_id: string }>(accessToken);
   axiosClient.defaults.headers.common['x-access-token'] = accessToken;
   const match = useRouteMatch();
   const dispatch = useAppDispatch();
@@ -26,35 +24,28 @@ export default function Users() {
   return (
     <Switch>
       <Route path={match.path} exact>
-        <ListPage roles_id={decoded?.roles_id} />
+        <CategoryPage />
       </Route>
 
-      <Route path={`${match.path}/add`}>
+      <Route path={`/admin/categorys/add`}>
         <AddEditPage />
       </Route>
-      <Route path={`${match.path}/changepass`}>
+      <Route path={`/admin/categorys/changepass`}>
         <ChangePassWordPage />
       </Route>
-      <Route path={`/admin/category/:id`}>
+      <Route path={`/admin/categorys/category`}>
         <AddEditCategoryPage />
       </Route>
-
-      <Route path={`${match.path}/product/:id`}>
-        <AddEditProduct />
+      <Route path={`/admin/categorys/brand/:id`}>
+        <AddEditBrand />
       </Route>
-      <Route path={`${match.path}/product`}>
-        <AddEditProduct />
+      <Route path={`/admin/categorys/brand`}>
+        <AddEditBrand />
       </Route>
-      <Route path={`${match.path}/category`}>
+      <Route path={`/admin/categorys/:id`}>
         <AddEditCategoryPage />
       </Route>
-      <Route path={`${match.path}/brand/:id`}>
-        <AddEditBrand />
-      </Route>
-      <Route path={`${match.path}/brand`}>
-        <AddEditBrand />
-      </Route>
-      <Route path={`${match.path}/:user_id`}>
+      <Route path={`/admin/categorys/:user_id`}>
         <AddEditPage />
       </Route>
 

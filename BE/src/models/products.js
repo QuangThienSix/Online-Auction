@@ -1,4 +1,7 @@
-import { load, add } from "../db";
+import {
+  load,
+  add
+} from "../db";
 
 const TBL_PRODUCT = "product";
 
@@ -63,6 +66,7 @@ set name = '${entity.name}',
 time_end = '${entity.time_end}',
 time_start = '${entity.time_start}',
 images = ${entity.images},
+description = '${entity.description}',
 current_price = ${entity.current_price},
 count_quantity_bidder = ${entity.count_quantity_bidder},
 seller_id = ${entity.seller_id},

@@ -12,13 +12,15 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
+import { RoleAdmin } from 'constants/user_roles';
+import jwt_decode from 'jwt-decode';
 import { Role, Users } from 'models';
 import React, { useState } from 'react';
-
+import { getItem } from 'utils';
 export interface IUserTableProps {
   usersList: Users[];
   roleMap: {
@@ -43,7 +45,9 @@ const useStyles = makeStyles(() => ({
   table: {},
 }));
 
-export default function UserTable({ usersList, roleMap, onRemove, onUpseller,onDownseller,changePassword, onEdit }: IUserTableProps) {
+export default function UserTable({ usersList, roleMap, onRemove, onUpseller, onDownseller, changePassword, onEdit }: IUserTableProps) {
+  const { accessToken } = getItem('users');
+  const decoded = jwt_decode<{ roles_id: string }>(accessToken);
   const classes = useStyles();
   const [selectedUsers, setSelectedUsers] = useState<Users>();
   const [open, setOpen] = useState(false);
@@ -138,15 +142,19 @@ export default function UserTable({ usersList, roleMap, onRemove, onUpseller,onD
                     Change Password
                   </Button>
 
-                  <Button size="small" color="secondary" onClick={() => handleRemoveClick(user)}>
-                    Remove
-                  </Button>
-                  <Button size="small" color="success" onClick={() => handleRemoveClick1(user)}>
-                    Up Seller
-                  </Button>
-                  <Button size="small" color="warning" onClick={() => handleRemoveClick2(user)}>
-                    Down Seller
-                  </Button>
+
+                  {String(decoded.roles_id) === RoleAdmin && (<>
+                    <Button size="small" color="secondary" onClick={() => handleRemoveClick(user)}>
+                      Remove
+                    </Button>
+                    <Button size="small" color="success" onClick={() => handleRemoveClick1(user)}>
+                      Up Seller
+                    </Button>
+                    <Button size="small" color="warning" onClick={() => handleRemoveClick2(user)}>
+                      Down Seller
+                    </Button>
+
+                  </>)}
                 </TableCell>
               </TableRow>
             ))}

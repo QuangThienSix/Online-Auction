@@ -7,7 +7,7 @@ import { Carousel } from 'primereact/carousel';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import './homePage.css';
-import { homeActions, selecttorsProduct5PriceTop, selecttorsProductTop } from './homeSlice';
+import { homeActions, selectProductTop5AlmostExpired, selecttorsProduct5PriceTop, selecttorsProductTop } from './homeSlice';
 // import productApi from 'api/productApi';
 
 export interface IHomePageProps { }
@@ -16,8 +16,12 @@ export default function HomePage(props: IHomePageProps) {
   // const { category, loading } = useCategory();
   const dispatch = useAppDispatch();
   const history = useHistory();
+
   const ProductTopList = useAppSelector(selecttorsProductTop);
-  const ProductTop5PriceList = useAppSelector(selecttorsProduct5PriceTop);
+  // const ProductTop5PriceList = useAppSelector(selecttorsProduct5PriceTop);
+  // const ProductTop5AlmostExpired = useAppSelector(selectProductTop5AlmostExpired);
+
+
 
   useEffect(() => {
     dispatch(homeActions.product());
@@ -63,7 +67,7 @@ export default function HomePage(props: IHomePageProps) {
           {/* <a> */}
           <div className="p-mb-3">
             <img
-              src={`showcase/demo/images/product/${product.images}`}
+              src={`http://${product.avatar}`}
               onError={(e: any) =>
               (e.target.src =
                 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')
@@ -125,7 +129,7 @@ export default function HomePage(props: IHomePageProps) {
                     circular
                     // autoplayInterval={3000}
                     itemTemplate={productTemplate}
-                    header={<h3 className="text-center">Sản Phẩm Top 5 Ratting</h3>}
+                    header={<h3 className="text-center">Top 5 sản phẩm ra giá nhất</h3>}
                   />
                 </div>
               </div>
@@ -133,7 +137,7 @@ export default function HomePage(props: IHomePageProps) {
           </div>
         </div>
       </section>
-      <section>
+      {/* <section>
         <div className="container">
           <div className="row">
             <div className="col">
@@ -148,14 +152,37 @@ export default function HomePage(props: IHomePageProps) {
                     circular
                     // autoplayInterval={3000}
                     itemTemplate={productTemplate}
-                    header={<h3 className="text-center">Sản Phẩm Top 5 Giá</h3>}
+                    header={<h3 className="text-center">Top 5 Sản phẩm chưa kết thúc giá cao nhât</h3>}
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
+      {/* <section>
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <div className="carousel-demo">
+                <div className="card" style={{ border: "none" }}>
+                  <Carousel
+                    value={ProductTop5AlmostExpired}
+                    numVisible={4}
+                    numScroll={1}
+                    responsiveOptions={responsiveOptions}
+                    className="custom-carousel"
+                    circular
+                    // autoplayInterval={3000}
+                    itemTemplate={productTemplate}
+                    header={<h3 className="text-center">Top 5 Sản phẩm gần kết thúc</h3>}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> */}
     </div>
   );
 }

@@ -40,7 +40,7 @@ export default function AddEditCategoryPage(props: IAddEdiProps) {
         addSingle('success', 'Save Category successfully!');
 
         // Redirect back to user list
-        history.push('/admin/user');
+        history.push('/admin/categorys');
       } catch (error: any) {
         addSingle(
           'error',

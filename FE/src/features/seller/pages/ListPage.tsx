@@ -1,12 +1,14 @@
-import { Box } from '@mui/material';
+import { Box, Button, Pagination, Typography } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
+import productApi from 'api/productApi';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { Product } from 'models';
+import { PaginationParams, Product } from 'models';
 import React, { useEffect } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
-import SellerTable from '../components/SellerTable';
-import { productsAction, selectProductsFilter, selectProductsList } from '../productsSlice';
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { addSingle } from 'utils';
+import { SellerTable } from '../components/SellerTable';
+import { productsAction, selectProductsFilter, selectProductsList, selectProductsPagination } from '../productsSlice';
 
 const usetheme = createTheme();
 const useStyles = makeStyles(() => ({
@@ -33,34 +35,61 @@ export function ListPage() {
     const dispatch = useAppDispatch();
     const productsList = useAppSelector(selectProductsList);
     const filter = useAppSelector(selectProductsFilter);
+    const paginationProduct = useAppSelector<PaginationParams>(selectProductsPagination);
     const handleEditProduct = async (user: Product) => {
         history.push(`${match.url}/${user.id}`);
+    };
+    const handlePageChangeProduct = (e: any, page: number) => {
+        dispatch(
+            productsAction.setFilter({
+                ...filter,
+                _page: page,
+            })
+        );
     };
     useEffect(() => {
         dispatch(productsAction.fetchProductsList(filter));
     }, [dispatch, filter]);
 
-    const handleRemoveProduct = async (user: Product) => {
-        // try {
-        //   // Remove user API
-        //   await usersApi.remove(user?.user_id || '');
-        //   addSingle('success', 'Remove user successfully!');
-        //   // Trigger to re-fetch user list with current filter
-        //   const newFilter = { ...filter };
-        //   dispatch(usersAction.setFilter(newFilter));
-        // } catch (error) {
-        //   // Toast error
-        //   console.log('Failed to fetch user', error);
-        // }
+    const handleRemoveProduct = async (product: Product) => {
+        try {
+            // Remove product API
+            await productApi.remove(product?.id || '');
+            addSingle('success', 'Remove product successfully!');
+            // Trigger to re-fetch product list with current filter
+            const newFilter = { ...filter };
+            dispatch(productsAction.setFilterAll(newFilter));
+        } catch (error) {
+            // Toast error
+            console.log('Failed to Remove product', error);
+        }
     };
     return (
         <Box className={classes.root}>
+
+            <Box className={classes.titleContainer}>
+                <Typography variant="h4">Products</Typography>
+
+                <Link to={`/admin/seller/add`} style={{ textDecoration: 'none' }}>
+                    <Button variant="contained" color="primary">
+                        Add new product
+                    </Button>
+                </Link>
+            </Box>
             {/* Product Table */}
             <SellerTable
-                productsList={productsList}
+                productList={productsList}
                 onEdit={handleEditProduct}
                 onRemove={handleRemoveProduct}
             />
+            <Box mt={2} display="flex" justifyContent="center">
+                <Pagination
+                    color="primary"
+                    count={Math.ceil(paginationProduct?._totalRows / paginationProduct?._limit)}
+                    page={paginationProduct?._page}
+                    onChange={handlePageChangeProduct}
+                />
+            </Box>
         </Box>
     );
 }

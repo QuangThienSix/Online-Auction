@@ -95,7 +95,7 @@ export function ProductTable({ productList, onEdit, onRemove }: IProductProps) {
                 <TableCell>{product.max_price}</TableCell>
                 <TableCell><Avatar
                   alt="Remy Sharp"
-                  src={product.avatar}
+                  src={`http://${product.avatar}`}
                   sx={{ width: 36, height: 36 }}
                 /></TableCell>
                 {/* <TableCell>{product.timestamp}</TableCell> */}

@@ -1,21 +1,21 @@
 import { ChevronLeft } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
-import categoryApi from 'api/category';
-import { Brands } from 'models';
+import productApi from 'api/productApi';
+import { Product } from 'models';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { addSingle } from 'utils';
-import BrandForm from '../components/BrandForm';
+import ProductForm from '../components/ProductForm';
 
 export interface IAddEdiProps { }
 
-export default function AddEditBrand(props: IAddEdiProps) {
+export default function AddEditProduct(props: IAddEdiProps) {
   // const testMessage = useAppSelector(selectMessage);
   // console.log('Message Server send: ', testMessage);
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
-  const [category, setCategory] = useState<Brands>();
+  const [category, setCategory] = useState<Product>();
 
   useEffect(() => {
     if (!id) return;
@@ -23,50 +23,62 @@ export default function AddEditBrand(props: IAddEdiProps) {
     // IFFE
     (async () => {
       try {
-        const data: Brands = await categoryApi.getByIdBrand(id);
+        const data: Product = await productApi.getPrDetail(id);
+        data.time_end = new Date(data.time_end);
+        data.time_start = new Date(data.time_start);
         setCategory(data);
       } catch (error) {
-        console.log('Failed to fetch user details', error);
+        console.log('Failed to fetch product details', error);
       }
     })();
   }, [id]);
 
-  const handleUserFormSubmit = async (formValues: Brands) => {
+  const handleUserFormSubmit = async (formValues: Product) => {
     // TODO: Handle submit here, call API  to add/update user
+
     if (isEdit) {
       try {
-        await categoryApi.updateBrand(formValues);
+        await productApi.updateProduct(formValues);
         // Toast success
-        addSingle('success', 'Save Brand successfully!');
+        addSingle('success', 'Save Product successfully!');
 
         // Redirect back to user list
-        history.push('/admin/categorys');
+        history.push('/admin/seller');
       } catch (error: any) {
         console.log(error);
         addSingle(
           'error',
-          error.data.errormessage ? error.data.errormessage : 'Failed users update!'
+          error.data.errormessage ? error.data.errormessage : 'Failed Product update!'
         );
       }
     } else {
       try {
-        await categoryApi.addBrand(formValues);
+        await productApi.addProduct(formValues);
         // Toast success
-        addSingle('success', 'Save users successfully!');
+        addSingle('success', 'Save Product successfully!');
 
         // Redirect back to user list
-        history.push('/admin/user');
+        history.push('/admin/seller');
       } catch (error: any) {
         addSingle('error', error.data.errormessage ? error.data.errormessage : 'Failed users add!');
       }
     }
   };
-  const initialValues: Brands = {
+
+  const initialValues: Product = {
     name: '',
-    is_deleted: '',
+    price: '',
+    current_price: '',
+    max_price: '',
+    avatar: '',
     category_id: '',
+    brand_id: '',
+    step: '',
+    description: '',
+    time_start: '',
+    time_end: '',
     ...category,
-  } as Brands;
+  } as Product;
   return (
     <Box>
       <Link to="/admin/user">
@@ -75,11 +87,11 @@ export default function AddEditBrand(props: IAddEdiProps) {
         </Typography>
       </Link>
 
-      <Typography variant="h4">{isEdit ? 'Update Brand info' : 'Add new Brand'}</Typography>
+      <Typography variant="h4">{isEdit ? 'Update Product info' : 'Add new Product'}</Typography>
 
       {(!isEdit || Boolean(category)) && (
         <Box mt={3}>
-          <BrandForm isEdit={isEdit} initialValue={initialValues} onSubmit={handleUserFormSubmit} />
+          <ProductForm initialValue={initialValues} onSubmit={handleUserFormSubmit} />
         </Box>
       )}
     </Box>

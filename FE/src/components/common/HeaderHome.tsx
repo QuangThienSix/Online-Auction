@@ -5,14 +5,16 @@ import { Button, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { authActions, selecttorsIsLoggedIn } from 'features/auth/authSlice';
 import { selectCategoryFilter, selectCategoryList, usersAction } from 'features/users/usersSlice';
+import debounce from "lodash.debounce";
 import { Brands, Category } from 'models/category';
 import { InputText } from 'primereact/inputtext';
 import { Menubar } from 'primereact/menubar';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import './header.css';
 
 export function HeaderHome() {
+  const [search, setSearch] = useState('');
   const dispatch = useAppDispatch();
   const history = useHistory();
   const isLoggedIn = useAppSelector(selecttorsIsLoggedIn);
@@ -45,7 +47,7 @@ export function HeaderHome() {
   const Tiem: { id: string | undefined; label: string | undefined; icon: string; items: {}[] }[] =
     [];
   // eslint-disable-next-line array-callback-return
-  categoryList.filter((item) =>  Number(item.is_deleted) === 0).map((category: Category) => {
+  categoryList.filter((item) => Number(item.is_deleted) === 0).map((category: Category) => {
     const brands = category.brands;
     const newLocal: {}[] = [];
     const Item = {
@@ -79,8 +81,12 @@ export function HeaderHome() {
   });
 
   const items = Tiem;
+  const updateQuery = (e: any) => setSearch(e?.target?.value);
 
-  const end = <InputText placeholder="Search" type="text" />;
+  const handleOnChange = debounce(updateQuery, 200);
+  console.log(search);
+
+  const end = <InputText placeholder="Search" type="text" onChange={handleOnChange} />;
 
   return (
     <header className="header">
@@ -106,15 +112,15 @@ export function HeaderHome() {
             {isLoggedIn ? (
               <>
                 <Button color="primary" style={{ marginRight: '5px' }} onClick={handlePathAdmin}>
-                  Manager
+                  QL
                 </Button>
                 <Button color="inherit" onClick={handleLogoutClick}>
-                  Logout
+                  Đăng Xuất
                 </Button>
               </>
             ) : (
               <Button color="inherit" onClick={handlePathLogin}>
-                Login
+                Đăng Nhập
               </Button>
 
             )}

@@ -9,6 +9,7 @@ export interface HomeState {
     product?: Product;
     productTopList: Product[];
     productTop5PriceList: Product[];
+    productTop5AlmostExpired: Product[];
 }
 
 const initialState: HomeState = {
@@ -17,6 +18,7 @@ const initialState: HomeState = {
     product: undefined,
     productTopList: [],
     productTop5PriceList: [],
+    productTop5AlmostExpired: [],
 };
 
 
@@ -41,6 +43,9 @@ const homeSlice = createSlice({
         setProductTop5PriceList(state, action: PayloadAction<Product[]>) {
             state.productTop5PriceList = action.payload;
         },
+        setProductTop5AlmostExpired(state, action: PayloadAction<Product[]>) {
+            state.productTop5AlmostExpired = action.payload;
+        },
     }
 })
 
@@ -51,6 +56,7 @@ export const homeActions = homeSlice.actions;
 
 export const selecttorsProductTop = (state: RootState) => state.home.productTopList;
 export const selecttorsProduct5PriceTop = (state: RootState) => state.home.productTop5PriceList;
+export const selectProductTop5AlmostExpired = (state: RootState) => state.home.productTop5AlmostExpired;
 // Reducer
 const homeReducer = homeSlice.reducer;
 export default homeReducer;

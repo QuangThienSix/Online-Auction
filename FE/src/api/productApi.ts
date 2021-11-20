@@ -5,8 +5,14 @@ import { getItem } from 'utils';
 
 const productApi = {
     getAll(params: ListParams): Promise<ListResponse<Product>> {
-        const url = '/product/top5-ratting';
+        const url = '/product/getTop5CountBidder';
         return axiosClient.get(url);
+    },
+    upload(data: any): Promise<any> {
+        const url = '/upload';
+        const formdata = new FormData();
+        formdata.append('files', data);
+        return axiosClient.post(url, formdata);
     },
     updateProduct(data: Partial<Product>): Promise<Product> {
         const url = `/product/${data.id}`;
@@ -35,7 +41,11 @@ const productApi = {
         return axiosClient.get(url);
     },
     getAllPrice(params: ListParams): Promise<ListResponse<Product>> {
-        const url = '/product/top5-price';
+        const url = '/product/getTop5AlmostExpiredWithPrice';
+        return axiosClient.get(url);
+    },
+    getTop5AlmostExpired(params: ListParams): Promise<ListResponse<Product>> {
+        const url = '/product/Top5AlmostExpired';
         return axiosClient.get(url);
     },
     getDetail(id: string): Promise<any> {

@@ -19,6 +19,13 @@ function* fethproductTop5Price() {
     });
     yield put(homeActions.setProductTop5PriceList(data));
 }
+function* fethProductTop5AlmostExpired() {
+    const { data }: ListResponse<Product> = yield call(productApi.getTop5AlmostExpired, {
+        _page: 1,
+        _limit: 5,
+    });
+    yield put(homeActions.setProductTop5AlmostExpired(data));
+}
 
 function* fetchProdcutsList() {
     try {
@@ -26,6 +33,7 @@ function* fetchProdcutsList() {
         yield all([
             call(fethproductTop5Ratting),
             call(fethproductTop5Price),
+            call(fethProductTop5AlmostExpired),
 
         ]);
         yield put(homeActions.productSuccess());
