@@ -22,6 +22,8 @@ import {
   updateProduct,
   getPrDetail,
   getProduct,
+  getProductByProductId,
+  updateIsHidden,
 } from "../models/products";
 import { broadcastAll } from "../ws";
 import BaseController from "./baseController";

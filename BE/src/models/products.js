@@ -1,16 +1,27 @@
-import {
-  load,
-  add
-} from "../db";
+import { load, add } from "../db";
 
 const TBL_PRODUCT = "product";
 
 export const singleByProductName = async (name) => {
   const rows = await load(
-    `select * from ${TBL_PRODUCT} where name = '${name}' and is_deleted = 0`
+    `select * from ${TBL_PRODUCT} where name = '${name}' and is_deleted = 0 and is_done = 0`
   );
   if (rows.length === 0) return null;
   return rows[0];
+};
+
+export const getProductByProductId = async (productId) => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where id = ${productId}`
+  );
+  if (rows.length === 0) return null;
+  return rows[0];
+};
+
+export const updateIsHidden = async (productId, isHidden) => {
+  const rows = await load(
+    `update ${TBL_PRODUCT} set is_done = ${isHidden} where id = ${productId}`
+  );
 };
 
 export const singleByProductId = async (id) => {
@@ -28,9 +39,7 @@ export const singleByProductId = async (id) => {
   return rows[0];
 };
 export const getProduct = async () => {
-  const rows = await load(
-    `select * from ${TBL_PRODUCT}`
-  );
+  const rows = await load(`select * from ${TBL_PRODUCT}`);
   if (rows.length === 0) return null;
   return rows;
 };
@@ -69,11 +78,10 @@ WHERE id = ${entity.id}
   );
   if (rows.length === 0) return null;
   return rows;
-
 };
 export const top5Ratting = async () => {
   const rows = await load(
-    `SELECT * FROM ${TBL_PRODUCT} a where  is_deleted = 0 ORDER BY a.ratting DESC LIMIT 5;
+    `SELECT * FROM ${TBL_PRODUCT} a where  is_deleted = 0  and (a.is_done = 0 or a.is_done is null) ORDER BY a.ratting DESC LIMIT 5;
     `
   );
   if (rows.length === 0) return null;
@@ -81,7 +89,7 @@ export const top5Ratting = async () => {
 };
 export const top5Price = async () => {
   const rows = await load(
-    `SELECT * FROM ${TBL_PRODUCT} a where  is_deleted = 0 ORDER BY a.price DESC LIMIT 5;
+    `SELECT * FROM ${TBL_PRODUCT} a where  is_deleted = 0 and (a.is_done = 0 or a.is_done is null)  ORDER BY a.price DESC LIMIT 5;
     `
   );
   if (rows.length === 0) return null;
@@ -90,7 +98,7 @@ export const top5Price = async () => {
 
 export const top5Active = async () => {
   const rows = await load(
-    `SELECT a.* FROM ${TBL_PRODUCT} a where  a.is_deleted = 0 and
+    `SELECT a.* FROM ${TBL_PRODUCT} a where  a.is_deleted = 0 and (a.is_done = 0 or a.is_done is null) and 
     current_timestamp() BETWEEN a.time_start AND a.time_end  ORDER BY a.price DESC LIMIT 5;
     `
   );
@@ -116,7 +124,7 @@ export const search = async (query = "", page = 1, size = 10) => {
 
 export const top5Recoment = async (brand_id) => {
   const rows = await load(
-    `SELECT a.* FROM ${TBL_PRODUCT} a where  a.is_deleted = 0 and
+    `SELECT a.* FROM ${TBL_PRODUCT} a where  a.is_deleted = 0 and (a.is_done = 0 or a.is_done is null) and
     current_timestamp() BETWEEN a.time_start AND a.time_end 
 and brand_id = ${brand_id}
 ORDER BY a.price DESC LIMIT 5;
@@ -148,7 +156,7 @@ export const getAuctionLastModifier = async (product_id) => {
   );
   if (rows.length === 0) return null;
   return rows;
-}
+};
 export const ProductDetail = async (product_id) => {
   const rows = await load(
     `select p.avatar, p.images, p.name, p.time_start, p.time_end, p.description, p.current_price, p.max_price,p.category_id ,u.fullname, u.address, u.email, u.ratting, u.ratting_negative from ${TBL_PRODUCT} p left join users u on p.seller_id = u.user_id where p.id = '${product_id}' and p.is_deleted = 0`
@@ -193,9 +201,7 @@ export const getProductBySeller = async (seller_id) => {
 };
 
 export const getPrDetail = async (id) => {
-  const rows = await load(
-    `select * from ${TBL_PRODUCT} where id = ${id}`
-  );
+  const rows = await load(`select * from ${TBL_PRODUCT} where id = ${id}`);
   if (rows.length === 0) return null;
   return rows[0];
 };
