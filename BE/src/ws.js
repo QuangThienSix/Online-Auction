@@ -1,19 +1,5 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { logger } from "./lib/utils";
-import {
-  singleByProductId,
-  addProduct,
-  deleteProduct,
-  updateProduct,
-  top5Ratting,
-  top5Price,
-  top5Active,
-  search,
-  top5Recoment,
-  ProductDetail,
-  getTop5RelationByCategoryId,
-  getProductByCategoryId,
-} from "./models/products";
 const WS_PORT = 45678;
 const CLIENTS = [];
 
@@ -34,18 +20,35 @@ if (!socketServer) {
   logger.info(`WebSocket Server is running at ws://localhost:${WS_PORT}`);
 }
 
-export const  broadcastAll =async (msg,param) => {
-  let data = "";
-  switch(msg.toLowerCase())
-  {
-    case "auction":
-      data= await singleByProductId(param);
-      break;
+export const broadcastAll = async (msg) => {
+  // let data = "";
+  // switch(msg.toLowerCase())
+  // {
+  //   case "auction":
+  //     data= await singleByProductId(param);
+  //     break;
 
-  }
+  // }
+  // console.log(msg);
+  // const data = {
+  //   id: msg.id,
+  //   name: msg.name,
+  //   ratting: msg.ratting,
+  //   price: msg.price,
+  //   current_price: msg.current_price,
+  //   max_price: msg.max_price,
+  //   count_quantity_bidder: msg.count_quantity_bidder,
 
-  console.log(data);
+  // }
+  // console.log(111111);
+  // console.log(data);
+  // let pop = JSON.stringify(data);
+  // console.log(pop);
+
+  const message = "thien";
+
   for (var i = 0; i < CLIENTS.length; i++) {
-    if (CLIENTS[i].readyState === WebSocket.OPEN) CLIENTS[i].send(data);
+    if (CLIENTS[i].readyState === WebSocket.OPEN)
+      CLIENTS[i].send(JSON.stringify(msg));
   }
 };

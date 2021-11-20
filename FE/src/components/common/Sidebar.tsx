@@ -50,6 +50,26 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           </NavLink>
+          <NavLink to="/admin/bidding" className={classes.link}>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <PeopleAlt />
+                </ListItemIcon>
+                <ListItemText primary="Bidding" />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+          <NavLink to="/admin/seller" className={classes.link}>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <PeopleAlt />
+                </ListItemIcon>
+                <ListItemText primary="Seller" />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
         </List>
       </nav>
     </Box>

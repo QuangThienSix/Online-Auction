@@ -7,6 +7,10 @@ import { getItem } from 'utils';
 import ListPage from './pages/ListPage';
 import jwt_decode from 'jwt-decode';
 import AddEditPage from './pages/AddEditUser';
+import ChangePassWordPage from './pages/ChangePass';
+import AddEditCategoryPage from './pages/AddEditCategory';
+import AddEditBrand from './pages/AddEditBrand';
+import AddEditProduct from './pages/AddEditProduct';
 
 export default function Users() {
   const { accessToken } = getItem('users');
@@ -28,10 +32,33 @@ export default function Users() {
       <Route path={`${match.path}/add`}>
         <AddEditPage />
       </Route>
+      <Route path={`${match.path}/changepass`}>
+        <ChangePassWordPage />
+      </Route>
+      <Route path={`${match.path}/category/:id`}>
+        <AddEditCategoryPage />
+      </Route>
 
+      <Route path={`${match.path}/product/:id`}>
+        <AddEditProduct />
+      </Route>
+      <Route path={`${match.path}/product`}>
+        <AddEditProduct />
+      </Route>
+      <Route path={`${match.path}/category`}>
+        <AddEditCategoryPage />
+      </Route>
+      <Route path={`${match.path}/brand/:id`}>
+        <AddEditBrand />
+      </Route>
+      <Route path={`${match.path}/brand`}>
+        <AddEditBrand />
+      </Route>
       <Route path={`${match.path}/:user_id`}>
         <AddEditPage />
       </Route>
+
+
     </Switch>
   );
 }

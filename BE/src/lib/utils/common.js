@@ -1,0 +1,8 @@
+export const convertStringArraytoArray = (string) => {
+    if (string) {
+        const StringObject = string.slice(1, string.length - 1);
+        const array = JSON.parse("[" + StringObject + "]");
+        return array;
+    }
+    return [];
+};

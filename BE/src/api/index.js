@@ -13,6 +13,7 @@ import comment from "./comment";
 import transform from "./transform";
 import userRole from "./user_role";
 import upload from "./upload";
+import bidder from "./bidder";
 
 /**
  * API Resources
@@ -34,6 +35,7 @@ export default () => {
   api.use("/comment", comment);
   api.use("/transform", transform);
   api.use("/upload", upload);
+  api.use("/bidder", bidder);
   // bul
 
   api.use("/users", authMdw, users);

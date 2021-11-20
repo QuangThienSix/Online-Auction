@@ -1,33 +1,33 @@
-import BaseController from "./baseController";
+import { getNow } from "../db";
 import {
-  getTokenForUser,
   deCodeTokenForUser,
-  sendMail,
-  getPagingData,
   logger,
   responsePaginationSuccess,
 } from "../lib/utils";
 import {
-  singleByProductId,
   addProduct,
   auction,
   deleteProduct,
-  updateProduct,
-  top5Ratting,
-  top5Price,
-  top5Active,
-  search,
-  top5Recoment,
-  ProductDetail,
-  getTop5RelationByCategoryId,
+  getProductByBrandId,
   getProductByCategoryId,
+  getProductBySeller,
+  getTop5RelationByCategoryId,
+  ProductDetail,
+  search,
+  singleByProductId,
+  top5Active,
+  top5Price,
+  top5Ratting,
+  top5Recoment,
+  updateProduct,
+  getPrDetail,
+  getProduct,
+  top5CountBidder,
+  top5AlmostExpiredWithPrice,
+  top5AlmostExpired,
 } from "../models/products";
-import bcrypt from "bcrypt";
-import appConfig from "../config/env/app.dev.json";
-import rn from "random-number";
-import apiConfig from "../config/api";
-import { getNow } from "../db";
 import { broadcastAll } from "../ws";
+import BaseController from "./baseController";
 var options = {
   // example input , yes negative values do work
   min: 1000,
@@ -47,10 +47,18 @@ class ProductController extends BaseController {
     this.getTop5ProductRecoment = this.getTop5ProductRecoment.bind(this);
     this.Query = this.Query.bind(this);
     this.ProductDetail = this.ProductDetail.bind(this);
+    this.getPrDetail = this.getPrDetail.bind(this);
     this.getTop5RelationByCategoryId =
       this.getTop5RelationByCategoryId.bind(this);
     this.getProductByCategoryId = this.getProductByCategoryId.bind(this);
+    this.getProductByBrandId = this.getProductByBrandId.bind(this);
     this.createAuction = this.createAuction.bind(this);
+    this.getProductBySeller = this.getProductBySeller.bind(this);
+    this.getProduct = this.getProduct.bind(this);
+    this.top5CountBidder = this.top5CountBidder.bind(this);
+    this.top5AlmostExpiredWithPrice =
+      this.top5AlmostExpiredWithPrice.bind(this);
+    this.top5AlmostExpired = this.top5AlmostExpired.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -72,10 +80,23 @@ class ProductController extends BaseController {
       try {
         data.created_at = getNow();
         data.updated_at = getNow();
+
+        data.time_start = getNow();
+        data.time_end = getNow();
+        data.timestamp = getNow();
+        data.is_done = 0;
+        data.is_deleted = 0;
+        data.ratting = 0;
         let result = await addProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(
+          res,
+          {
+            message: exception,
+          },
+          500
+        );
       }
     } else {
       return this.responseError(
@@ -90,7 +111,8 @@ class ProductController extends BaseController {
   }
   async updateProduct(req, res) {
     logger.info("updateProduct");
-    const { data } = req.body;
+
+    const data = req.body;
     const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
@@ -105,10 +127,19 @@ class ProductController extends BaseController {
           405
         );
       try {
+        data.time_start = getNow();
+        data.time_end = getNow();
+        data.timestamp = getNow();
         let result = await updateProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(
+          res,
+          {
+            message: exception,
+          },
+          500
+        );
       }
     } else {
       return this.responseError(
@@ -123,7 +154,7 @@ class ProductController extends BaseController {
   }
   async deleteProduct(req, res) {
     logger.info("deleteProduct");
-    const { data } = req.body;
+    const { id } = req.params;
     const accessToken = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
@@ -137,11 +168,16 @@ class ProductController extends BaseController {
           405
         );
       try {
-        data.updated_at = getNow();
-        let result = await deleteProduct(data);
+        let result = await deleteProduct(id);
         return this.responseSuccess(res, result);
       } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
+        return this.responseError(
+          res,
+          {
+            message: exception,
+          },
+          500
+        );
       }
     } else {
       return this.responseError(
@@ -154,11 +190,67 @@ class ProductController extends BaseController {
       );
     }
   }
+  async getProduct(req, res) {
+    logger.info("getProduct");
+    logger.info("req.query", req.query);
+    let { _page, _limit, name_like, role, _sort, _order } = req.query;
+    try {
+      let product = await getProduct();
+      if (!product) {
+        return responsePaginationSuccess(
+          res,
+          [],
+          _page,
+          _limit,
+          "List products successfully"
+        );
+      }
+      _page = Number(_page);
+      _limit = Number(_limit);
+      const pageCount = Math.ceil(product.length / _limit);
+
+      if (_page > pageCount) {
+        _page = pageCount;
+      }
+
+      return responsePaginationSuccess(
+        res,
+        product,
+        _page,
+        _limit,
+        "List products successfully"
+      );
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
   async getProductById(req, res) {
     logger.info("getProduct id");
     try {
       const { product_id } = req.params.id;
       let result = await singleByProductId(product_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getProductBySeller(req, res) {
+    logger.info("getProductBySeller id");
+    const { roles_id, user_id } = req.accessTokenPayload;
+    try {
+      let result = await getProductBySeller(user_id);
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
@@ -186,32 +278,35 @@ class ProductController extends BaseController {
     }
   }
 
-
   async createAuction(req, res) {
     logger.info("createAuction");
     const { data } = req.body;
-    const token =  req.headers["x-access-token"];
+    const token = req.headers["x-access-token"];
     const parseToken = deCodeTokenForUser(token);
     if (parseToken) {
-      if (parseToken.payload.roles_id ==1)
+      // if (parseToken.payload.roles_id == 1)
+      //   return this.responseError(
+      //     res, {
+      //       authenticated: false,
+      //       message: "Method Not Allowed",
+      //     },
+      //     405
+      //   );
+      try {
+        data.bidder_id = parseToken.payload.user_id;
+        await auction(data.product_id, data.bidder_id, data.price);
+        const result = await singleByProductId(data.product_id);
+
+        await broadcastAll(result);
+        return this.responseSuccess(res, result);
+      } catch (exception) {
         return this.responseError(
           res,
           {
-            authenticated: false,
-            message: "Method Not Allowed",
+            message: exception.message,
           },
-          405
+          500
         );
-      try {
-        data.bidder_id = parseToken.payload.user_id;
-        let result = await auction(data.product_id,data.bidder_id,data.price);
-        if (result !=null)
-        await broadcastAll("auction", data.product_id);
-
-
-        return this.responseSuccess(res, result);
-      } catch (exception) {
-        return this.responseError(res, { message: exception }, 500);
       }
     } else {
       return this.responseError(
@@ -224,7 +319,6 @@ class ProductController extends BaseController {
       );
     }
   }
-
 
   async getTop5ProductPrice(req, res) {
     logger.info("getProduct Price");
@@ -272,13 +366,11 @@ class ProductController extends BaseController {
     }
   }
 
-
   async Query(req, res) {
     logger.info("query Product");
     try {
       const { q, page, size } = req.query;
       let result = await search(q, page || 1, size || 10);
-      console.log(result);
       try {
         let _page = Number(page || 1);
         let _limit = Number(size || 10);
@@ -326,6 +418,23 @@ class ProductController extends BaseController {
     }
   }
 
+  async getPrDetail(req, res) {
+    logger.info("getPrDetail");
+    const { id } = req.params;
+    try {
+      let result = await getPrDetail(id);
+      return res.json(result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
   async getTop5RelationByCategoryId(req, res) {
     logger.info("getTop5RelationByCategoryId");
     let { category_id, product_id } = req.params;
@@ -350,6 +459,72 @@ class ProductController extends BaseController {
 
     try {
       let result = await getProductByCategoryId(category_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+  async getProductByBrandId(req, res) {
+    logger.info("getProductByBrandId");
+
+    let { brand_id } = req.params;
+
+    try {
+      let result = await getProductByBrandId(brand_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async top5CountBidder(req, res) {
+    logger.info("top5CountBidder");
+    try {
+      let result = await top5CountBidder();
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async top5AlmostExpiredWithPrice(req, res) {
+    logger.info("top5AlmostExpiredWithPrice");
+    try {
+      let result = await top5AlmostExpiredWithPrice();
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async top5AlmostExpired(req, res) {
+    logger.info("top5AlmostExpired");
+    try {
+      let result = await top5AlmostExpired();
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(

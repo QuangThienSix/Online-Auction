@@ -1,6 +1,12 @@
 import BaseController from "./baseController";
-import { getTokenForUser, deCodeTokenForUser, sendMail } from "../lib/utils";
-import { logger } from "../lib/utils";
+import {
+  getTokenForUser,
+  deCodeTokenForUser,
+  sendMail
+} from "../lib/utils";
+import {
+  logger
+} from "../lib/utils";
 import {
   singleByUserName,
   updateRefreshToken,
@@ -8,6 +14,8 @@ import {
   singleByMail,
   updateIslock,
   addUser,
+  updatetoken,
+  updatePassUser
 } from "../models/user";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -26,21 +34,24 @@ class AuthController extends BaseController {
     this.signUp = this.signUp.bind(this);
     this.signIn = this.signIn.bind(this);
     this.verify = this.verify.bind(this);
+    this.forgotPassword = this.forgotPassword.bind(this);
     this.parseToken = this.parseToken.bind(this);
     this.refreshAccessToken = this.refreshAccessToken.bind(this);
+    this.sendOTP = this.sendOTP.bind(this);
   }
 
   async parseToken(req, res) {
     logger.info("parseToken");
-    const { accessToken } = req.body;
+    const {
+      accessToken
+    } = req.body;
 
     const parseToken = deCodeTokenForUser(accessToken);
     if (parseToken) {
       this.responseSuccess(res, parseToken);
     } else {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "token incorrect",
         },
@@ -121,8 +132,7 @@ class AuthController extends BaseController {
     if (user) {
       logger.info("same username");
       return this.responseError(
-        res,
-        {
+        res, {
           message: "same username ",
         },
         400
@@ -133,8 +143,7 @@ class AuthController extends BaseController {
     if (mail) {
       logger.info("same Email");
       return this.responseError(
-        res,
-        {
+        res, {
           message: "same Email ",
         },
         400
@@ -147,8 +156,7 @@ class AuthController extends BaseController {
     } catch (error) {
       logger.info("Failed add user", error);
       return this.responseError(
-        res,
-        {
+        res, {
           message: "Failed add user",
         },
         400
@@ -169,8 +177,7 @@ class AuthController extends BaseController {
           await sendMail("phamquangthien.it@gmail.com", email, "[OTP]", html);
         }
         return this.responseSuccess(
-          res,
-          {
+          res, {
             success: true,
             email: email,
           },
@@ -178,8 +185,7 @@ class AuthController extends BaseController {
         );
       } catch (error) {
         return this.responseError(
-          res,
-          {
+          res, {
             message: "Failed send Email",
           },
           400
@@ -190,14 +196,16 @@ class AuthController extends BaseController {
 
   async signIn(req, res) {
     logger.info("singin");
-    const { username, password } = req.body;
+    const {
+      username,
+      password
+    } = req.body;
     logger.info("User and Password login: ", req.body);
 
     const user = await singleByUserName(username);
     if (user === null) {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "username || password is incorrect",
         },
@@ -207,8 +215,7 @@ class AuthController extends BaseController {
 
     if (!bcrypt.compareSync(password, user.password)) {
       return this.responseError(
-        res,
-        {
+        res, {
           authenticated: false,
           message: "username || password is incorrect",
         },
@@ -238,8 +245,7 @@ class AuthController extends BaseController {
 
     if (accessToken) {
       this.responseSuccess(
-        res,
-        {
+        res, {
           authenticated: true,
           accessToken,
           refreshToken,
@@ -252,9 +258,16 @@ class AuthController extends BaseController {
     }
   }
   async refreshAccessToken(req, res) {
-    const { accessToken, refreshToken } = req.body;
-    const { payload } = deCodeTokenForUser(accessToken);
-    const { user_id } = payload;
+    const {
+      accessToken,
+      refreshToken
+    } = req.body;
+    const {
+      payload
+    } = deCodeTokenForUser(accessToken);
+    const {
+      user_id
+    } = payload;
 
     const ret = await isValidRefreshToken(user_id, refreshToken);
     if (ret === true) {
@@ -269,7 +282,10 @@ class AuthController extends BaseController {
   }
   async verify(req, res) {
     logger.info("verify");
-    const { email, tokenMail } = req.body;
+    const {
+      email,
+      tokenMail
+    } = req.body;
     const user = await singleByMail(email);
     if (user) {
       if (user.tokenMail === tokenMail) {
@@ -289,6 +305,86 @@ class AuthController extends BaseController {
         authenticated: false,
         message: `${user.email}: Invalid Email`,
       });
+    }
+  }
+  async forgotPassword(req, res) {
+    logger.info("forgotPassword");
+    const {
+      email,
+      tokenMail,
+      newpassword
+    } = req.body;
+
+    const user = await singleByMail(email);
+    if (user) {
+      if (user.tokenMail === tokenMail) {
+        logger.info("token === user.tokenMail");
+        const password_hash = bcrypt.hashSync(
+          newpassword,
+          appConfig.authentication.saltRounds
+        );
+        await updatePassUser(user.user_id, password_hash);
+        return this.responseSuccess(res, user, "Forgot successfully");
+      } else {
+        logger.info("Invalid token");
+        return this.responseError(res, {
+          authenticated: false,
+          message: `${user.email}: Invalid token`,
+        });
+      }
+    } else {
+      logger.info("Invalid Email");
+      return this.responseError(res, {
+        authenticated: false,
+        message: `${user.email}: Invalid Email`,
+      });
+    }
+  }
+  async sendOTP(req, res) {
+    logger.info("sendOTP");
+    const {
+      email
+    } = req.body;
+    const user = await singleByMail(email);
+    var tokenMail = parseInt(rn(options));
+    if (user) {
+      await updatetoken(tokenMail, user.user_id);
+      try {
+        {
+          // send Email
+          logger.info("Send Email");
+          const html = `Hi ${user.fullname},
+        <br/>
+        Chúng tôi cung cấp mã OTP.
+        Email: ${email}
+        <br/> <br/>
+        Mã Xác Nhận: <b>${tokenMail}</b>
+        Link Xác nhận : <a href="http://localhost:${apiConfig.port}/login/verify">http://localhost:${apiConfig.port}/login/verify</a>
+        `;
+          await sendMail("phamquangthien.it@gmail.com", email, "[OTP]", html);
+        }
+        return this.responseSuccess(
+          res, {
+            success: true,
+            email: email,
+          },
+          "Register successfully"
+        );
+      } catch (error) {
+        return this.responseError(
+          res, {
+            message: "Failed send Email",
+          },
+          400
+        );
+      }
+    } else {
+      return this.responseError(
+        res, {
+          message: "Failed send Email",
+        },
+        400
+      );
     }
   }
 }

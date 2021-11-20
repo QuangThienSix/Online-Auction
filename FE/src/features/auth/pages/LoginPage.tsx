@@ -1,5 +1,5 @@
-import { ChevronLeft } from '@mui/icons-material';
-import { Alert, createTheme, Paper, Typography } from '@mui/material';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Alert, createTheme, Paper, Typography, Box } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { Users } from 'models';
@@ -57,11 +57,19 @@ export default function LoginPage() {
           </Alert>
         )}
         <LoginForm initialValue={initialValue} onSubmit={handleLoginClick} />
-        <Link to="/regis">
-          <Typography variant="caption" style={{ display: 'flex', alignItems: 'center' }}>
-            <ChevronLeft /> Back Register
-          </Typography>
-        </Link>
+        <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Link to="/regis">
+            <Typography variant="caption" style={{ display: 'flex', alignItems: 'center' }}>
+              <ChevronLeft /> Back Register
+            </Typography>
+          </Link>
+          <Link to="/forgot" style={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="caption" style={{ display: 'flex', alignItems: 'center' }}>
+              Back Forgot Password
+              <ChevronRight />
+            </Typography>
+          </Link>
+        </Box>
       </Paper>
     </div>
   );

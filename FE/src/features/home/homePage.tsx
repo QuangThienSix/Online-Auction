@@ -7,7 +7,7 @@ import { Carousel } from 'primereact/carousel';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import './homePage.css';
-import { homeActions, selecttorsProductTop } from './homeSlice';
+import { homeActions, selecttorsProduct5PriceTop, selecttorsProductTop } from './homeSlice';
 // import productApi from 'api/productApi';
 
 export interface IHomePageProps { }
@@ -17,6 +17,7 @@ export default function HomePage(props: IHomePageProps) {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const ProductTopList = useAppSelector(selecttorsProductTop);
+  const ProductTop5PriceList = useAppSelector(selecttorsProduct5PriceTop);
 
   useEffect(() => {
     dispatch(homeActions.product());
@@ -76,7 +77,7 @@ export default function HomePage(props: IHomePageProps) {
             <h6 className="p-mt-0 p-mb-1">Giá Mua: {numeral(product.max_price).format('0,0')} đ</h6>
             <h6 className="p-mt-0 p-mb-1" style={{ fontWeight: 700 }}>Giá Hiện Tại: {numeral(product.price).format('0,0')} đ</h6>
             <h6 className="p-mt-0 p-mb-1">Ngày Bán: {moment(product.created_at).format('DD/MM/YYYY')}</h6>
-            <h6 className="p-mt-0 p-mb-1">Người Bán: {product.seller_id}</h6>
+            {/* <h6 className="p-mt-0 p-mb-1">Người Bán: {product.seller_id}</h6> */}
             <div className="item-rating">
               {Number(product.ratting) > 500 ? (
                 <>
@@ -124,7 +125,30 @@ export default function HomePage(props: IHomePageProps) {
                     circular
                     // autoplayInterval={3000}
                     itemTemplate={productTemplate}
-                    header={<h3 className="text-center">Sản Phẩm</h3>}
+                    header={<h3 className="text-center">Sản Phẩm Top 5 Ratting</h3>}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <div className="carousel-demo">
+                <div className="card" style={{ border: "none" }}>
+                  <Carousel
+                    value={ProductTop5PriceList}
+                    numVisible={4}
+                    numScroll={1}
+                    responsiveOptions={responsiveOptions}
+                    className="custom-carousel"
+                    circular
+                    // autoplayInterval={3000}
+                    itemTemplate={productTemplate}
+                    header={<h3 className="text-center">Sản Phẩm Top 5 Giá</h3>}
                   />
                 </div>
               </div>

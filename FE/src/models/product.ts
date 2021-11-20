@@ -14,20 +14,21 @@ export interface Product {
     max_price: string;
     name: string;
     price: string;
-    ratting: string;
+    ratting: number;
     seller_id: string;
     step: string;
     time_end: string;
     time_start: string;
     timestamp: string;
     updated_at: string;
-
+    is_done: string;
 }
 
 export interface ProductDetaill {
+    id?: string;
     address?: string;
-    avatar: string;
-    category_id: string;
+    avatar?: string;
+    category_id?: string;
     current_price?: string;
     description?: string;
     email?: string;
