@@ -205,3 +205,30 @@ export const getPrDetail = async (id) => {
   if (rows.length === 0) return null;
   return rows[0];
 };
+
+export const top5CountBidder = async () => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} where is_deleted = 0 and (is_done = 0 or is_done is null) order by count_quantity_bidder  desc LIMIT 5`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+
+export const top5AlmostExpiredWithPrice = async () => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} WHERE time_end > now() and is_deleted = 0 and (is_done = 0 or is_done is null) ORDER by current_price desc LIMIT 5`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+
+export const top5AlmostExpired = async () => {
+  const rows = await load(
+    `select * from ${TBL_PRODUCT} WHERE time_end > now() and is_deleted = 0 and (is_done = 0 or is_done is null) ORDER by time_end desc LIMIT 5`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};

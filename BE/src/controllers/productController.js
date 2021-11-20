@@ -22,8 +22,9 @@ import {
   updateProduct,
   getPrDetail,
   getProduct,
-  getProductByProductId,
-  updateIsHidden,
+  top5CountBidder,
+  top5AlmostExpiredWithPrice,
+  top5AlmostExpired,
 } from "../models/products";
 import { broadcastAll } from "../ws";
 import BaseController from "./baseController";
@@ -54,6 +55,10 @@ class ProductController extends BaseController {
     this.createAuction = this.createAuction.bind(this);
     this.getProductBySeller = this.getProductBySeller.bind(this);
     this.getProduct = this.getProduct.bind(this);
+    this.top5CountBidder = this.top5CountBidder.bind(this);
+    this.top5AlmostExpiredWithPrice =
+      this.top5AlmostExpiredWithPrice.bind(this);
+    this.top5AlmostExpired = this.top5AlmostExpired.bind(this);
   }
 
   async creatProduct(req, res) {
@@ -472,6 +477,54 @@ class ProductController extends BaseController {
 
     try {
       let result = await getProductByBrandId(brand_id);
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async top5CountBidder(req, res) {
+    logger.info("top5CountBidder");
+    try {
+      let result = await top5CountBidder();
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async top5AlmostExpiredWithPrice(req, res) {
+    logger.info("top5AlmostExpiredWithPrice");
+    try {
+      let result = await top5AlmostExpiredWithPrice();
+      return this.responseSuccess(res, result);
+    } catch (error) {
+      return this.responseError(
+        res,
+        {
+          message: error,
+        },
+        500
+      );
+    }
+  }
+
+  async top5AlmostExpired(req, res) {
+    logger.info("top5AlmostExpired");
+    try {
+      let result = await top5AlmostExpired();
       return this.responseSuccess(res, result);
     } catch (error) {
       return this.responseError(
