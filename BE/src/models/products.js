@@ -232,3 +232,20 @@ export const top5AlmostExpired = async () => {
   if (rows.length === 0) return null;
   return rows;
 };
+
+export const getUserLastModifile = async (product_id) => {
+  const rows = await load(
+    `SELECT b.username	,	b.fullname	,b.address,	b.email	,		b.ratting,				b.ratting_negative
+    FROM product_bidder a
+    JOIN users  b on a.bidder_id = b.user_id
+    WHERE product_id  = ${product_id}
+    ORDER BY price DESC
+    LIMIT 1 ;`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+
+
+

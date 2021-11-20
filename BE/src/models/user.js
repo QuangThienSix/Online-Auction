@@ -118,3 +118,25 @@ export const updatePassUser = async (user_id, password) => {
   if (rows.length === 0) return null;
   return rows[0];
 };
+
+export const pointRatting = async (user_id) => {
+  const rows = await load(
+    ` 
+    SELECT 
+    CASE
+        WHEN   IFNULL(ratting,0) /IFNULL(ratting_negative,1) >= 0.8 THEN   TRUE
+        ELSE FALSE
+    END AS 'result'
+    FROM users 
+    where user_id=${user_id}`
+  );
+  if (rows.length === 0) return null;
+  return rows[0];
+};
+
+
+
+
+
+
+//user_id , ratting ,nagatiove , rattimg/ nagati >= 0.8 == true

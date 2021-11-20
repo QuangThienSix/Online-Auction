@@ -25,6 +25,7 @@ import {
   updatePassUser,
   listUserId,
   updateUserId,
+  pointRatting
 } from "../models/user";
 import bcrypt from "bcrypt";
 import appConfig from "../config/env/app.dev.json";
@@ -53,6 +54,7 @@ class UsersController extends BaseController {
     this.changePassUser = this.changePassUser.bind(this);
     this.sendOTP = this.sendOTP.bind(this);
     this.updateUser = this.updateUser.bind(this);
+    this.pointRatting = this.pointRatting.bind(this);
   }
 
   async listUser(req, res) {
@@ -488,6 +490,26 @@ class UsersController extends BaseController {
       }
     }
   }
+  async pointRatting(req, res) {
+    const {
+      user_id
+    } = req.params;
+      
+      console.log("dâdada  " + user_id);
+    {
+      try {
+       var response = await pointRatting(user_id);
+        return this.responseSuccess(
+          res,
+          response
+        );
+      } catch (error) {
+        return this.responseError(res, "User does not exist", 400);
+      }
+    } 
+  }
+
+
 }
 
 export default new UsersController();
