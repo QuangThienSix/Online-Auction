@@ -25,8 +25,8 @@ const product = () => {
     "/getTop5AlmostExpiredWithPrice",
     ProductController.top5AlmostExpiredWithPrice
   );
-
   api.get("/getTop5AlmostExpired", ProductController.top5AlmostExpired);
+
   api.get("/ProductDetail/:product_id", ProductController.ProductDetail);
   api.get("/:id", ProductController.getPrDetail);
   api.get(
