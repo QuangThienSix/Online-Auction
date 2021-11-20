@@ -14,6 +14,7 @@ import transform from "./transform";
 import userRole from "./user_role";
 import upload from "./upload";
 import bidder from "./bidder";
+import seller from "./seller";
 
 /**
  * API Resources

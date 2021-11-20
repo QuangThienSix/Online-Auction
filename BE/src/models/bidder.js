@@ -8,3 +8,21 @@ export const getProductBidding = async (bidderid) => {
   if (rows.length === 0) return null;
   return rows;
 };
+
+export const getProductBidderCompleted = async (bidderid) => {
+  const rows = await load(
+    `select p.id, Max(pb.price) as max_price from product p join product_bidder pb on pb.product_id = p.id where pb.bidder_id = ${bidderid} and p.time_end < now()  group by pb.product_id`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
+
+export const getProductBidderMaxPrice = async (id) => {
+  const rows = await load(
+    `select p.id, Max(pb.price) as max_price from product p join product_bidder pb on pb.product_id = p.id where pb.product_id = ${id} group by pb.product_id`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
