@@ -5,6 +5,8 @@ import {
   deCodeTokenForUser,
   logger,
   responsePaginationSuccess,
+  sendMail
+
 } from "../lib/utils";
 import {
   addProduct,
@@ -173,39 +175,38 @@ class ProductController extends BaseController {
         data.timestamp = getNow();
         let result = await updateProduct(data);
         var users = await getUserAuction(data.id);
-        users.forEach(element => {
-           //send mail 
-        
-        try {
-          {
-            // send Email
-            logger.info("Send Email updated thông tin");
-            const html = `Hi ${element.fullname},
+        users.forEach(async (element) => {
+          //send mail 
+
+          try {
+            {
+              // send Email
+              logger.info("Send Email updated thông tin");
+              const html = `Hi ${element.fullname},
             <br/>
             Chúng tôi gửi thông báo đến bạn sản phẩm ${element.product_name} này bạn đã thay đổi .
             Giá hiện tại: ${element.price}
             <br/> <br/>
             `;
-            const html1 = `Hi ${element.fullname},
+              const html1 = `Hi ${element.fullname},
             <br/>
             Chúng tôi gửi thông báo đến bạn sản phẩm ${element.product_name} này đã được ${element.seller} đã thay đổi.
             Giá hiện tại: ${element.price}
             <br/> <br/>
             `;
-          
-            await sendMail(
-              appConfig.Mail.Gmail_USER,
-              element.email,
-              "[Auction]",
-              html1
-            );
-          }
-         
-        } catch (error) {
-        }
-      
-       });
-      
+
+              await sendMail(
+                'phamquangthien.it@gmail.com',
+                element.email,
+                "[Auction]",
+                html1
+              );
+            }
+
+          } catch (error) {}
+
+        });
+
 
 
 
@@ -408,8 +409,10 @@ class ProductController extends BaseController {
       //   );
       try {
         data.bidder_id = parseToken.payload.user_id;
-        await auction(data.product_id, data.bidder_id, data.price);
+        const rows = await auction(data.product_id, data.bidder_id, data.price);
         const result = await singleByProductId(data.product_id);
+
+        result.message = rows[1][0].message ? rows[1][0].message : '400';
 
         await broadcastAll(result);
         return this.responseSuccess(res, result);

@@ -43,7 +43,7 @@ export function ProductDetail(props: IProductDetailProps) {
     function isEmpty(obj: any) {
         return Object.keys(obj).length === 0;
     }
-
+    console.log(socket);
 
     useEffect(() => {
         if (!id) return
@@ -99,9 +99,18 @@ export function ProductDetail(props: IProductDetailProps) {
             },
         }
         try {
-            await productApi.auction(data);
-            addSingle('success', 'Đấu giá thành công');
-            setDisplayResponsive(false);
+            const resufl = await productApi.auction(data);
+            console.log(resufl.data.message);
+            if (resufl.data.message === '200') {
+                addSingle('success', 'Đấu giá thành công');
+                setDisplayResponsive(false);
+            }
+            else {
+                addSingle('success', 'Đấu giá thất bại!!');
+                setDisplayResponsive(false);
+            }
+
+
         } catch (error) {
             addSingle('info', 'Đấu giá thất bại!!');
         }
