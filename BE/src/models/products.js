@@ -250,3 +250,19 @@ export const getUserLastModifile = async (product_id) => {
   if (rows.length === 0) return null;
   return rows;
 };
+
+
+export const getUserAuction = async (product_id) => {
+  const rows = await load(
+    `SELECT c.name as 'product_name', c.price,c.seller_id, d.username as'seller' , b.username	,	b.fullname	,b.address,	b.email	,		b.ratting,				b.ratting_negative
+    FROM product_bidder a
+    JOIN users  b on a.bidder_id = b.user_id
+    JOIN product c on a.product_id = a.id
+    JOIN users d on c.seller_id = d.user_id
+    WHERE a.product_id  =  ${product_id}
+    ORDER BY a.price DESC`
+  );
+
+  if (rows.length === 0) return null;
+  return rows;
+};
