@@ -131,6 +131,7 @@ class SendMailController extends BaseController {
       );
     }
   }
+
 }
 
 export default new SendMailController();

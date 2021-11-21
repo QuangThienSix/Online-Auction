@@ -27,7 +27,8 @@ import {
   top5CountBidder,
   top5AlmostExpiredWithPrice,
   top5AlmostExpired,
-  getUserLastModifile
+  getUserLastModifile,
+  getUserAuction
 } from "../models/products";
 import {
   broadcastAll
@@ -153,6 +154,43 @@ class ProductController extends BaseController {
         data.time_end = datestringe;
         data.timestamp = getNow();
         let result = await updateProduct(data);
+        var users = await getUserAuction(data.id);
+        users.forEach(element => {
+           //send mail 
+        
+        try {
+          {
+            // send Email
+            logger.info("Send Email updated thông tin");
+            const html = `Hi ${element.fullname},
+            <br/>
+            Chúng tôi gửi thông báo đến bạn sản phẩm ${element.product_name} này bạn đã thay đổi .
+            Giá hiện tại: ${element.price}
+            <br/> <br/>
+            `;
+            const html1 = `Hi ${element.fullname},
+            <br/>
+            Chúng tôi gửi thông báo đến bạn sản phẩm ${element.product_name} này đã được ${element.seller} đã thay đổi.
+            Giá hiện tại: ${element.price}
+            <br/> <br/>
+            `;
+          
+            await sendMail(
+              appConfig.Mail.Gmail_USER,
+              element.email,
+              "[Auction]",
+              html1
+            );
+          }
+         
+        } catch (error) {
+        }
+      
+       });
+      
+
+
+
         return this.responseSuccess(res, result);
       } catch (exception) {
         return this.responseError(
