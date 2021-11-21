@@ -31,6 +31,7 @@ export default function HomePage(props: IHomePageProps) {
 
 
   const handleDetail = (product: Product) => {
+    console.log(product);
     history.push(`product/${product.id}`);
   };
 
@@ -60,6 +61,57 @@ export default function HomePage(props: IHomePageProps) {
       numScroll: 1,
     },
   ];
+  const productTemplate123 = (product: Product) => {
+    return (
+      <div className="product-item">
+        <div className="product-item-content text-center">
+          {/* <a> */}
+          <div className="p-mb-3">
+            <img
+              src={`http://${product.avatar}`}
+              onError={(e: any) =>
+              (e.target.src =
+                'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')
+              }
+              alt={product.name}
+              className="product-image"
+            />
+          </div>
+          <div>
+            <h4 className="p-mb-3">{product.name}</h4>
+            <h6 className="p-mt-0 p-mb-1">Giá Mua: {numeral(product.max_price).format('0,0')} đ</h6>
+            <h6 className="p-mt-0 p-mb-1" style={{ fontWeight: 700 }}>Giá Hiện Tại: {numeral(product.current_price).format('0,0')} đ</h6>
+            <h6 className="p-mt-0 p-mb-1">Ngày Bán: {moment(product.created_at).format('DD/MM/YYYY')}</h6>
+            {/* <h6 className="p-mt-0 p-mb-1">Người Bán: {product.seller_id}</h6> */}
+            <div className="item-rating">
+              {Number(product.ratting) > 500 ? (
+                <>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                </>
+              ) : (
+                <>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star p-mr-2" style={{ color: "#fb6e2e" }}></i>
+                  <i className="pi pi-star-o p-mr-2"></i>
+                </>
+              )}
+
+              <span className="item-rating-total"> {product.ratting}</span>
+            </div>
+            <div className="car-buttons p-mt-3 product-item-button">
+              <Button onClick={() => handleDetail(product)} icon="pi pi-search" className="p-button p-button-rounded" />
+            </div>
+          </div>
+          {/* </a> */}
+        </div>
+      </div>
+    );
+  };
   const productTemplate = (product: Product) => {
     return (
       <div className="product-item">
@@ -151,7 +203,7 @@ export default function HomePage(props: IHomePageProps) {
                     className="custom-carousel"
                     circular
                     // autoplayInterval={3000}
-                    itemTemplate={productTemplate}
+                    itemTemplate={productTemplate123}
                     header={<h3 className="text-center">Top 5 Sản phẩm chưa kết thúc giá cao nhât</h3>}
                   />
                 </div>

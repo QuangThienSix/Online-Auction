@@ -89,12 +89,30 @@ class ProductController extends BaseController {
         data.created_at = getNow();
         data.updated_at = getNow();
 
-        data.time_start = getNow();
-        data.time_end = getNow();
+        var d = new Date(data.time_start);
+        var datestring =
+          d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " +
+          d.getHours() + ":" + d.getMinutes();
+
+        var da = new Date(data.time_end);
+        var datestringe =
+          da.getFullYear() +
+          "-" +
+          (
+            da.getMonth() + 1
+          ) +
+          "-" +
+          da.getDate() +
+          " " +
+          da.getHours() + ":" + da.getMinutes();
+
+        data.time_start = datestring;
+        data.time_end = datestringe;
         data.timestamp = getNow();
         data.is_done = 0;
         data.is_deleted = 0;
         data.ratting = 0;
+        data.seller_id = parseToken.payload.user_id;
         let result = await addProduct(data);
         return this.responseSuccess(res, result);
       } catch (exception) {

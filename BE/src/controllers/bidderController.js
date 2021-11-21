@@ -76,7 +76,7 @@ class BidderController extends BaseController {
         return this.responseError(
           res,
           {
-            message: exception,
+            message: err,
           },
           500
         );

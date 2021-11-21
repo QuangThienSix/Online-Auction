@@ -98,10 +98,12 @@ export function ProductDetail(props: IProductDetailProps) {
                 price: searchRef.current.value,
             },
         }
-        const resulf = await productApi.auction(data);
-        if (resulf) {
+        try {
+            await productApi.auction(data);
             addSingle('success', 'Đấu giá thành công');
             setDisplayResponsive(false);
+        } catch (error) {
+            addSingle('info', 'Đấu giá thất bại!!');
         }
     }
 
@@ -185,7 +187,7 @@ export function ProductDetail(props: IProductDetailProps) {
                     {/* <a> */}
                     <div className="p-mb-3">
                         <img
-                            src={`showcase/demo/images/product/${product.images}`}
+                            src={`http://${product?.avatar}`}
                             onError={(e: any) =>
                             (e.target.src =
                                 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')
@@ -295,7 +297,7 @@ export function ProductDetail(props: IProductDetailProps) {
                     <div className="row">
                         <div className="col-4 image-product">
                             <div className="image-product__main mb-2">
-                                <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="250" />
+                                <Image src={`http://${product?.avatar}`} alt="Image" width="250" />
                             </div>
                             <div className="row mb-2">
                                 {/* <div className="col-4"> <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="100" /></div>
@@ -328,7 +330,7 @@ export function ProductDetail(props: IProductDetailProps) {
                                         <div className="carousel-demo">
                                             <div className="card" style={{ border: "none" }}>
                                                 <Carousel
-                                                    value={productList}
+                                                    value={productList ? productList : []}
                                                     numVisible={4}
                                                     numScroll={2}
                                                     responsiveOptions={responsiveOptionsList}

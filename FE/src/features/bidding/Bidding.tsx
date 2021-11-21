@@ -40,15 +40,36 @@ export function Bidding(props: IBiddingProps) {
     };
 
     useEffect(() => {
+        console.log(decoded);
         if (!decoded.user_id) return
         // IFFE
         (async () => {
-            const data: ListResponse<bidderProduct> = await bidderApi.getAll();
-            const dataWatch: ListResponse<Watch> = await watchApi.getAll();
-            const dataGetWonList: ListResponse<any> = await bidderApi.getWonList();
-            setWtchList(dataWatch.data ? dataWatch.data : []);
-            setBidderProduct(data.data ? data.data : []);
-            setDataGetWonList(dataGetWonList.data ? dataGetWonList.data : []);
+
+            try {
+                const data: ListResponse<bidderProduct> = await bidderApi.getAll();
+                setBidderProduct(data.data ? data.data : []);
+            } catch (error: any) {
+                console.log(error)
+            }
+            try {
+                const dataWatch: ListResponse<Watch> = await watchApi.getAll();
+                setWtchList(dataWatch.data ? dataWatch.data : []);
+            } catch (error: any) {
+                console.log(error)
+            }
+
+            try {
+                const dataGetWonList: ListResponse<any> = await bidderApi.getWonList();
+                setDataGetWonList(dataGetWonList.data ? dataGetWonList.data : []);
+            } catch (error) {
+                console.log(error)
+            }
+
+
+
+
+
+
         })();
 
     }, [decoded.user_id]);

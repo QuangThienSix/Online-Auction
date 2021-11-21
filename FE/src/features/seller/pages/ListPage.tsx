@@ -73,6 +73,7 @@ export function ListPage() {
             console.log('Failed to Remove product', error);
         }
     };
+
     return (
         <Box className={classes.root}>
 
@@ -102,6 +103,7 @@ export function ListPage() {
 
             <SellerTableSelling
                 productList={productSelling ? productSelling : []}
+                onEdit={handleEditProduct}
             />
             <div className="mt-3 mb-3"></div>
             <SellerTableSold

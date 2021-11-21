@@ -19,6 +19,7 @@ export default function Searchpage() {
         history.push(`/product/${product.id}`);
     };
     const renderGridItem = (data: any) => {
+        console.log(data);
         return (
             <div className="p-col-12 p-md-4">
                 <div className="product-grid-item card">
@@ -30,13 +31,13 @@ export default function Searchpage() {
                         <span className={`product-badge`}>{data.brand_name}</span>
                     </div>
                     <div className="product-grid-item-content">
-                        <img src={`https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png`} alt={data.name} />
+                        <img src={`http://${data.avatar}`} alt={data.name} />
                         <div className="product-name">{data.name}</div>
                         <div className="product-description">{data.description}</div>
                         <Rating value={data.rating} readOnly cancel={false}></Rating>
                     </div>
                     <div className="product-grid-item-bottom">
-                        <span className="product-price">$ {data.price}</span>
+                        <span className="product-price">$ {data.current_price}</span>
                         <Button onClick={() => handleDetail(data)} icon="pi pi-search" label="Detail"></Button>
                     </div>
                 </div>
